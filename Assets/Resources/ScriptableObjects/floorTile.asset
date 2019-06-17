@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7499de3cb921d410885d94cb62e11259, type: 3}
+  m_Name: floorTile
+  m_EditorClassIdentifier: 
+  tileName: floor
+  tileDescription: not a lava tile
+  tileSprite: {fileID: 21300000, guid: 4bf487a24d9464709bced75fd56381f9, type: 3}
+  tileObject: {fileID: 797724703588368053, guid: 39d8cf8f01794451396e2ba94af69f54,
+    type: 3}
+  isWalkable: 1
+  isVisualBlock: 0

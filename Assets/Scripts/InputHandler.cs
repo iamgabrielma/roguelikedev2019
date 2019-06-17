@@ -7,15 +7,17 @@ public class InputHandler : MonoBehaviour
     private bool isPlayerMoving; // This avoids that there's multiple movement until the previous movement hasn't completed
 
     GameObject player; // Self reference, in order to use MovePlayer() easily
+    private Vector3 _lastKnownPlayerPosition; // We use this to track players last position before their next move
 
     private void Start()
     {
         // TODO: add nullcheck. We assign player to the static __player instance, shouldn't be null but check for safety.
-        player = Engine.__player;
+        player = Engine.__player; 
     }
 
     private void Update()
     {
+
         if (Input.GetKeyDown(KeyCode.W) && isPlayerMoving == false)
         {
             isPlayerMoving = true;
@@ -46,6 +48,8 @@ public class InputHandler : MonoBehaviour
 
     public void MovePlayer(string direction)
     {
+        _lastKnownPlayerPosition = player.transform.localPosition; 
+
         switch (direction)
         {
             case "up":
@@ -64,8 +68,20 @@ public class InputHandler : MonoBehaviour
                 float xNegative = player.transform.localPosition.x - 1.0f;
                 player.transform.localPosition = new Vector3(xNegative, player.transform.localPosition.y, 0);
                 break;
+            case "none":
+                Debug.Log("There's a wall there, not walkable.");
+                break;
 
         }
         isPlayerMoving = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        // This checks if the player has touched a wall, if does, "teleports" the player to its last position, as cannon be crossed. This is done this way because physics and the rigidbody moves the player to a float position after colliding, breaking the logic afterwards as movement relies on integer vectors
+        if (collision.tag == "Wall")
+        {
+            player.transform.position = new Vector3(_lastKnownPlayerPosition.x, _lastKnownPlayerPosition.y, 0);
+        }
     }
 }
