@@ -16,8 +16,9 @@ public class Engine : MonoBehaviour
     public Transform _wallHolder;
     //readonly int screen_width = 20;
     //readonly int screen_height = 20;
-    readonly int mapX_width = 80; // eventually Moved to GameMap.cs
-    readonly int mapY_height = 45; // eventually  Moved to GameMap.cs
+    // 30 rows allow each row to be 36 pixels high in 1080p, the most common monitor size.
+    //readonly int mapX_width = 106; // eventually Moved to GameMap.cs
+    //readonly int mapY_height = 30; // eventually  Moved to GameMap.cs
 
     public static GameObject __player; // TODO -> Question: Is using a static gameobject for player a good idea?
     public static GameMap __gameMap; // TODO -> Question: Is using a static gameobject for player a good idea? Assuming it should be only one...yes?
@@ -40,7 +41,7 @@ public class Engine : MonoBehaviour
         //int _ms = ts.Milliseconds; // Calculated 14ms for a 20x20 via GameMap.cs . 14ms as well for 20x20 instantiating Prefabs. 165ms for 80x80
 
         //FloorSetup(map_width,map_height); // -> Testing via GameMap.cs
-        WallsSetup(mapX_width, mapY_height);
+        //WallsSetup(mapX_width, mapY_height);
 
         // Coordinates where we'll instantiate the player.
         //TODO: Is not clear at the moment if we will use these. Revisit and pass (0,0,0) vector directly to the __player instantiation otherwise
@@ -49,7 +50,9 @@ public class Engine : MonoBehaviour
 
         // The playerObject is assigned and the __player instance is created
         GameObject playerObject = Resources.Load<GameObject>("Prefabs/Player"); 
-        __player = Instantiate(playerObject, new Vector3(player_x, player_y, 0), Quaternion.identity);
+
+        // TODO: Added +0.5f temporarily to where the player instantiated, most likely we want to generate this through Entity, that already calculates this.
+        __player = Instantiate(playerObject, new Vector3(player_x+0.5f, player_y+0.5f, 0), Quaternion.identity);
 
         // TODO: Testing the Entity class for the player.
 
@@ -57,8 +60,12 @@ public class Engine : MonoBehaviour
 
         // Testing the Entity class for Enemies. Seems a bit convoluted and either would have to go with GO's or with Entities but seems to go.
         GameObject _test_npc = Resources.Load<GameObject>("Prefabs/Enemy");
-        Entity npcInstance = new Entity(1,1,"Enemy", _test_npc);
-        Instantiate(npcInstance.entityGameObject, new Vector3(npcInstance.x, npcInstance.y, 0), Quaternion.identity);
+
+        // TODO: Check this class, redudant info adding x, y and V3.
+        Entity npcInstance = new Entity(1, 1, "Enemy", _test_npc, new Vector3(1,1,0));
+        //Instantiate(npcInstance.entityGameObject, new Vector3(npcInstance.x, npcInstance.y, 0), Quaternion.identity);
+        // Modified the Entity class to accept a vector3 that relocates the entity 0.5f to fit the tiles: npcInstance.entityLocation
+        Instantiate(npcInstance.entityGameObject, npcInstance.entityLocation, Quaternion.identity);
 
         listOfEntities.Add(npcInstance);
         listOfGameObjects.Add(_test_npc);

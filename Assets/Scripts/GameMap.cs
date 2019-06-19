@@ -5,15 +5,17 @@ using UnityEngine;
 using System.Diagnostics;
 using System;
 
+// TODO: deprecate in favor of tilemaps and GridGenerator.cs
 public class GameMap: MonoBehaviour
 {
-
-    public Tile[] tiles;
+    // TODO: the comments with an arrow //-> are because the switch from prefab mapgen to tilemap mapgen, I had to rename Tile to _Tile and this was throwing errors, but needs a full rewrite anyway.
+    //->public Tile[] tiles;
 
     public Transform _floorHolder;
 
-    readonly int mapX_width = 80;
-    readonly int mapY_height = 45;
+    // 30 rows allow each row to be 36 pixels high in 1080p, the most common monitor size.
+    readonly int mapX_width = 106;
+    readonly int mapY_height = 30;
 
     private void Start()
     {
@@ -35,7 +37,7 @@ public class GameMap: MonoBehaviour
 
         //Stopwatch stopwatch = new Stopwatch();
         //stopwatch.Start();
-        FloorSetup(mapX_width, mapY_height);
+        //FloorSetup(mapX_width, mapY_height);
         //stopwatch.Stop();
         //TimeSpan ts = stopwatch.Elapsed;
         //int _ms = ts.Milliseconds; // Calculated 14ms for a 20x20 Floorsetup
@@ -47,14 +49,14 @@ public class GameMap: MonoBehaviour
     // TEST: Experiment using the Tile class:
     public void FloorSetup(int width, int height)
     {
-        GameObject floorTile = tiles[0].tileObject;
+        //->GameObject floorTile = tiles[0].tileObject;
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                GameObject _floorTile = Instantiate(floorTile, new Vector3(x, y, 0), Quaternion.identity);
-                _floorTile.transform.SetParent(_floorHolder);
+                //->GameObject _floorTile = Instantiate(floorTile, new Vector3(x, y, 0), Quaternion.identity);
+                //->_floorTile.transform.SetParent(_floorHolder);
             }
         }
     }
