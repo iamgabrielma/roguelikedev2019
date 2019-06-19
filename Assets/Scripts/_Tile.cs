@@ -2,7 +2,7 @@
 
 // Deriving from ScriptableObject we don't need a GameObject, as this will add as a template or data container to generate other objects
 [CreateAssetMenu(fileName= "New Tile", menuName="Tiles")]
-public class Tile: ScriptableObject
+public class _Tile: ScriptableObject
 {
 
 
@@ -19,7 +19,7 @@ public class Tile: ScriptableObject
         return "Inspecting tile... this seems to be " + tileDescription;
     }
 
-    // TODO: In the future we may need to edit the Sprite based on if is within FOV or not.
+    // TODO: In the future we may need to edit the Sprite based on if is within FOV or not. Add isExplored
 
     /* Eg: Other potential properties */
     //public bool isTileBlocked; // if it’s blocked, you can’t move through it // isWalkable more clear?
