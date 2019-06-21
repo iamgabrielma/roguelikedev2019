@@ -9,10 +9,13 @@ public class InputHandler : MonoBehaviour
     GameObject player; // Self reference, in order to use MovePlayer() easily
     private Vector3 _lastKnownPlayerPosition; // We use this to track players last position before their next move
 
+    public static bool isFOVrecompute; // If True, FOV is recomputed on GridGenerator.cs (temporary, maybe this needs to go into GameMap or something)
+
     private void Start()
     {
         // TODO: add nullcheck. We assign player to the static __player instance, shouldn't be null but check for safety.
-        player = Engine.__player; 
+        player = Engine.__player;
+        isFOVrecompute = true; // When the player appears for first time, we need to calculate the initial FOV
     }
 
     private void Update()
@@ -73,6 +76,7 @@ public class InputHandler : MonoBehaviour
                 break;
 
         }
+        isFOVrecompute = true; // When a movement is success, then we recompute FOV
         isPlayerMoving = false;
     }
 

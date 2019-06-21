@@ -2221,10 +2221,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8ca2179b58eb4a62ac74ba3e95475ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FOV_recompute: 0
   floorMap: {fileID: 1293218972}
   wallMap: {fileID: 2093532504}
   floorTile: {fileID: 11400000, guid: bfe86d2eee69f4490a700e56c930b38c, type: 2}
   wallTile: {fileID: 11400000, guid: 0b9bd483c3f6a42f9b83ee1f7c7a7ade, type: 2}
+  seed: 2
+  useRandomSeed: 0
 --- !u!156049354 &1743562588
 Grid:
   m_ObjectHideFlags: 0

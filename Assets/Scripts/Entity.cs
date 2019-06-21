@@ -7,6 +7,7 @@ public class Entity
     public string name;
     public GameObject entityGameObject;
     public Vector3 entityLocation;
+    public bool isBlockingEntity; // This will differentiate if is a physic body or we can pass through (potion), without need to check colliders or is trigger.
 
     // If sentient ... possibly needs a new class inherits from this one Sentient : Entity , and we add Move() there.
     enum EntityMode
@@ -34,7 +35,7 @@ public class Entity
         name = aName;
         entityGameObject = aEntityGameObject;
 
-        // Reallocates the Entities to fit the tiles.
+        // Reallocates the Entities to fit the tiles by offsetting its position +0.5f in X and Y
         Vector3 reallocateEntity(int ax, int ay)
         {
 

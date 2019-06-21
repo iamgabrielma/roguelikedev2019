@@ -11,6 +11,8 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         isPlayerFound = false; // Will be false by default as the Camera is already in the Inspector before the Player Entity is instantiated.
+        // TODO: Value 12 for the camera size hardcoded for the moment, calculate this dynamically in the future.
+        this.GetComponent<Camera>().orthographicSize = 12;
 
     }
 

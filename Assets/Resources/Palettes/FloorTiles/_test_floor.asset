@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: _test_floor
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 21300000, guid: 4bf487a24d9464709bced75fd56381f9, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.01886791, g: 0.018066913, b: 0.018066913, a: 1}
   m_Transform:
     e00: 1
     e01: 0
@@ -32,5 +32,5 @@ MonoBehaviour:
     e32: 0
     e33: 1
   m_InstancedGameObject: {fileID: 0}
-  m_Flags: 1
+  m_Flags: 0
   m_ColliderType: 1
