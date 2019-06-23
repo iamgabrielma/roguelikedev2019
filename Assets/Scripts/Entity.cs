@@ -43,6 +43,12 @@ public class Entity
 
         }
 
+        // Sets the entity tag to "Enemy"
+        if (aName != null && aName == "Enemy")
+        {
+            aEntityGameObject.tag = aName;
+        }
+
         entityLocation = reallocateEntity(aX, aY);
 
 

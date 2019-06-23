@@ -7,9 +7,9 @@ using UnityEngine;
 
 public class Engine : MonoBehaviour
 {
-
+    //public enum CurrentState { player_turn, enemy_turn };
     /* DEBUG FUNCTIONS */
-    private bool _debug_instantiating_multiple_enemies = false;
+    //private bool _debug_instantiating_multiple_enemies = false;
 
     // Temporary screen_width & height
     public Transform _floorHolder;
@@ -26,8 +26,10 @@ public class Engine : MonoBehaviour
     List<Entity> listOfEntities = new List<Entity>(); // To keep track of created Entities
     List<GameObject> listOfGameObjects = new List<GameObject>(); // To keep track of created GameObjects
 
+
     public void Start()
     {
+
         // TODO: Add it from the GameMap class.
         _floorHolder = new GameObject("floorHolder").transform; // Will hold all our floor tiles, so the Inspector is not cluttered with GameObjects
         _wallHolder = new GameObject("wallHolder").transform; // Will hold all our wall tiles, so the Inspector is not cluttered with GameObjects
@@ -45,8 +47,8 @@ public class Engine : MonoBehaviour
 
         // Coordinates where we'll instantiate the player.
         //TODO: Is not clear at the moment if we will use these. Revisit and pass (0,0,0) vector directly to the __player instantiation otherwise
-        int player_x = 0;
-        int player_y = 0;
+        int player_x = 1;
+        int player_y = 1;
 
         // The playerObject is assigned and the __player instance is created
         GameObject playerObject = Resources.Load<GameObject>("Prefabs/Player"); 
@@ -84,6 +86,15 @@ public class Engine : MonoBehaviour
         //    //Debug.Log("Number of GO's: " + listOfGameObjects.Count.ToString());
         //}
 
+    }
+
+    // WIP: Adding gamestate changes here for the moment.
+    private void Update()
+    {
+
+
+        // If player turn, we can move and do actions
+        // If enemy turn, we’re looping through each of the entities (excluding the player) and allowing them to take a turn. 
     }
 
     public void FloorSetup(int width, int height)
