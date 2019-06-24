@@ -14,6 +14,7 @@ public class GridGenerator : MonoBehaviour
     // FOV variables
     public bool isFOVrecompute;
     private Transform playerReference; // I can calculate the FOV based on player position
+    public int playerVisibilityRadius;
 
     /* Debug checks for adding variety to the ProcGen map */
     //private bool _debug_procgen_tileDensity;
@@ -59,6 +60,7 @@ public class GridGenerator : MonoBehaviour
     void Start()
     {
         playerReference = GameObject.FindWithTag("Player").transform;
+        playerVisibilityRadius = 4;
         isFOVrecompute = InputHandler.isFOVrecompute; // We set this to the Static bool
 
         // Check if we're using a seed for the map
@@ -119,6 +121,7 @@ public class GridGenerator : MonoBehaviour
             CalculateEntityClosestFOV(listOfEnemyEntities);
 
             // TODO: Most likely I can take this outside of Update() for performance. 
+            // TODO: I think I don't need these and can be deleted. Review.
             List<Vector2> listOfDiscovered_vectors = new List<Vector2>();
             List<Vector2> listOfClosestFOV_vectors = new List<Vector2>();
 
@@ -156,66 +159,15 @@ public class GridGenerator : MonoBehaviour
 
             }
 
-            // TESTING 2: This works better than testing 1, but needs improvement.
-
-            //CalculateEntityClosestFOV(); TODO: Player is not an entity: --->
+            // Calculates Player FOV
             CalculatePlayerClosestFOV();
-            // TODO: Before moving forward with this solution, test real quick to add a panel gameobject as a player child, with a hole in the middle and alpha 0.5 around the rest of the screen
-            //for (int x = 0; x < 2; x++)
-            //{
-            //    for (int y = 0; y < 2; y++)
-            //    {
-            //        if (floorMap.GetTile(new Vector3Int(_playerPosX, _playerPosY, 0)) != null && floorMap.tag == "Floor")
-            //        {
-            //            // Paint RED 
-            //            _testing_closestFovMap.SetTile(new Vector3Int(_playerPosX + x, _playerPosY + y, 0), floorTile);
-            //            _testing_closestFovMap.SetTile(new Vector3Int(_playerPosX + x, _playerPosY - y, 0), floorTile);
-            //            _testing_closestFovMap.SetTile(new Vector3Int(_playerPosX - x, _playerPosY + y, 0), floorTile);
-            //            _testing_closestFovMap.SetTile(new Vector3Int(_playerPosX - x, _playerPosY - y, 0), floorTile);
-            //            _testing_closestFovMap.SetColor(new Vector3Int(_playerPosX + x, _playerPosY + y, 0), Color.blue); // cuadrante 1 |_
-            //            _testing_closestFovMap.SetColor(new Vector3Int(_playerPosX + x, _playerPosY - y, 0), Color.blue); // cuadrante 2 
-            //            _testing_closestFovMap.SetColor(new Vector3Int(_playerPosX - x, _playerPosY - y, 0), Color.blue); // cuadrante 3
-            //            _testing_closestFovMap.SetColor(new Vector3Int(_playerPosX - x, _playerPosY + y, 0), Color.blue); // cuadrante 4 _|
 
 
-            //        }
-            //        // Fails because only checks in playerposx + x and Y, but not around.
-            //        if (wallMap.GetTile(new Vector3Int(_playerPosX + x, _playerPosY + y, 0)) != null && wallMap.tag == "Wall")
-            //        {
-            //            // Paint RED 
-            //            _testing_closestFovMap.SetTile(new Vector3Int(_playerPosX + x, _playerPosY + y, 0), wallTile);
-            //            _testing_closestFovMap.SetTile(new Vector3Int(_playerPosX + x, _playerPosY - y, 0), wallTile);
-            //            _testing_closestFovMap.SetTile(new Vector3Int(_playerPosX - x, _playerPosY + y, 0), wallTile);
-            //            _testing_closestFovMap.SetTile(new Vector3Int(_playerPosX - x, _playerPosY - y, 0), wallTile);
-            //            _testing_closestFovMap.SetColor(new Vector3Int(_playerPosX + x, _playerPosY + y, 0), Color.blue); // cuadrante 1 |_
-            //            _testing_closestFovMap.SetColor(new Vector3Int(_playerPosX + x, _playerPosY - y, 0), Color.blue); // cuadrante 2 
-            //            _testing_closestFovMap.SetColor(new Vector3Int(_playerPosX - x, _playerPosY - y, 0), Color.blue); // cuadrante 3
-            //            _testing_closestFovMap.SetColor(new Vector3Int(_playerPosX - x, _playerPosY + y, 0), Color.blue); // cuadrante 4 _|
 
-
-            //        }
-            //    }
-            //}
-
-
-            // TESTING 1: 
+            // This sets to null these tiles outside the player area, so are repainted to grey once the player moves to the next place.
+            // TODO: Implement into CalculatePlayerClosestFOV() and use visibility variables instead of harcoded values.
             for (int i = 0; i < 2; i++)
             {
-                // Check if is floor or wall
-                if (floorMap.GetTile(new Vector3Int(_playerPosX, _playerPosY, 0)) != null && floorMap.tag == "Floor")
-                {
-                    // Paint RED // WORKS
-                    //_testing_closestFovMap.SetTile(new Vector3Int(_playerPosX+i, _playerPosY+i, 0), floorTile);
-                    //_testing_closestFovMap.SetTile(new Vector3Int(_playerPosX + i, _playerPosY - i, 0), floorTile);
-                    //_testing_closestFovMap.SetTile(new Vector3Int(_playerPosX - i, _playerPosY + i, 0), floorTile);
-                    //_testing_closestFovMap.SetTile(new Vector3Int(_playerPosX - i, _playerPosY - i, 0), floorTile);
-                    //_testing_closestFovMap.SetColor(new Vector3Int(_playerPosX +i, _playerPosY + i, 0), Color.red); // cuadrante 1 |_
-                    //_testing_closestFovMap.SetColor(new Vector3Int(_playerPosX + i, _playerPosY - i, 0), Color.red); // cuadrante 2 
-                    //_testing_closestFovMap.SetColor(new Vector3Int(_playerPosX - i, _playerPosY - i, 0), Color.red); // cuadrante 3
-                    //_testing_closestFovMap.SetColor(new Vector3Int(_playerPosX - i, _playerPosY + i, 0), Color.red); // cuadrante 4 _|
-
-
-                } 
 
                 for (int a = 0; a < 6; a++) // 6 because must be double than -2 -1 and 2+1
                 {
@@ -238,17 +190,6 @@ public class GridGenerator : MonoBehaviour
                 }
 
             }
-
-
-
-            // 2.2: And here, we should NOT paint whatever is outside that circle of influence
-            // TODO si lo hago tal como lo hago cuando pinto el mapa de verde para cerrar gaps, lo debería conseguir.
-
-            //var dist = Vector3.Distance(_testing_closestFovMap.transform.position, playerReference.localPosition);
-            //Debug.Log("dist" + dist.ToString()); // calculated and increased, but we need a transform for this.
-
-            // Other potential solution, attach a gameobject to the player to set visibility
-
 
 
             isFOVrecompute = false;
@@ -354,7 +295,7 @@ public class GridGenerator : MonoBehaviour
 
 
     }
-
+    // TODO: Fix: Tiles added via this process don't go through FOV and are always visible. 
     void ProcGenFixtures(int width, int height)
     {
         // Seems that this may be the cause why shorter FOV was not working. If I generate a new tile in Floor or Walls, it inherits the grey color and is not blue. I need to use a new tilemap for setting a new color because is set by TILEMAP, not by TILE!!!
@@ -365,12 +306,12 @@ public class GridGenerator : MonoBehaviour
             if (floorMap.GetTile(new Vector3Int(i, 0, 0)) != null)
             {
                 _testing_map.SetTile(new Vector3Int(i, 0, 0), wallTile);
-                _testing_map.SetColor(new Vector3Int(i, 0, 0), Color.green);
+                _testing_map.SetColor(new Vector3Int(i, 0, 0), Color.grey);
             }
             if (floorMap.GetTile(new Vector3Int(i, height-1, 0)) != null)
             {
                 _testing_map.SetTile(new Vector3Int(i, height-1, 0), wallTile);
-                _testing_map.SetColor(new Vector3Int(i, height-1, 0), Color.green);
+                _testing_map.SetColor(new Vector3Int(i, height-1, 0), Color.grey);
             }
         }
         // Fills with walls the right and left map openings from the walkers
@@ -379,12 +320,12 @@ public class GridGenerator : MonoBehaviour
             if (floorMap.GetTile(new Vector3Int(0, i, 0)) != null)
             {
                 _testing_map.SetTile(new Vector3Int(0, i, 0), wallTile);
-                _testing_map.SetColor(new Vector3Int(0, i, 0), Color.green);
+                _testing_map.SetColor(new Vector3Int(0, i, 0), Color.grey);
             }
             if (floorMap.GetTile(new Vector3Int(i, height - 1, 0)) != null)
             {
                 _testing_map.SetTile(new Vector3Int(height, i, 0), wallTile);
-                _testing_map.SetColor(new Vector3Int(height, i, 0), Color.green);
+                _testing_map.SetColor(new Vector3Int(height, i, 0), Color.grey);
             }
         }
     }
@@ -512,6 +453,7 @@ public class GridGenerator : MonoBehaviour
         //Gizmos.DrawCube(new Vector2(0+0.5f, 0+0.5f),Vector3.one);
     }
 
+    // TODO: Most likely we can place this in a different place, for example on GameStateManager to generate enemies as new events or states happen.
     private void PlaceEntities()
     {
         // Random number of enemies:
@@ -529,20 +471,19 @@ public class GridGenerator : MonoBehaviour
             Vector2 _randomVector = listOfFloorTiles[_randomIndex];
 
             Entity npcInstance = new Entity((int)_randomVector.x, (int)_randomVector.y, "Enemy", _test_npc, new Vector3(_randomVector.x, _randomVector.y, 0));
+
+            Engine.SchedulingSystem.Add(npcInstance); // We don't instantiate a new schedule, but add the npc's to the global instance declared in Engine.cs
+
             Instantiate(npcInstance.entityGameObject, npcInstance.entityLocation, Quaternion.identity);
 
             listOfEnemyEntities.Add(npcInstance); // Add current enemies to a List 
             // list[index]
             //Debug.Log("Available vector: " + _randomVector.ToString());
         }
-        //listOfFloorTiles
-        //Entity npcInstance = new Entity(1, 1, "Enemy", _test_npc, new Vector3(1,1,0));
 
-        // Track entities
-        //List<Entity> listOfEntities = new List<Entity>();
     }
 
-
+    // Is inside our GridGenerator because regenerates / re-pain our grid constantly
     void CalculateEntityClosestFOV(List<Entity> _listOfEntities) {
 
         foreach (var enemy in _listOfEntities)
@@ -581,6 +522,9 @@ public class GridGenerator : MonoBehaviour
         }
     }
 
+    // TODO: We can remove this after testing, Player is not an Entity as well.
+    // Adapted from CalculateEntityClosestFOV , as we can't pass the Player as an argument because is not generated as an Entity, once we change this we can get rid of the function as well.
+    // Is inside our GridGenerator because regenerates / re-pain our grid constantly
     void CalculatePlayerClosestFOV()
     {
 
@@ -588,8 +532,8 @@ public class GridGenerator : MonoBehaviour
             {
                 Vector3 _entityLocation = new Vector3(playerReference.localPosition.x, playerReference.localPosition.y, 0); // Gets the position vector of each entity
                 //Debug.Log("Enemy at: " + _entityLocation.ToString());
-                int _entityVisibilityRadius = 3; // 
-                                                 //int _entityVisibilityDiameter = 6; // _entityVisibilityRadius * 2
+                int _entityVisibilityRadius = playerVisibilityRadius; // 
+                int _entityVisibilityDiameter = _entityVisibilityRadius * 2; // _entityVisibilityRadius * 2
                 int _offsetQuadrant4 = (int)_entityLocation.x - _entityVisibilityRadius; // Top left corner of the enemy quadrant (4). Position -3
                 int _offsetQuadrant1 = (int)_entityLocation.y - _entityVisibilityRadius; // Top left corner of the enemy quadrant (4). Position -3
                                                                                          //int _offsetQuadrant1 = (int)_entityLocation.x + _entityVisibilityRadius; // Top right corner of the enemy quadrant (1) 
@@ -604,17 +548,52 @@ public class GridGenerator : MonoBehaviour
                         {
                             //Debug.Log("DEBUG: " + new Vector3(x, y, 0));
                             _testing_closestFovMap.SetTile(new Vector3Int(x, y, 0), floorTile);
-                            _testing_closestFovMap.SetColor(new Vector3Int(x, y, 0), Color.blue);
+                            _testing_closestFovMap.SetColor(new Vector3Int(x, y, 0), Color.white);
                         }
                         else if (wallMap.GetTile(new Vector3Int(x, y, 0)) != null && wallMap.tag == "Wall")
                         {
                             //Debug.Log("DEBUG: " + new Vector3(x, y, 0));
                             _testing_closestFovMap.SetTile(new Vector3Int(x, y, 0), wallTile);
-                            _testing_closestFovMap.SetColor(new Vector3Int(x, y, 0), Color.blue);
+                            _testing_closestFovMap.SetColor(new Vector3Int(x, y, 0), Color.white);
                         }
                     }
                 }
-            }
-        
+
+            // Re-drawns these tiles that are outside CalculatePlayerClosestFOV()
+            ResetTilesOutsideFOV(_entityVisibilityDiameter, _entityVisibilityRadius, _offsetQuadrant4, _entityLocation);
+
+        }
+
+    }
+
+    void ResetTilesOutsideFOV(int _entityVisibilityDiameter, int _entityVisibilityRadius, int _offsetQuadrant4, Vector3 _entityLocation)
+    {
+        for (int i = 0; i < _entityVisibilityDiameter + 1; i++)
+        {
+            _testing_closestFovMap.SetTile(new Vector3Int(_offsetQuadrant4 + i, (int)_entityLocation.y + _entityVisibilityRadius, 0), null);
+            //Leave this for debugging: 
+            //_testing_closestFovMap.SetColor(new Vector3Int(_offsetQuadrant4 + i, (int)_entityLocation.y + _entityVisibilityRadius, 0), Color.yellow);
+        }
+        // Bottom
+        for (int i = 0; i < _entityVisibilityDiameter; i++)
+        {
+            _testing_closestFovMap.SetTile(new Vector3Int(_offsetQuadrant4 + i, (int)_entityLocation.y - _entityVisibilityRadius, 0), null);
+            //Leave this for debugging: 
+            //_testing_closestFovMap.SetColor(new Vector3Int(_offsetQuadrant4 + i, (int)_entityLocation.y - _entityVisibilityRadius , 0), Color.yellow);
+        }
+        // Left
+        for (int i = 0; i < _entityVisibilityDiameter; i++)
+        {
+            _testing_closestFovMap.SetTile(new Vector3Int(_offsetQuadrant4, (int)_entityLocation.y - _entityVisibilityRadius + i, 0), null);
+            //Leave this for debugging: 
+            //_testing_closestFovMap.SetColor(new Vector3Int(_offsetQuadrant4 , (int)_entityLocation.y - _entityVisibilityRadius + i, 0), Color.yellow);
+        }
+        // Right
+        for (int i = 0; i < _entityVisibilityDiameter + 1; i++)
+        {
+            _testing_closestFovMap.SetTile(new Vector3Int((int)_entityLocation.x + _entityVisibilityRadius, (int)_entityLocation.y - _entityVisibilityRadius + i, 0), null);
+            //Leave this for debugging: 
+            //_testing_closestFovMap.SetColor(new Vector3Int((int)_entityLocation.x + _entityVisibilityRadius, (int)_entityLocation.y - _entityVisibilityRadius + i , 0), Color.yellow);
+        }
     }
 }

@@ -20,12 +20,14 @@ public class Engine : MonoBehaviour
     //readonly int mapX_width = 106; // eventually Moved to GameMap.cs
     //readonly int mapY_height = 30; // eventually  Moved to GameMap.cs
 
-    public static GameObject __player; // TODO -> Question: Is using a static gameobject for player a good idea?
-    public static GameMap __gameMap; // TODO -> Question: Is using a static gameobject for player a good idea? Assuming it should be only one...yes?
+    public static GameObject __player;
+    public static GameMap __gameMap;
 
     List<Entity> listOfEntities = new List<Entity>(); // To keep track of created Entities
     List<GameObject> listOfGameObjects = new List<GameObject>(); // To keep track of created GameObjects
 
+
+    public static SchedulingSystem SchedulingSystem { get; private set; }
 
     public void Start()
     {
@@ -33,6 +35,10 @@ public class Engine : MonoBehaviour
         // TODO: Add it from the GameMap class.
         _floorHolder = new GameObject("floorHolder").transform; // Will hold all our floor tiles, so the Inspector is not cluttered with GameObjects
         _wallHolder = new GameObject("wallHolder").transform; // Will hold all our wall tiles, so the Inspector is not cluttered with GameObjects
+
+        // We instantiate our static schedule system:
+        SchedulingSystem = new SchedulingSystem();
+
 
         // TODO: Move this into a separate h_helper function
         //Stopwatch stopwatch = new Stopwatch();
@@ -46,19 +52,23 @@ public class Engine : MonoBehaviour
         //WallsSetup(mapX_width, mapY_height);
 
         // Coordinates where we'll instantiate the player.
-        //TODO: Is not clear at the moment if we will use these. Revisit and pass (0,0,0) vector directly to the __player instantiation otherwise
-        int player_x = 1;
-        int player_y = 1;
+        // TODO: Make Sure the Player Starts on a Floor Cell
+        //int player_x = 1;
+        //int player_y = 1;
 
-        // The playerObject is assigned and the __player instance is created
-        GameObject playerObject = Resources.Load<GameObject>("Prefabs/Player"); 
+        // Moved the Player to be an instance of Entity.
+        GameObject _test_player = Resources.Load<GameObject>("Prefabs/Player");
+        Entity playerInstance = new Entity(1, 1, "Player", _test_player, new Vector3(1, 1, 0)); // Place player in a fixed place (temporary)
 
-        // TODO: Added +0.5f temporarily to where the player instantiated, most likely we want to generate this through Entity, that already calculates this.
-        __player = Instantiate(playerObject, new Vector3(player_x+0.5f, player_y+0.5f, 0), Quaternion.identity);
+        SchedulingSystem.Add(playerInstance); // Now I can pass an Entity as a parameter because the Entity implements IScheduleable
+        // Console message: Null added to the schedule. we'll see :D 
 
-        // TODO: Testing the Entity class for the player.
-
+        __player = Instantiate(playerInstance.entityGameObject, playerInstance.entityLocation, Quaternion.identity);
         listOfGameObjects.Add(__player);
+
+        // WIP adding actors to scheduling:
+
+
 
         // Testing the Entity class for Enemies. Seems a bit convoluted and either would have to go with GO's or with Entities but seems to go.
         //GameObject _test_npc = Resources.Load<GameObject>("Prefabs/Enemy");
@@ -144,6 +154,5 @@ public class Engine : MonoBehaviour
 
 
     }
-
 
 }

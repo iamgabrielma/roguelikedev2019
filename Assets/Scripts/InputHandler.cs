@@ -103,5 +103,15 @@ public class InputHandler : MonoBehaviour
         {
             player.transform.position = new Vector3(_lastKnownPlayerPosition.x, _lastKnownPlayerPosition.y, 0);
         }
+
+        // TODO: Bump attack when the player hits the enemy by hittings its tile
+        if (collision.tag == "Enemy")
+        {
+            //Entity _enemy = new Entity((int)collision.transform.localPosition.x, (int)collision.transform.localPosition.y, "Enemy", _test_npc, new Vector3(_randomVector.x, _randomVector.y, 0)); ;
+            Debug.Log("Bump attack: resolving defense!");
+            Entity.ResolveDefense(player, collision.gameObject);
+            Entity.ResolveDeath(collision.gameObject);
+
+        }
     }
 }

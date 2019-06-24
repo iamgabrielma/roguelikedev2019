@@ -143,3 +143,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyCanMove: 0
   enemyReference: {fileID: 797724703588368051}
+  health: 0

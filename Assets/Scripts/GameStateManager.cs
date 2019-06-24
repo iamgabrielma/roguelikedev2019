@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameStateManager: MonoBehaviour
 {
@@ -18,6 +19,10 @@ public class GameStateManager: MonoBehaviour
     List<Entity> gridReference = new List<Entity>();
     List<Entity> updatedEntities = new List<Entity>();
 
+    public Text textGameTimeTicks;
+
+
+
     public void Start()
     {
      
@@ -32,6 +37,7 @@ public class GameStateManager: MonoBehaviour
         // Initial game state is set to playerTurn
         //previousGameState = GameState.noTurns;
         __gameTimeTicks = 0;   // Starts with gameTime = 0
+        textGameTimeTicks.text = __gameTimeTicks.ToString();
         __gameState = GameState.playerTurn; // Initial state
         SetGameState(__gameState);
 
@@ -82,6 +88,11 @@ public class GameStateManager: MonoBehaviour
 
     private void Update()
     {
+        // If 
+        //if (InputHandler.isFOVrecompute == true)
+        //{
+            textGameTimeTicks.text = "Time: " + __gameTimeTicks.ToString();
+        //}
 
         if (Input.GetKeyDown(KeyCode.M))
         {

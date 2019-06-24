@@ -7,10 +7,13 @@ public class EnemyAI : MonoBehaviour
     public bool enemyCanMove;
     public Transform enemyReference; //Self refence
     // Start is called before the first frame update
+    public int health;
+
     void Start()
     {
         //enemyCanMove = true;
         enemyCanMove = false;
+        health = 3; // TODO: rename EnemyAi to something else
         //enemyReference = gameObject.GetComponent<Transform>();
     }
 
