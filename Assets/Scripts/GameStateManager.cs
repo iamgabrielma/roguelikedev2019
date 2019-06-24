@@ -146,12 +146,12 @@ public class GameStateManager: MonoBehaviour
         switch (newGameState)
         {
             case GameState.playerTurn:
-                Debug.Log("Player turn");
-                Debug.Log("Time:" + __gameTimeTicks);
+                //Debug.Log("Player turn");
+                //Debug.Log("Time:" + __gameTimeTicks);
                 //__gameState = GameState.enemyTurn;
                 break;
             case GameState.enemyTurn:
-                Debug.Log("Enemy turn");
+                //Debug.Log("Enemy turn");
                 //StartCoroutine(_temp_enemy_turn());
                 // myObject.GetComponent<MyScript>().MyFunction(); for the enemies.
                 break;

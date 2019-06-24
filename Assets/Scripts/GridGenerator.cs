@@ -439,7 +439,7 @@ public class GridGenerator : MonoBehaviour
         //Debug.Log(listOfFloorTiles.Count);
         //Debug.Log(mapWidthX);
         //Debug.Log(mapHeightY);
-        Debug.Log("Map Density " + _mapDensity + "% | Floor: " + listOfFloorTiles.Count.ToString() + " | Walls: " + listOfWallTiles.Count.ToString());
+        //Debug.Log("Map Density " + _mapDensity + "% | Floor: " + listOfFloorTiles.Count.ToString() + " | Walls: " + listOfWallTiles.Count.ToString());
     }
 
     private void OnDrawGizmos()
@@ -466,15 +466,17 @@ public class GridGenerator : MonoBehaviour
         // For each entity to be created, find a suitable spawning place and Instantiate an enemy
         for (int i = 0; i < _numberOfEnemyEntities; i++)
         {
-            Debug.Log("listOfFloorTiles count: " + listOfFloorTiles.Count.ToString());
+            //Debug.Log("listOfFloorTiles count: " + listOfFloorTiles.Count.ToString());
             int _randomIndex = Random.Range(1, listOfFloorTiles.Count);
             Vector2 _randomVector = listOfFloorTiles[_randomIndex];
 
             Entity npcInstance = new Entity((int)_randomVector.x, (int)_randomVector.y, "Enemy", _test_npc, new Vector3(_randomVector.x, _randomVector.y, 0));
 
-            Engine.SchedulingSystem.Add(npcInstance); // We don't instantiate a new schedule, but add the npc's to the global instance declared in Engine.cs
-
+            //Engine.SchedulingSystem.Add(npcInstance); // We don't instantiate a new schedule, but add the npc's to the global instance declared in Engine.cs
+            Debug.Log("npc instances are added");
             Instantiate(npcInstance.entityGameObject, npcInstance.entityLocation, Quaternion.identity);
+            Engine.SchedulingSystem.Add(npcInstance);
+            //npcInstance.name = npcInstance.tag;
 
             listOfEnemyEntities.Add(npcInstance); // Add current enemies to a List 
             // list[index]

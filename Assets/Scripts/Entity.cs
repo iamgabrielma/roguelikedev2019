@@ -14,48 +14,55 @@ public class Entity : MonoBehaviour , IScheduleable
     public int speed;
 
     // If sentient ... possibly needs a new class inherits from this one Sentient : Entity , and we add Move() there.
-    enum EntityMode
-    {
-        Wander,
-        Hunt,
-        Sleep
-    }
+    //enum EntityMode
+    //{
+    //    Wander,
+    //    Hunt,
+    //    Sleep
+    //}
 
     // If sentient
-    enum EntityStatus
-    {
-        Healthy,
-        Confused,
-        Allucinating,
-        Paralysed,
-        Lit
-    }
+    //enum EntityStatus
+    //{
+    //    Healthy,
+    //    Confused,
+    //    Allucinating,
+    //    Paralysed,
+    //    Lit
+    //}
 
     // Entity constructor
     public Entity(int aX, int aY, string aName, GameObject aEntityGameObject, Vector3 aEntityLocation ) {
 
         //x = aX;
         //y = aY;
+        //entityName = aName;
         entityName = aName;
         entityGameObject = aEntityGameObject;
+        entityLocation = reallocateEntity(aX, aY);
         health = 3;
         speed = 1;
 
         // Reallocates the Entities to fit the tiles by offsetting its position +0.5f in X and Y
         Vector3 reallocateEntity(int ax, int ay)
         {
-
             return new Vector3(ax + 0.5f, ay + 0.5f, 0);
-
         }
 
-        // Sets the entity tag to "Enemy"
-        if (aName != null && aName == "Enemy")
-        {
-            aEntityGameObject.tag = aName;
-        }
+        // This doesn't work here, as happens before the instance.
+        //string renameEntity(GameObject entityObject, string entityName) {
 
-        entityLocation = reallocateEntity(aX, aY);
+        //    //entityName = entityObject.tag;
+
+        //    if (entityObject.tag == "Player(Clone)")
+        //    {
+        //        entityName = entityObject.tag;
+        //    }
+
+        //    return entityName;
+        //}
+
+
 
 
         // TODO: Add: Awareness

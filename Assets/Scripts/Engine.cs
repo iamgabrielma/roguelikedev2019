@@ -38,6 +38,7 @@ public class Engine : MonoBehaviour
 
         // We instantiate our static schedule system:
         SchedulingSystem = new SchedulingSystem();
+        Debug.Log("Schedulungsystem is created"); // this seems to be the first, so shouldn't be problems
 
 
         // TODO: Move this into a separate h_helper function
@@ -62,12 +63,12 @@ public class Engine : MonoBehaviour
 
         SchedulingSystem.Add(playerInstance); // Now I can pass an Entity as a parameter because the Entity implements IScheduleable
         // Console message: Null added to the schedule. we'll see :D 
-
+        Debug.Log("player instance is added");
         __player = Instantiate(playerInstance.entityGameObject, playerInstance.entityLocation, Quaternion.identity);
+        __player.name = __player.tag;
         listOfGameObjects.Add(__player);
 
         // WIP adding actors to scheduling:
-
 
 
         // Testing the Entity class for Enemies. Seems a bit convoluted and either would have to go with GO's or with Entities but seems to go.

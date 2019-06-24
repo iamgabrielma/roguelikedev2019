@@ -5,6 +5,13 @@ using UnityEngine;
 public class InputHandler : MonoBehaviour
 {
 
+    public bool IsPlayerTurn { get; set; } // Property
+
+    public void EndPlayerTurn()
+    {
+        IsPlayerTurn = false;
+    }
+
     /* InputHandler may be a limited name, as at the moment deals with Player logic as well */
 
 
@@ -87,6 +94,7 @@ public class InputHandler : MonoBehaviour
         isPlayerMoving = false;
 
         GameStateManager.__gameTimeTicks++; // Adds a tick to Game Time.
+        ActivateEnemies(); // When a movement is sucess, enemies may have their turn as well.
 
         //GameStateManager.__gameState = GameStateManager.GameState.playerTurn; // Call player turn for turn completed and debug log gametime
         // Once we've moved, is the Enemy turn:
@@ -113,5 +121,11 @@ public class InputHandler : MonoBehaviour
             Entity.ResolveDeath(collision.gameObject);
 
         }
+    }
+
+    public void ActivateEnemies()
+    {
+        IScheduleable scheduleable = Engine.SchedulingSystem.Get(); // In theory this must return the player, or the enemies, but returns null.
+        Debug.Log(scheduleable);
     }
 }
