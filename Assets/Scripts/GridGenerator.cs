@@ -483,6 +483,14 @@ public class GridGenerator : MonoBehaviour
             //Debug.Log("Available vector: " + _randomVector.ToString());
         }
 
+        // WIP: Testing create new Monster class. KINDA WORKS.
+        //monsterTest.entityLocation = new Vector3(6.5f, 6.5f, 0);
+        //monsterTest.entityGameObject = Resources.Load<GameObject>("Prefabs/EnemyRed");
+        //monsterTest.entityName = "the monster";
+        Monster monsterTest = new Monster(); //(6, 6, "Monster", _test_npc, new Vector3(6,6,0)); // ERROR Monster does not have a constructor that accept 5 arguments.
+        Instantiate(monsterTest.entityGameObject, new Vector3(6.5f, 6.5f, 0), Quaternion.identity); // This monster clone appears on 6,6 as expected, but the game object is still in 0,0 , wut
+        Engine.SchedulingSystem.Add(monsterTest);
+
     }
 
     // Is inside our GridGenerator because regenerates / re-pain our grid constantly

@@ -36,22 +36,22 @@ public class SchedulingSystem
         //if (key != null) // We cannot do ( int != null ) because always is True. We have to check if the List contains the key
         if (!_scheduleables.ContainsKey(key)) // If the List does not contains the key "key", then add it
         {
-            Debug.Log("No key: " + key); // 1
-            Debug.Log("Type: " + scheduleable.GetType()); // Type: Entity
+            //Debug.Log("No key: " + key); // 1
+            //Debug.Log("Type: " + scheduleable.GetType()); // Type: Entity
             _scheduleables.Add(key, new List<IScheduleable>() );
             //_scheduleables.Add(key, scheduleable);
-            Debug.Log("Yes key: " + key); // 1
-            Debug.Log("Type: " + scheduleable.GetType()); // Type: Entity
+            //Debug.Log("Yes key: " + key); // 1
+            //Debug.Log("Type: " + scheduleable.GetType()); // Type: Entity
 
         }
 
         // This is placing the scheduleable to our _scheduleables list, at the current time = 0 + the entity time (speed) = 1
         _scheduleables[key].Add(scheduleable);
 
-        foreach (var item in _scheduleables)
-        {
-            Debug.Log("key: " + item.Key + " | value: " + item.Value[0].Time);
-        }
+        //foreach (var item in _scheduleables)
+        //{
+        //    Debug.Log("key: " + item.Key + " | value: " + item.Value[0].Time);
+        //}
 
     }
 
@@ -87,7 +87,7 @@ public class SchedulingSystem
     public IScheduleable Get() {
 
         var firstScheduleableGroup = _scheduleables.First(); // .First() returns the first element of a sequence, in this case the 1st value-key pair from our _scheduleables List
-        Debug.Log(firstScheduleableGroup.Key + " | " + firstScheduleableGroup.Value);
+        //Debug.Log(firstScheduleableGroup.Key + " | " + firstScheduleableGroup.Value);
         var firstScheduleable = firstScheduleableGroup.Value.First(); // The we use it again to take the 1st value of the 1st value-key pair
         //Remove(firstScheduleable); // Once we got it, we remove it from our List via the SchedulingSystem.Remove() method above //wut, el problema estaba aqui
         _time = firstScheduleableGroup.Key;

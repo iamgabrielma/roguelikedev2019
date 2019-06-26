@@ -34,23 +34,31 @@ public class InputHandler : MonoBehaviour
 
     private void Update()
     {
+        if (GameStateManager.__gameState == GameStateManager.GameState.playerTurn)
+        {
+            IsPlayerTurn = true;
+        }
+        else
+        {
+            IsPlayerTurn = false;
+        }
 
-            if (Input.GetKeyDown(KeyCode.W) && isPlayerMoving == false)
+        if (Input.GetKeyDown(KeyCode.W) && isPlayerMoving == false && IsPlayerTurn)
             {
                 isPlayerMoving = true;
                 MovePlayer("up");
             }
-            else if (Input.GetKeyDown(KeyCode.S) && isPlayerMoving == false)
+            else if (Input.GetKeyDown(KeyCode.S) && isPlayerMoving == false && IsPlayerTurn)
             {
                 isPlayerMoving = true;
                 MovePlayer("down");
             }
-            else if (Input.GetKeyDown(KeyCode.D) && isPlayerMoving == false)
+            else if (Input.GetKeyDown(KeyCode.D) && isPlayerMoving == false && IsPlayerTurn)
             {
                 isPlayerMoving = true;
                 MovePlayer("right");
             }
-            else if (Input.GetKeyDown(KeyCode.A) && isPlayerMoving == false)
+            else if (Input.GetKeyDown(KeyCode.A) && isPlayerMoving == false && IsPlayerTurn)
             {
                 isPlayerMoving = true;
                 MovePlayer("left");
@@ -92,8 +100,11 @@ public class InputHandler : MonoBehaviour
         }
         isFOVrecompute = true; // When a movement is success, then we recompute FOV
         isPlayerMoving = false;
+        IsPlayerTurn = false;
 
         GameStateManager.__gameTimeTicks++; // Adds a tick to Game Time.
+        GameStateManager.__gameState = GameStateManager.GameState.enemyTurn; // Finished our turn, is enemy turn.
+
         ActivateEnemies(); // When a movement is sucess, enemies may have their turn as well.
 
         //GameStateManager.__gameState = GameStateManager.GameState.playerTurn; // Call player turn for turn completed and debug log gametime
@@ -125,7 +136,20 @@ public class InputHandler : MonoBehaviour
 
     public void ActivateEnemies()
     {
-        IScheduleable scheduleable = Engine.SchedulingSystem.Get(); // In theory this must return the player, or the enemies, but returns null.
-        Debug.Log(scheduleable);
+        IScheduleable scheduleable = Engine.SchedulingSystem.Get(); // In theory this must return the player, or the enemies, but returns null. Fixed.
+        //Debug.Log(scheduleable);
+        if (scheduleable is Entity) // TODO: We'll need to create more classes that inherit from Entity, otherwise only this will be used.
+        {
+            IsPlayerTurn = true;
+            Debug.Log("Player turn!");
+            Engine.SchedulingSystem.Add(scheduleable);
+        }
+//         TESTING
+        //if (scheduleable is Monster) // TODO: We'll need to create more classes that inherit from Entity, otherwise only this will be used.
+        //{
+        //    IsPlayerTurn = true;
+        //    Debug.Log("MONSTER turn!");
+        //    Engine.SchedulingSystem.Add(scheduleable);
+        //}
     }
 }

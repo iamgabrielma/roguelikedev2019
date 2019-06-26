@@ -47,6 +47,25 @@ public class GameStateManager: MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        // Turns are managed here.
+        if (__gameState == GameState.enemyTurn)
+        {
+            Debug.Log("Enemy turn");
+            DoEnemyStuff();
+            __gameState = GameState.playerTurn;
+            Debug.Log("Player turn");
+
+        }
+    }
+
+    void DoEnemyStuff() {
+
+        Debug.Log("Enemy AI does their stuff. We shouldn't call any action here, but just enemyAI reading the current game State");
+        //Entity.TestMove();
+    }
+
     // 4 - get'em
     private void GetCurrentNumberOfEnemies(List<Entity> gridReference) {
 
@@ -86,7 +105,7 @@ public class GameStateManager: MonoBehaviour
         }
     }
 
-    private void Update()
+    private void _Update()
     {
         // If 
         //if (InputHandler.isFOVrecompute == true)

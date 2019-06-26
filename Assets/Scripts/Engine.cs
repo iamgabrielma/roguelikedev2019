@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class Engine : MonoBehaviour
 {
+    //Monster monsterTest;
     //public enum CurrentState { player_turn, enemy_turn };
     /* DEBUG FUNCTIONS */
     //private bool _debug_instantiating_multiple_enemies = false;
@@ -67,35 +68,6 @@ public class Engine : MonoBehaviour
         __player = Instantiate(playerInstance.entityGameObject, playerInstance.entityLocation, Quaternion.identity);
         __player.name = __player.tag;
         listOfGameObjects.Add(__player);
-
-        // WIP adding actors to scheduling:
-
-
-        // Testing the Entity class for Enemies. Seems a bit convoluted and either would have to go with GO's or with Entities but seems to go.
-        //GameObject _test_npc = Resources.Load<GameObject>("Prefabs/Enemy");
-
-        // TODO: Check this class, redudant info adding x, y and V3.
-        //Entity npcInstance = new Entity(1, 1, "Enemy", _test_npc, new Vector3(1,1,0));
-        //Instantiate(npcInstance.entityGameObject, new Vector3(npcInstance.x, npcInstance.y, 0), Quaternion.identity);
-        // Modified the Entity class to accept a vector3 that relocates the entity 0.5f to fit the tiles: npcInstance.entityLocation
-        //Instantiate(npcInstance.entityGameObject, npcInstance.entityLocation, Quaternion.identity);
-
-        //listOfEntities.Add(npcInstance);
-        //listOfGameObjects.Add(_test_npc);
-
-        //if (_debug_instantiating_multiple_enemies)
-        //{
-        //    //Debug.Log("#############################------+ DEBUG +------#############################");
-        //    int maxEnemies = 5;
-
-        //    for (int i = 0; i < maxEnemies; i++)
-        //    {
-        //        GameObject _go = Instantiate(npcInstance.entityGameObject, new Vector3(npcInstance.x+i, npcInstance.y+i, 0), Quaternion.identity);
-        //        listOfGameObjects.Add(_go);
-        //    }
-
-        //    //Debug.Log("Number of GO's: " + listOfGameObjects.Count.ToString());
-        //}
 
     }
 

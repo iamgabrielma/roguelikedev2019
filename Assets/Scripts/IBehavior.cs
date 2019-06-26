@@ -4,6 +4,6 @@ using UnityEngine;
 
 public interface IBehavior
 {
-    bool Act();
+    bool Act( Entity entity);
 }
 

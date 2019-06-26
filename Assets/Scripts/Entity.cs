@@ -34,8 +34,8 @@ public class Entity : MonoBehaviour , IScheduleable
     // Entity constructor
     public Entity(int aX, int aY, string aName, GameObject aEntityGameObject, Vector3 aEntityLocation ) {
 
-        //x = aX;
-        //y = aY;
+        x = aX;
+        y = aY;
         //entityName = aName;
         entityName = aName;
         entityGameObject = aEntityGameObject;
@@ -70,6 +70,11 @@ public class Entity : MonoBehaviour , IScheduleable
 
 
 
+    }
+
+    public GameObject TestGameObject() {
+
+        return gameObject;
     }
 
     // Make sure the Entity class implements IScheduleable so that we can add them to our scheduling system.int Time()
@@ -119,8 +124,25 @@ public class Entity : MonoBehaviour , IScheduleable
         if (defender.gameObject.GetComponent<EnemyAI>().health <= 0)
         {
             // Note 23.06.19 -> Now inherits from Monobehavior so we can use Destroy()
+
             Destroy(defender);
         }
+    }
+
+    public static void TestMove(GameObject entityThatMoves, float dx, float dy)
+    {
+
+        Debug.Log("TESTMOVE() called: " + dx + dy);
+
+        float _dx = entityThatMoves.gameObject.GetComponent<Transform>().localPosition.x + dx;
+        float _dy = entityThatMoves.gameObject.GetComponent<Transform>().localPosition.y + dy;
+
+        entityThatMoves.gameObject.GetComponent<Transform>().localPosition = new Vector3(_dx, _dy, 0);
+        //float xnegative = entityThatMoves.transform.localPosition.x - 1.0f;
+        //float y = entityThatMoves.transform.localPosition.y;
+        //entityThatMoves.transform.localPosition = new Vector3(xnegative, entityThatMoves.transform.localPosition.y, 0.0f);
+        //entityThatMoves.gameObject.GetComponent<Transform>().localPosition = new Vector3(xnegative, y, 0);
+        //Debug.Log(entityThatMoves.name + "at: " + entityThatMoves.transform.localPosition.ToString());
     }
 
 }
