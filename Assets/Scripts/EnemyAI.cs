@@ -30,42 +30,22 @@ public class EnemyAI : MonoBehaviour
         if (GameStateManager.__gameState == GameStateManager.GameState.enemyTurn && isEnemyTimeToDoOneAction == false)
         {
             // TODO nullcheck
-            //GameObject newenemypost = transform.parent.gameObject; // re-find current position
             isEnemyTimeToDoOneAction = true; // We switch this to true so stops after just this one
             GameObject newenemypost = this.gameObject;
             EnemyMoves(newenemypost);
             Debug.Log("State 2.1: Enemy turn. This was called as well!");
-            //_temp_MoveEnemy(4); // Moves enemy down. NOT WORKING
-            //enemyCanMove = true; // So we avoid calling this function more than one by checking the game state alone
 
         }
-        //if (GameStateManager.__gameState == GameStateManager.GameState.enemyTurn && enemyCanMove == false)
-        //{
 
-        //    int _rand = Random.Range(1,4);
-        //    _temp_MoveEnemy(_rand);
-        //    //isEnemyActing = false;
-        //    enemyCanMove = true;
-        //}
     }
 
     void EnemyMoves(GameObject _newenemypost) {
 
-
+        // TODO: Check for valid walls/floors around before performing a movement. Before fixing this I'll fix the map interconnected rooms as I have to get valid tiles from there already.
+        // TODO: Will also need the above to implement A*
         Entity.TestMove(_newenemypost, 1.0f, 0.0f);
-        //Debug.Log("Enemy reads the game state, realize is their turn, calls this function and then gets out of it. Will be enough to perform only one action ? ");
-        //float xnegative = enemy.transform.localPosition.x - 1.0f;
-        //enemy.transform.localPosition = new Vector3(xnegative, enemy.transform.localPosition.y, 0.0f);
 
-        //Debug.Log(enemy.name + "at: " + enemy.transform.localPosition.ToString());
-        //Entity.TestMove(enemy, 1, 1);
-
-        //Debug.Log(this.transform.parent.gameObject.transform.localPosition.ToString());
-        //Debug.Log(transform.parent.GetComponent<Transform>().localPosition.ToString());
-        //Debug.Log(enemyReference.GetComponent<Transform>().localPosition.ToString());
-        //float xnegative = enemyTransform.parent.localPosition.x - 1.0f;
-        //enemyTransform.localPosition = new Vector3(xnegative, enemyTransform.parent.localPosition.y, 0);
-        isEnemyTimeToDoOneAction = false; // We switch this to false so stops after just this one
+        isEnemyTimeToDoOneAction = false; // We switch this to false so they can move again once is their turn
 
 
     }

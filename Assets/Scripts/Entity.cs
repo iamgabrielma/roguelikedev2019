@@ -137,12 +137,9 @@ public class Entity : MonoBehaviour , IScheduleable
         float _dx = entityThatMoves.gameObject.GetComponent<Transform>().localPosition.x + dx;
         float _dy = entityThatMoves.gameObject.GetComponent<Transform>().localPosition.y + dy;
 
+        // New direction:
         entityThatMoves.gameObject.GetComponent<Transform>().localPosition = new Vector3(_dx, _dy, 0);
-        //float xnegative = entityThatMoves.transform.localPosition.x - 1.0f;
-        //float y = entityThatMoves.transform.localPosition.y;
-        //entityThatMoves.transform.localPosition = new Vector3(xnegative, entityThatMoves.transform.localPosition.y, 0.0f);
-        //entityThatMoves.gameObject.GetComponent<Transform>().localPosition = new Vector3(xnegative, y, 0);
-        //Debug.Log(entityThatMoves.name + "at: " + entityThatMoves.transform.localPosition.ToString());
+
     }
 
 }

@@ -47,6 +47,7 @@ public class GridGenerator : MonoBehaviour
     }
     private int maxNumberOfWalkers;
     List<Walker> listOfWalkers = new List<Walker>();
+    List<Walker> listOfNonRandomWalkers = new List<Walker>();
 
     List<Vector2> listOfFloorTiles = new List<Vector2>(); // Will be a list of positions, not of tiles.
     List<Vector2> listOfWallTiles = new List<Vector2>();
@@ -73,14 +74,19 @@ public class GridGenerator : MonoBehaviour
 
         // Floor setup
         ProcGenFloorWalkersSetup();
+        // WIP: Testing new Walkers:
+        //TEST_ProcGenNewWalkers();
         // Walls setup
         ProcGenWallSetup();
-        // Close gaps in the map
+        // Testing filling map generation:
+        TEST_ProcGenNewWalkers();
+        // Close gaps in the map: Finds floorTiles in the borders and changes them for wallTiles
         ProcGenFixtures(mapWidthX, mapHeightY);
         // Place Entities
         PlaceEntities();
         // Helper function to get level information
         GetMapData();
+
 
     }
     
@@ -249,6 +255,66 @@ public class GridGenerator : MonoBehaviour
 
     }
 
+    public void TEST_ProcGenNewWalkers() {
+
+
+        for (int i = 0; i < 50; i++) // 50 because why not.
+        {
+            float _density = GetMapData();
+
+            if (_density < 0.3f)
+            {
+                Walker _nonRandomWalker = new Walker();
+
+                int _rand = Random.Range(0, listOfWallTiles.Count);
+                //Debug.Log(_rand);
+                Vector2 _randpos = listOfWallTiles[_rand]; // Index out of range, wut. ISSUE: At this point we still have no walls, so index will be zero.
+                                                           //Debug.Log(listOfWallTiles[_rand].ToString());
+                _nonRandomWalker.walkerPosition = new Vector2(_randpos.x, _randpos.y);
+                Debug.Log("Created new walker at: " + _nonRandomWalker.walkerPosition.ToString());
+
+                // Fix lists: 
+                listOfWallTiles.Remove(_nonRandomWalker.walkerPosition);//removes this vector from the wall list, as is a floor now
+                listOfFloorTiles.Add(_nonRandomWalker.walkerPosition);//adds a new floor tile
+                listOfNonRandomWalkers.Add(_nonRandomWalker);//adds nonrandomwalker
+
+                TEST_Moving_non_random_walkers();
+
+
+
+            }
+        }
+
+
+
+        // top right corner
+        //int dx = 106;
+        //int dy = 30;
+        //Walker _nonRandomWalker = new Walker();
+        //// Initial position:
+        //_nonRandomWalker.walkerPosition = new Vector2(dx, dy);
+        //listOfNonRandomWalkers.Add(_nonRandomWalker);
+
+        //for (int i = 0; i < 1000; i++) // 1000 because ¯\_(ツ)_/¯
+        //{
+        //    TEST_Moving_non_random_walkers();
+        //}
+
+    }
+
+    public void TEST_Moving_non_random_walkers() {
+
+        foreach (var _nonRandomWalker in listOfNonRandomWalkers)
+        {
+                _nonRandomWalker.walkerPosition = RandomDirection(_nonRandomWalker.walkerPosition);
+                floorMap.SetTile(new Vector3Int((int)_nonRandomWalker.walkerPosition.x, (int)_nonRandomWalker.walkerPosition.y, 0), floorTile); // set new floor
+                wallMap.SetTile(new Vector3Int((int)_nonRandomWalker.walkerPosition.x, (int)_nonRandomWalker.walkerPosition.y, 0), null); // unset old wall
+            floorMap.SetColor(new Vector3Int((int)_nonRandomWalker.walkerPosition.x, (int)_nonRandomWalker.walkerPosition.y, 0), Color.green);
+
+        }
+
+    }
+
     public void ProcGenWallSetup() {
 
         // There's no need for all of this if we already have a list of tile locations listOfFloorTiles
@@ -295,7 +361,7 @@ public class GridGenerator : MonoBehaviour
 
 
     }
-    // TODO: Fix: Tiles added via this process don't go through FOV and are always visible. 
+    // TODO: Bug Fix: Tiles added via this process don't go through FOV and are always visible. 
     void ProcGenFixtures(int width, int height)
     {
         // Seems that this may be the cause why shorter FOV was not working. If I generate a new tile in Floor or Walls, it inherits the grey color and is not blue. I need to use a new tilemap for setting a new color because is set by TILEMAP, not by TILE!!!
@@ -306,12 +372,12 @@ public class GridGenerator : MonoBehaviour
             if (floorMap.GetTile(new Vector3Int(i, 0, 0)) != null)
             {
                 _testing_map.SetTile(new Vector3Int(i, 0, 0), wallTile);
-                _testing_map.SetColor(new Vector3Int(i, 0, 0), Color.grey);
+                _testing_map.SetColor(new Vector3Int(i, 0, 0), Color.green);
             }
             if (floorMap.GetTile(new Vector3Int(i, height-1, 0)) != null)
             {
                 _testing_map.SetTile(new Vector3Int(i, height-1, 0), wallTile);
-                _testing_map.SetColor(new Vector3Int(i, height-1, 0), Color.grey);
+                _testing_map.SetColor(new Vector3Int(i, height-1, 0), Color.green);
             }
         }
         // Fills with walls the right and left map openings from the walkers
@@ -320,12 +386,12 @@ public class GridGenerator : MonoBehaviour
             if (floorMap.GetTile(new Vector3Int(0, i, 0)) != null)
             {
                 _testing_map.SetTile(new Vector3Int(0, i, 0), wallTile);
-                _testing_map.SetColor(new Vector3Int(0, i, 0), Color.grey);
+                _testing_map.SetColor(new Vector3Int(0, i, 0), Color.green);
             }
             if (floorMap.GetTile(new Vector3Int(i, height - 1, 0)) != null)
             {
                 _testing_map.SetTile(new Vector3Int(height, i, 0), wallTile);
-                _testing_map.SetColor(new Vector3Int(height, i, 0), Color.grey);
+                _testing_map.SetColor(new Vector3Int(height, i, 0), Color.green);
             }
         }
     }
@@ -393,6 +459,7 @@ public class GridGenerator : MonoBehaviour
 
         }
 
+
         // TODO 2:If this initial direction is outside of boundaries, roll again:
         /* Boundaries:
         BottomLeft: 0,0
@@ -408,21 +475,22 @@ public class GridGenerator : MonoBehaviour
         {
             currentWalkerPosition.y = currentWalkerPosition.y * (-1);
 
-        } else if (currentWalkerPosition.x > mapWidthX) // Checks if x wants to go outside boundaries
+        } 
+        // TODO: This may cause troubles of non-connected rooms, when we TELEPORT the walker somewhere else
+        else if (currentWalkerPosition.x > mapWidthX) // Checks if x wants to go outside boundaries
         {
-            //currentWalkerPosition.x = currentWalkerPosition.x * (-1); // Error: Will put us in Y-- , which we don't want.
-            //currentWalkerPosition.x -= 1.0f; // Approach 1: Go back
-            //currentWalkerPosition.x = mapWidthX; // Approach 2: Stop
+
             // This would fill up the (0,0) corner
+            TeleportWalker(new Vector2(currentWalkerPosition.x, currentWalkerPosition.y)); // TODO for now this does nothing, is just a WIP
             currentWalkerPosition.x = 0; //Approach 3: Teleport to a corner, but map feels a blob as is filling up only in the middle , so we teleport the walker entirely, not only one axis.
             currentWalkerPosition.y = 0;
 
         }
         else if (currentWalkerPosition.y > mapHeightY) // Checks if y wants to go outside boundaries
         {
-            //currentWalkerPosition.y = currentWalkerPosition.y * (-1); // Error: Will put us in Y-- , which we don't want.
-            //currentWalkerPosition.y -= 1.0f; // Go back
+
             // This would fill up the (max,max) corner , see approach 3 above
+            TeleportWalker(new Vector2(currentWalkerPosition.x, currentWalkerPosition.y)); // TODO for now this does nothing, is just a WIP
             currentWalkerPosition.x = mapWidthX;
             currentWalkerPosition.y = mapHeightY;
         }
@@ -431,15 +499,50 @@ public class GridGenerator : MonoBehaviour
 
     }
 
+    Vector2 NonRandomDirection(Vector2 currentWalkerPosition)
+    {
+    
+        // As non-random direction we can use a weighted method.
+        // Expecting the one that enters here comes from x=106y=30 so we want to go to the opposite corner, aka= 0,0 x-- y --
+        float _rand = (int)Random.Range(0, 2); // 0, 1, 2, 3
+        switch (_rand)
+        {
+            //case 0: //up x=0 y++
+                //currentWalkerPosition.y += 1.0f;
+                //break;
+            case 0: //down x=0 y--
+                currentWalkerPosition.y -= 1.0f;
+                break;
+            case 1: //left x-- y=0
+                currentWalkerPosition.x -= 1.0f;
+                break;
+            //case 3://right x++ y=0
+                //currentWalkerPosition.x += 1.0f;
+                //break;
+            default:
+                break;
 
-    private void GetMapData() {
+        }
+
+        return new Vector2(currentWalkerPosition.x, currentWalkerPosition.y);
+
+    }
+
+    Vector2 TeleportWalker(Vector2 currentWalkerPosition) {
+
+        return new Vector2(currentWalkerPosition.x, currentWalkerPosition.y);
+    }
+
+    private float GetMapData() {
 
         //float _mapDensity = (listOfWallTiles.Count / listOfFloorTiles.Count) * 100;
-        float _mapDensity = (float)listOfFloorTiles.Count / (mapWidthX * mapHeightY) * 100;
+        float _mapDensity = (float)listOfFloorTiles.Count / (mapWidthX * mapHeightY);
         //Debug.Log(listOfFloorTiles.Count);
         //Debug.Log(mapWidthX);
         //Debug.Log(mapHeightY);
-        //Debug.Log("Map Density " + _mapDensity + "% | Floor: " + listOfFloorTiles.Count.ToString() + " | Walls: " + listOfWallTiles.Count.ToString());
+        Debug.Log("Map Density " + (_mapDensity * 100) + "% | Floor: " + listOfFloorTiles.Count.ToString() + " | Walls: " + listOfWallTiles.Count.ToString());
+
+        return _mapDensity;
     }
 
     private void OnDrawGizmos()
