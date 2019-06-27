@@ -38,7 +38,7 @@ public class GridGenerator : MonoBehaviour
     public bool useRandomSeed;
 
     private int mapWidthX = 106;
-    private int mapHeightY = 30;
+    private int mapHeightY = 106;
 
     // ProcGen variables:
     enum gridSpaces { empty, floor, wall };
@@ -91,11 +91,22 @@ public class GridGenerator : MonoBehaviour
 
         // Floor setup
         ProcGenFloorWalkersSetup();
-        // WIP: Testing new Walkers:
-        //TEST_ProcGenNewWalkers();
+        // WIP: Testing new Walkers: TODO: Fix.
+        TEST_ProcGenNewWalkers();
         // Walls setup
         ProcGenWallSetup();
+        // Close gaps in the map: Finds floorTiles in the borders and changes them for wallTiles
+        //ProcGenWallFixtures(mapWidthX, mapHeightY);
+        // Get floor borders graphically
+        GetProcGenMapBorders();
+        // 
+        ProcGenAdditionalWalkers();
+        ProcGenWallFixtures(mapWidthX, mapHeightY);
 
+        PlaceEntities();
+
+        //ProcessMap();
+        GetMapData();
         // Testing filling map generation for more density - SUCCESS
         //TEST_ProcGenNewWalkers();
 
@@ -108,8 +119,7 @@ public class GridGenerator : MonoBehaviour
 
         //GetNeighbors();
 
-        // Close gaps in the map: Finds floorTiles in the borders and changes them for wallTiles
-        //ProcGenFixtures(mapWidthX, mapHeightY);
+
 
         // Lague application:
         //SetIntegerMap();
@@ -120,8 +130,7 @@ public class GridGenerator : MonoBehaviour
         //_test = GetRegionTiles(mapWidthX, mapHeightY);
         //Debug.Log("test is:" + _test.Count.ToString());
 
-        // Testing - SUCCESS
-        //GetBorderNeighbors();
+
         // Testing - SUCESS
         //GetBorderVolumes();
         // Testing... WIP
@@ -147,12 +156,10 @@ public class GridGenerator : MonoBehaviour
 
 
         // Place Entities
-        PlaceEntities();
-        playerReference = GameObject.FindWithTag("Player").transform;
+
         // Helper function to get level information
 
-        //ProcessMap();
-        GetMapData();
+
 
         //GetRegionTiles(1,1);
 
@@ -182,7 +189,7 @@ public class GridGenerator : MonoBehaviour
             // Walls setup
             ProcGenWallSetup();
             // Close gaps in the map
-            ProcGenFixtures(mapWidthX, mapHeightY);
+            ProcGenWallFixtures(mapWidthX, mapHeightY);
             // Place Entities
             PlaceEntities();
             // Helper function to get level information
@@ -340,7 +347,7 @@ public class GridGenerator : MonoBehaviour
         // Runs WalkersPopulationControl 1000 times
         for (int i = 0; i < 1000; i++) // 1000 because ¯\_(ツ)_/¯
         {
-            WalkersPopulationControl(); // regenerates all tiles
+            WalkersPopulationControl(listOfWalkers); // regenerates all tiles
         }
 
         // Done -> 2: WalkersPopulationControl() -> Walkers gonna walk
@@ -361,7 +368,7 @@ public class GridGenerator : MonoBehaviour
             {
                 Walker _nonRandomWalker = new Walker();
 
-                int _rand = Random.Range(0, listOfWallTiles.Count);
+                int _rand = Random.Range(0, listOfWallTiles.Count); // TODO: Change this to borders
                 //Debug.Log(_rand);
                 Vector2 _randpos = listOfWallTiles[_rand]; // Index out of range, wut. ISSUE: At this point we still have no walls, so index will be zero.
                                                            //Debug.Log(listOfWallTiles[_rand].ToString());
@@ -375,6 +382,11 @@ public class GridGenerator : MonoBehaviour
 
                 TEST_Moving_non_random_walkers();
 
+            }
+            else
+            {
+                Debug.Log("No walkers to add, density: " + GetMapData().ToString());
+                break; // get out the loop
             }
         }
 
@@ -447,7 +459,7 @@ public class GridGenerator : MonoBehaviour
 
     }
     // TODO: Bug Fix: Tiles added via this process don't go through FOV and are always visible. 
-    void ProcGenFixtures(int width, int height)
+    void ProcGenWallFixtures(int width, int height)
     {
         // Seems that this may be the cause why shorter FOV was not working. If I generate a new tile in Floor or Walls, it inherits the grey color and is not blue. I need to use a new tilemap for setting a new color because is set by TILEMAP, not by TILE!!!
 
@@ -456,25 +468,26 @@ public class GridGenerator : MonoBehaviour
         {
             if (floorMap.GetTile(new Vector3Int(i, 0, 0)) != null)
             {
-                _testing_map.SetTile(new Vector3Int(i, 0, 0), wallTile);
-                _testing_map.SetColor(new Vector3Int(i, 0, 0), Color.green);
+                floorMap.SetTile(new Vector3Int(i, 0, 0), null); // Clear potential previous floors
+                wallMap.SetTile(new Vector3Int(i, 0, 0), wallTile);
+                wallMap.SetColor(new Vector3Int(i, 0, 0), Color.black);
+
+
                 // Add to our list of walls:
                 Vector2 _wallTileLocation = new Vector2(i, 0);
-                listOfWallTiles.Add(_wallTileLocation);
-
-                floorMap.SetTile(new Vector3Int(i, 0, 0), null); // Clear potential previous floors
-                listOfFloorTiles.Remove(_wallTileLocation); // Remove them for the list as well so we can use flood algo
+                listOfWallTiles.Add(_wallTileLocation); // + list
+                listOfFloorTiles.Remove(_wallTileLocation); // - list
             }
             if (floorMap.GetTile(new Vector3Int(i, height-1, 0)) != null)
             {
-                _testing_map.SetTile(new Vector3Int(i, height-1, 0), wallTile);
-                _testing_map.SetColor(new Vector3Int(i, height-1, 0), Color.green);
+                floorMap.SetTile(new Vector3Int(i, height - 1, 0), null); // Clear potential previous floors
+                wallMap.SetTile(new Vector3Int(i, height-1, 0), wallTile);
+                wallMap.SetColor(new Vector3Int(i, height-1, 0), Color.black);
+
                 // Add to our list of walls:
                 Vector2 _wallTileLocation = new Vector2(i, height-1);
-                listOfWallTiles.Add(_wallTileLocation);
-
-                floorMap.SetTile(new Vector3Int(i, height - 1, 0), null); // Clear potential previous floors
-                listOfFloorTiles.Remove(_wallTileLocation); // Remove them for the list as well so we can use flood algo
+                listOfWallTiles.Add(_wallTileLocation);// + list
+                listOfFloorTiles.Remove(_wallTileLocation); // - list
             }
         }
         // Fills with walls the right and left map openings from the walkers
@@ -482,33 +495,34 @@ public class GridGenerator : MonoBehaviour
         {
             if (floorMap.GetTile(new Vector3Int(0, i, 0)) != null)
             {
-                _testing_map.SetTile(new Vector3Int(0, i, 0), wallTile);
-                _testing_map.SetColor(new Vector3Int(0, i, 0), Color.green);
+                wallMap.SetTile(new Vector3Int(0, i, 0), wallTile);
+                wallMap.SetColor(new Vector3Int(0, i, 0), Color.black);
                 // Add to our list of walls:
                 Vector2 _wallTileLocation = new Vector2(0, i);
-                listOfWallTiles.Add(_wallTileLocation);
+
 
                 floorMap.SetTile(new Vector3Int(0, i, 0), null); // Clear potential previous floors
+                listOfWallTiles.Add(_wallTileLocation);
                 listOfFloorTiles.Remove(_wallTileLocation); // Remove them for the list as well so we can use flood algo
             }
             if (floorMap.GetTile(new Vector3Int(i, height - 1, 0)) != null)
             {
-                _testing_map.SetTile(new Vector3Int(height, i, 0), wallTile);
-                _testing_map.SetColor(new Vector3Int(height, i, 0), Color.green);
+                wallMap.SetTile(new Vector3Int(height, i, 0), wallTile);
+                wallMap.SetColor(new Vector3Int(height, i, 0), Color.black);
                 // Add to our list of walls:
                 Vector2 _wallTileLocation = new Vector2(height, i);
-                listOfWallTiles.Add(_wallTileLocation);
 
                 floorMap.SetTile(new Vector3Int(height, i, 0), null); // Clear potential previous floors
+                listOfWallTiles.Add(_wallTileLocation);
                 listOfFloorTiles.Remove(_wallTileLocation); // Remove them for the list as well so we can use flood algo
             }
         }
     }
 
-    void WalkersPopulationControl() {
+    void WalkersPopulationControl(List<Walker> _inputListOfWalkers) {
 
         // Gets the 10 walkers and...
-        foreach (var _walker in listOfWalkers)
+        foreach (var _walker in _inputListOfWalkers)
         {
             //Random.InitState(seed);
             /* This initially did not work because https://stackoverflow.com/questions/5650705/in-c-why-cant-i-modify-the-member-of-a-value-type-instance-in-a-foreach-loop
@@ -522,8 +536,21 @@ public class GridGenerator : MonoBehaviour
 
             /* New solution: */
             _walker.walkerPosition = RandomDirection(_walker.walkerPosition);
+            wallMap.SetTile(new Vector3Int((int)_walker.walkerPosition.x, (int)_walker.walkerPosition.y, 0), null); // This part is done for once we ran the 2nd or more iterations, as after the walls are put in place, we may not see the floors that are generated afterwards
             floorMap.SetTile(new Vector3Int((int)_walker.walkerPosition.x, (int)_walker.walkerPosition.y, 0), floorTile);
-            listOfFloorTiles.Add(_walker.walkerPosition); // add initial tile to out floor list
+            listOfFloorTiles.Add(_walker.walkerPosition);
+            //if (listOfFloorTiles.Contains(_walker.walkerPosition))
+            //{
+            //    continue;
+            //}
+            //else
+            //{
+            //    listOfFloorTiles.Add(_walker.walkerPosition);
+            //}
+
+            /* else: IF TILE HAS ALREADY BEEN WALKED, CONTINUE */
+
+            // add initial tile to out floor list
             //Debug.Log("Tile created at pos: " + _walker.walkerPosition.ToString());
 
 
@@ -544,7 +571,7 @@ public class GridGenerator : MonoBehaviour
                 //}
                 //Debug.Log("Tile created at pos: " + _walker.walkerPosition.ToString());
                 listOfFloorTiles.Add(_walker.walkerPosition);
-                listOfWalkers.Add(_newWalker); // Problem this will not execute here because we're still within the loop, and the LIST listOfWalkers cannot be modified by adding a new item while is running. That's why we add break to get out of the loop.
+                _inputListOfWalkers.Add(_newWalker); // Problem this will not execute here because we're still within the loop, and the LIST listOfWalkers cannot be modified by adding a new item while is running. That's why we add break to get out of the loop.
                 break;
             }
             //else if (_rand > 95) // 10% Chance of walker dying
@@ -675,14 +702,17 @@ public class GridGenerator : MonoBehaviour
 
         //float _mapDensity = (listOfWallTiles.Count / listOfFloorTiles.Count) * 100;
         float _mapDensity = (float)listOfFloorTiles.Count / (mapWidthX * mapHeightY);
-        float _region1MapDensity = (float)listOfRegion1FloorTiles.Count / (listOfFloorTiles.Count);
-        float _region2MapDensity = (float)listOfRegion2FloorTiles.Count / (listOfFloorTiles.Count); // Right now 0%.
+        // TODO this is badly counted because walkers add this multiple times for the same coordinate
+
+        //float _region1MapDensity = (float)listOfRegion1FloorTiles.Count / (listOfFloorTiles.Count);
+        //float _region2MapDensity = (float)listOfRegion2FloorTiles.Count / (listOfFloorTiles.Count); // Right now 0%.
         //Debug.Log(listOfFloorTiles.Count);
         //Debug.Log(mapWidthX);
         //Debug.Log(mapHeightY);
         //Debug.Log("Map Density " + (_mapDensity * 100) + "% | Floor: " + listOfFloorTiles.Count.ToString() + " | Walls: " + listOfWallTiles.Count.ToString());
         //Debug.Log("Region 1 density: " + (_region1MapDensity * 100 ) + "%");
         //Debug.Log("Region 2 density: " + (_region2MapDensity * 100) + "%");
+
         return _mapDensity;
     }
 
@@ -700,6 +730,9 @@ public class GridGenerator : MonoBehaviour
     // TODO: Most likely we can place this in a different place, for example on GameStateManager to generate enemies as new events or states happen.
     private void PlaceEntities()
     {
+        // Player: Get reference
+        playerReference = GameObject.FindWithTag("Player").transform;
+
         // Place player
         //GameObject _test_player = Resources.Load<GameObject>("Prefabs/Player");
         //int _randomIndexP = Random.Range(1, GridGenerator.listOfFloorTiles.Count);
@@ -1169,7 +1202,7 @@ public class GridGenerator : MonoBehaviour
     }
 
     //  Checks for borders in the level and paint them red graphically.
-    void GetBorderNeighbors() {
+    void GetProcGenMapBorders() {
 
 
         //1- Use listOfFloorTiles
@@ -1210,11 +1243,80 @@ public class GridGenerator : MonoBehaviour
                 //continue; //skips to the next part, breaking the loop will get us entirely out
 
             }
-      
-
-
         }
 
+    }
+
+    void ProcGenAdditionalWalkers() {
+        /* TODO Needs GetProcGenMapBorders(); to be running, in order to work, move into a different method */
+
+        // Get border locations from GetProcGenMapBorders, this exists already in List borders
+        //  use this data to create more walkers
+        //int _fit = 0;
+        // Get various offsets:
+        // Map center limits
+        // center 53,53
+        // x: 0,53  , 106,53
+        // y: 53,0 , 53,106
+        // 25 - 75 looks good for offsetting
+
+        // 1) Set area borders
+        //Vector2 _upleft = new Vector2(25,75);
+        //Vector2 _upright = new Vector2(75, 75);
+        //Vector2 _downleft = new Vector2(25, 25);
+        //Vector2 _downright = new Vector2(75, 25);
+
+        List<Walker> _additionalWalkers = new List<Walker>();
+
+        Debug.Log(" border tiles: " + borders.Count.ToString());
+
+        foreach (var item in borders)
+        {   
+            // Creates level on the upper part of the map
+            if (item.y > 75)
+            {
+                Walker _newWalker = new Walker();
+                _newWalker.walkerPosition = new Vector2(item.x, item.y);
+                //_newWalker.walkerPosition = RandomDirection(_newWalker.walkerPosition);
+                _additionalWalkers.Add(_newWalker);
+            }
+            // Creates level on the bottom part of the map
+            //else if (item.y < 50)
+            //{
+            //    Walker _newWalker = new Walker();
+            //    _newWalker.walkerPosition = new Vector2(item.x, item.y);
+            //    //_newWalker.walkerPosition = RandomDirection(_newWalker.walkerPosition);
+            //    _additionalWalkers.Add(_newWalker);
+            //}
+        }
+
+        // Once our new list of walkers for extending the level is created, we run the script to make them run.
+        for (int i = 0; i < 1000; i++) // 1000 because ¯\_(ツ)_/¯
+        {
+            WalkersPopulationControl(_additionalWalkers); // regenerates all tiles
+        }
+
+        // 2) Get location of tiles
+        //for (int x = (int)_upleft.x; x < (int)_upright.x; x++)
+        //{
+        //    for (int y = (int)_downleft.x; y < (int)_downright.x; y++)
+        //    {
+        //        // This creates an area
+        //        _centerGameArea.Add(new Vector2(x,y));
+
+        //    }
+        //}
+
+        //foreach (var item in _centerGameArea)
+        //{
+        //    if (borders[item] > item)
+        //    {
+        //        //wallMap.SetColor(new Vector3Int((int)item.x, (int)item.y, 0), Color.red);
+        //        _fit++;
+        //    }
+        //}
+
+        //Debug.Log("fit++: " + _fit);
     }
 
     bool H_IsInMapRange(int x, int y) {

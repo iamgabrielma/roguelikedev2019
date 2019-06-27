@@ -47,7 +47,7 @@ public class Engine : MonoBehaviour
         // Places player in a valid floorTile
         GameObject _test_player = Resources.Load<GameObject>("Prefabs/Player");
         int playerX = 106/2;
-        int playerY = 30/2; // If we spawn the player in the center, waklkers always have opened the place up:
+        int playerY = 106/2; // If we spawn the player in the center, waklkers always have opened the place up:
 
         Entity playerInstance = new Entity(playerX, playerY, "Player", _test_player, new Vector3(playerX, playerY, 0)); // Place player in a fixed place (temporary)
         //int _randomIndex = Random.Range(1, GridGenerator.listOfFloorTiles.Count);
