@@ -11,6 +11,9 @@ using UnityEditor;
 
 public class GridGenerator : MonoBehaviour
 {
+    public static bool __isMapReady;
+    int[,] map; // Creating this for the flood generation. We'll have to store our map here with 0's and 1's
+
     // FOV variables
     public bool isFOVrecompute;
     private Transform playerReference; // I can calculate the FOV based on player position
@@ -19,7 +22,7 @@ public class GridGenerator : MonoBehaviour
     /* Debug checks for adding variety to the ProcGen map */
     //private bool _debug_procgen_tileDensity;
     private bool _debug_z_block_of_code = false;
-    private bool _debug_show_level_no_FOV = false;
+    //private bool _debug_show_level_no_FOV = false;
     private bool _debug_redo_map = false;
 
     // The tile map stores sprites in a layout marked by a Grid component. Ref: https://docs.unity3d.com/2017.2/Documentation/ScriptReference/Tilemaps.Tilemap.html
@@ -40,17 +43,30 @@ public class GridGenerator : MonoBehaviour
     // ProcGen variables:
     enum gridSpaces { empty, floor, wall };
     enum walkerDirection{ up, down, left, right};
+
     class Walker
     {
         public Vector2 walkerPosition;
         public Vector2 walkerDirection;
     }
-    private int maxNumberOfWalkers;
+
+    class FloodRegion
+    {
+        public List<Vector2> floodRegion;
+        public int group;
+    }
+
+    private int maxNumberOfIterations;
     List<Walker> listOfWalkers = new List<Walker>();
     List<Walker> listOfNonRandomWalkers = new List<Walker>();
 
-    List<Vector2> listOfFloorTiles = new List<Vector2>(); // Will be a list of positions, not of tiles.
+    public static List<Vector2> listOfFloorTiles = new List<Vector2>(); // Will be a list of positions, not of tiles.
     List<Vector2> listOfWallTiles = new List<Vector2>();
+
+    List<Vector2> listOfRegion1FloorTiles = new List<Vector2>(); // Region 1 massive area
+    List<Vector2> listOfRegion2FloorTiles = new List<Vector2>(); // Region 2, the rest
+
+    List<Vector2> borders = new List<Vector2>();
 
     public List<Entity> listOfEnemyEntities = new List<Entity>();
 
@@ -60,6 +76,7 @@ public class GridGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        __isMapReady = false;
         playerReference = GameObject.FindWithTag("Player").transform;
         playerVisibilityRadius = 4;
         isFOVrecompute = InputHandler.isFOVrecompute; // We set this to the Static bool
@@ -78,14 +95,66 @@ public class GridGenerator : MonoBehaviour
         //TEST_ProcGenNewWalkers();
         // Walls setup
         ProcGenWallSetup();
-        // Testing filling map generation:
-        TEST_ProcGenNewWalkers();
+
+        // Testing filling map generation for more density - SUCCESS
+        //TEST_ProcGenNewWalkers();
+
+        // Testing region filling
+
+        //GetRegionTiles(mapWidthX, mapHeightY);
+        //List<Coord> _test = new List<Coord>();
+        //_test = GetRegionTiles(mapWidthX, mapHeightY);
+        //Debug.Log("test is:" + _test.Count.ToString());
+
+        //GetNeighbors();
+
         // Close gaps in the map: Finds floorTiles in the borders and changes them for wallTiles
-        ProcGenFixtures(mapWidthX, mapHeightY);
+        //ProcGenFixtures(mapWidthX, mapHeightY);
+
+        // Lague application:
+        //SetIntegerMap();
+        //GetRegionTiles(1, 1);//4 tiles
+        //GetRegionTiles(2, 2);//8? tiles
+        //GetRegionTiles(mapWidthX-1, mapHeightY-1); // Finally seems to work, next step list of lists.
+        //List<Coord> _test = new List<Coord>();
+        //_test = GetRegionTiles(mapWidthX, mapHeightY);
+        //Debug.Log("test is:" + _test.Count.ToString());
+
+        // Testing - SUCCESS
+        //GetBorderNeighbors();
+        // Testing - SUCESS
+        //GetBorderVolumes();
+        // Testing... WIP
+        //GetRegions();
+        // Testing ... Floodtilemaps
+        //Tilemap _tilemapregion1 = FloodRegions(floorMap);
+        //Tilemap _tilemapregion2 = FloodRegions(floorMap);
+        //Debug.Log("tilemap region 2 size:" + _tilemapregion2.size.ToString()); // 107,31,1 ¯\_(ツ)_/¯
+        //Debug.Log("tilemap region 1 magnitude:" + _tilemapregion1.size.magnitude.ToString());
+        //Debug.Log("tilemap region 2 size:" + _tilemapregion2.size.x.ToString());
+        //Debug.Log("tilemap region 2 size:" + _tilemapregion2.AddTileFlags);
+        //ProcGenBorderFixtures();
+
+
+
+        //GetRegions(0); // 0 -> floors, -> walls
+        // More WIP
+        //FloodingTilesWIP();
+        //foreach (var item in listOfFloorTiles)
+        //{
+        //    _tilemapregion2.SetTileFlags(new Vector3Int((int)item.x, (int)item.y, 0), TileFlags.None);
+        //}
+
+
         // Place Entities
         PlaceEntities();
+        playerReference = GameObject.FindWithTag("Player").transform;
         // Helper function to get level information
+
+        //ProcessMap();
         GetMapData();
+
+        //GetRegionTiles(1,1);
 
 
     }
@@ -232,17 +301,43 @@ public class GridGenerator : MonoBehaviour
 
 
         // TODO: Note that maxNumberOfWalkers is actually maxNumberOf_INITIAL_Walkers , as new ones are born in PopulationControl function.
-        maxNumberOfWalkers = 10;
+        //maxNumberOfWalkers = 10;
+        maxNumberOfIterations = 10; // actually these are iterations
         // 0: Iterations
         // Done -> 1: Create walkers:
-        for (int i = 0; i < maxNumberOfWalkers; i++)
+
+        // 1 Creates walkers
+        for (int i = 0; i < maxNumberOfIterations; i++)
         {
-            Walker _walker = new Walker(); // No vector here assumes that all of them are created at (0,0)
+            /* 0 works: */
             // Problem: If walkers are created at (0,0), they easily grow the map in X and Y negative. Will use the center of the map as a starting location instead.
+            Walker _walker = new Walker(); // No vector here assumes that all of them are created at (0,0)
             _walker.walkerPosition = new Vector2((int)mapWidthX/2, (int)mapHeightY/2);
             listOfWalkers.Add(_walker);
+
+            //WalkersPopulationControl();
+            /* 1) Testing to create the walkers not in the same point but in a central area */
+
+            //float _mapCenterPointX = mapWidthX / 2;
+            //float _mapCenterPointY = mapHeightY / 2;
+            //Vector2 _mapCenterPointV = new Vector2(_mapCenterPointX, _mapCenterPointY);
+
+            //for (int x = (int)_mapCenterPointX - 10; x < (int)_mapCenterPointX + 10; x++)
+            //{
+            //    for (int y = (int)_mapCenterPointY - 10; x < (int)_mapCenterPointY + 10; x++)
+            //    {
+            //        floorMap.SetTile(new Vector3Int(x, y, 0), floorTile); // initial tiles
+            //        Walker _walker = new Walker();
+            //        _walker.walkerPosition = new Vector2(x,y);
+            //        listOfWalkers.Add(_walker);
+
+            //    }
+            //}
+            /* 2) Shoot them in a specific randomdir for a few tiles and then let them walk */
+
         }
 
+        // Runs WalkersPopulationControl 1000 times
         for (int i = 0; i < 1000; i++) // 1000 because ¯\_(ツ)_/¯
         {
             WalkersPopulationControl(); // regenerates all tiles
@@ -271,7 +366,7 @@ public class GridGenerator : MonoBehaviour
                 Vector2 _randpos = listOfWallTiles[_rand]; // Index out of range, wut. ISSUE: At this point we still have no walls, so index will be zero.
                                                            //Debug.Log(listOfWallTiles[_rand].ToString());
                 _nonRandomWalker.walkerPosition = new Vector2(_randpos.x, _randpos.y);
-                Debug.Log("Created new walker at: " + _nonRandomWalker.walkerPosition.ToString());
+                //Debug.Log("Created new walker at: " + _nonRandomWalker.walkerPosition.ToString());
 
                 // Fix lists: 
                 listOfWallTiles.Remove(_nonRandomWalker.walkerPosition);//removes this vector from the wall list, as is a floor now
@@ -280,25 +375,8 @@ public class GridGenerator : MonoBehaviour
 
                 TEST_Moving_non_random_walkers();
 
-
-
             }
         }
-
-
-
-        // top right corner
-        //int dx = 106;
-        //int dy = 30;
-        //Walker _nonRandomWalker = new Walker();
-        //// Initial position:
-        //_nonRandomWalker.walkerPosition = new Vector2(dx, dy);
-        //listOfNonRandomWalkers.Add(_nonRandomWalker);
-
-        //for (int i = 0; i < 1000; i++) // 1000 because ¯\_(ツ)_/¯
-        //{
-        //    TEST_Moving_non_random_walkers();
-        //}
 
     }
 
@@ -306,10 +384,16 @@ public class GridGenerator : MonoBehaviour
 
         foreach (var _nonRandomWalker in listOfNonRandomWalkers)
         {
-                _nonRandomWalker.walkerPosition = RandomDirection(_nonRandomWalker.walkerPosition);
-                floorMap.SetTile(new Vector3Int((int)_nonRandomWalker.walkerPosition.x, (int)_nonRandomWalker.walkerPosition.y, 0), floorTile); // set new floor
-                wallMap.SetTile(new Vector3Int((int)_nonRandomWalker.walkerPosition.x, (int)_nonRandomWalker.walkerPosition.y, 0), null); // unset old wall
-            floorMap.SetColor(new Vector3Int((int)_nonRandomWalker.walkerPosition.x, (int)_nonRandomWalker.walkerPosition.y, 0), Color.green);
+        
+            _nonRandomWalker.walkerPosition = RandomDirection(_nonRandomWalker.walkerPosition);
+            floorMap.SetTile(new Vector3Int((int)_nonRandomWalker.walkerPosition.x, (int)_nonRandomWalker.walkerPosition.y, 0), floorTile); // set new floor
+            wallMap.SetTile(new Vector3Int((int)_nonRandomWalker.walkerPosition.x, (int)_nonRandomWalker.walkerPosition.y, 0), null); // unset old wall
+            floorMap.SetColor(new Vector3Int((int)_nonRandomWalker.walkerPosition.x, (int)_nonRandomWalker.walkerPosition.y, 0), Color.green); // testing visibility
+
+            // Fixing lists:
+            Vector2 _floorTileLocation = new Vector2((int)_nonRandomWalker.walkerPosition.x, (int)_nonRandomWalker.walkerPosition.y);
+            listOfFloorTiles.Add(_floorTileLocation); // Add to floor list
+            listOfWallTiles.Remove(_floorTileLocation); // remove from wall list
 
         }
 
@@ -319,8 +403,8 @@ public class GridGenerator : MonoBehaviour
 
         // There's no need for all of this if we already have a list of tile locations listOfFloorTiles
         // Update: There's actually a need: https://forum.unity.com/threads/tilemap-tile-positions-assistance.485867/#post-3165299
-        int width = 106;
-        int height = 30;
+        int width = mapWidthX;
+        int height = mapHeightY;
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -330,7 +414,8 @@ public class GridGenerator : MonoBehaviour
 
                     //Debug.Log("x: " + x + "| y: "+ y); // We get the coordinates from looping through the game, not through the tilemap itself.
                     Vector2 _floorTileLocation = new Vector2(x,y);
-                    listOfFloorTiles.Add(_floorTileLocation);
+                    listOfFloorTiles.Add(_floorTileLocation); // General map
+                    listOfRegion1FloorTiles.Add(_floorTileLocation); // Region 1
 
                 }
                 else
@@ -373,11 +458,23 @@ public class GridGenerator : MonoBehaviour
             {
                 _testing_map.SetTile(new Vector3Int(i, 0, 0), wallTile);
                 _testing_map.SetColor(new Vector3Int(i, 0, 0), Color.green);
+                // Add to our list of walls:
+                Vector2 _wallTileLocation = new Vector2(i, 0);
+                listOfWallTiles.Add(_wallTileLocation);
+
+                floorMap.SetTile(new Vector3Int(i, 0, 0), null); // Clear potential previous floors
+                listOfFloorTiles.Remove(_wallTileLocation); // Remove them for the list as well so we can use flood algo
             }
             if (floorMap.GetTile(new Vector3Int(i, height-1, 0)) != null)
             {
                 _testing_map.SetTile(new Vector3Int(i, height-1, 0), wallTile);
                 _testing_map.SetColor(new Vector3Int(i, height-1, 0), Color.green);
+                // Add to our list of walls:
+                Vector2 _wallTileLocation = new Vector2(i, height-1);
+                listOfWallTiles.Add(_wallTileLocation);
+
+                floorMap.SetTile(new Vector3Int(i, height - 1, 0), null); // Clear potential previous floors
+                listOfFloorTiles.Remove(_wallTileLocation); // Remove them for the list as well so we can use flood algo
             }
         }
         // Fills with walls the right and left map openings from the walkers
@@ -387,17 +484,30 @@ public class GridGenerator : MonoBehaviour
             {
                 _testing_map.SetTile(new Vector3Int(0, i, 0), wallTile);
                 _testing_map.SetColor(new Vector3Int(0, i, 0), Color.green);
+                // Add to our list of walls:
+                Vector2 _wallTileLocation = new Vector2(0, i);
+                listOfWallTiles.Add(_wallTileLocation);
+
+                floorMap.SetTile(new Vector3Int(0, i, 0), null); // Clear potential previous floors
+                listOfFloorTiles.Remove(_wallTileLocation); // Remove them for the list as well so we can use flood algo
             }
             if (floorMap.GetTile(new Vector3Int(i, height - 1, 0)) != null)
             {
                 _testing_map.SetTile(new Vector3Int(height, i, 0), wallTile);
                 _testing_map.SetColor(new Vector3Int(height, i, 0), Color.green);
+                // Add to our list of walls:
+                Vector2 _wallTileLocation = new Vector2(height, i);
+                listOfWallTiles.Add(_wallTileLocation);
+
+                floorMap.SetTile(new Vector3Int(height, i, 0), null); // Clear potential previous floors
+                listOfFloorTiles.Remove(_wallTileLocation); // Remove them for the list as well so we can use flood algo
             }
         }
     }
 
     void WalkersPopulationControl() {
 
+        // Gets the 10 walkers and...
         foreach (var _walker in listOfWalkers)
         {
             //Random.InitState(seed);
@@ -413,15 +523,28 @@ public class GridGenerator : MonoBehaviour
             /* New solution: */
             _walker.walkerPosition = RandomDirection(_walker.walkerPosition);
             floorMap.SetTile(new Vector3Int((int)_walker.walkerPosition.x, (int)_walker.walkerPosition.y, 0), floorTile);
+            listOfFloorTiles.Add(_walker.walkerPosition); // add initial tile to out floor list
+            //Debug.Log("Tile created at pos: " + _walker.walkerPosition.ToString());
+
 
             // Walker population control
             int _rand = Random.Range(0, 100);
-            if (_rand <= 50) // 50% chance of new walker being born
+            if (_rand <= 30) // 30% chance of new walker being born
             {
                 //Debug.Log("A new walker is created!");
                 Walker _newWalker = new Walker();
-                _newWalker.walkerPosition = _walker.walkerPosition;
-                listOfWalkers.Add(_newWalker); // Problem this will not execute here because we're still within the loop, and cannot be modified by adding a new item while is running. That's why we add break to get out of the loop.
+                _newWalker.walkerPosition = _walker.walkerPosition; // new walker position is the same as the old walker position
+                //for (int i = 0; i < 5; i++)
+                //{
+                //    NonRandomDirection(_newWalker.walkerPosition);
+                //    floorMap.SetTile(new Vector3Int((int)_newWalker.walkerPosition.x, (int)_newWalker.walkerPosition.y, 0), floorTile);
+                //    floorMap.SetColor(new Vector3Int((int)_newWalker.walkerPosition.x, (int)_newWalker.walkerPosition.y, 0), Color.red);
+                //    listOfFloorTiles.Add(_newWalker.walkerPosition);
+                //    Debug.Log("moving right 5 times");
+                //}
+                //Debug.Log("Tile created at pos: " + _walker.walkerPosition.ToString());
+                listOfFloorTiles.Add(_walker.walkerPosition);
+                listOfWalkers.Add(_newWalker); // Problem this will not execute here because we're still within the loop, and the LIST listOfWalkers cannot be modified by adding a new item while is running. That's why we add break to get out of the loop.
                 break;
             }
             //else if (_rand > 95) // 10% Chance of walker dying
@@ -433,6 +556,8 @@ public class GridGenerator : MonoBehaviour
             //Debug.Log("pos: " + _walker.walkerPosition.ToString() + " dir: " + _walker.walkerDirection.ToString());
             //Debug.Log("number of walkers: "+ listOfWalkers.Count.ToString());
         }
+
+        __isMapReady = true;
     }
 
     Vector2 RandomDirection(Vector2 currentWalkerPosition) {
@@ -454,6 +579,19 @@ public class GridGenerator : MonoBehaviour
             case 3://right x++ y=0
                 currentWalkerPosition.x += 1.0f;
                 break;
+            // Playing with adding extra weighted to the sides, as if we add +2.0f will skip one tile
+            //case 4:
+            //    currentWalkerPosition.x -= 1.0f;
+            //    break;
+            //case 5:
+                //currentWalkerPosition.x += 1.0f;
+                //break;
+            //case 6:
+            //    currentWalkerPosition.x -= 1.0f;
+            //    break;
+            //case 7:
+                //currentWalkerPosition.x += 1.0f;
+                //break;
             default:
                 break;
 
@@ -477,23 +615,23 @@ public class GridGenerator : MonoBehaviour
 
         } 
         // TODO: This may cause troubles of non-connected rooms, when we TELEPORT the walker somewhere else
-        else if (currentWalkerPosition.x > mapWidthX) // Checks if x wants to go outside boundaries
-        {
+        //else if (currentWalkerPosition.x > mapWidthX) // Checks if x wants to go outside boundaries
+        //{
 
-            // This would fill up the (0,0) corner
-            TeleportWalker(new Vector2(currentWalkerPosition.x, currentWalkerPosition.y)); // TODO for now this does nothing, is just a WIP
-            currentWalkerPosition.x = 0; //Approach 3: Teleport to a corner, but map feels a blob as is filling up only in the middle , so we teleport the walker entirely, not only one axis.
-            currentWalkerPosition.y = 0;
+        //    // This would fill up the (0,0) corner
+        //    TeleportWalker(new Vector2(currentWalkerPosition.x, currentWalkerPosition.y)); // TODO for now this does nothing, is just a WIP
+        //    currentWalkerPosition.x = 0; //Approach 3: Teleport to a corner, but map feels a blob as is filling up only in the middle , so we teleport the walker entirely, not only one axis.
+        //    currentWalkerPosition.y = 0;
 
-        }
-        else if (currentWalkerPosition.y > mapHeightY) // Checks if y wants to go outside boundaries
-        {
+        //}
+        //else if (currentWalkerPosition.y > mapHeightY) // Checks if y wants to go outside boundaries
+        //{
 
-            // This would fill up the (max,max) corner , see approach 3 above
-            TeleportWalker(new Vector2(currentWalkerPosition.x, currentWalkerPosition.y)); // TODO for now this does nothing, is just a WIP
-            currentWalkerPosition.x = mapWidthX;
-            currentWalkerPosition.y = mapHeightY;
-        }
+        //    // This would fill up the (max,max) corner , see approach 3 above
+        //    TeleportWalker(new Vector2(currentWalkerPosition.x, currentWalkerPosition.y)); // TODO for now this does nothing, is just a WIP
+        //    currentWalkerPosition.x = mapWidthX;
+        //    currentWalkerPosition.y = mapHeightY;
+        //}
 
         return new Vector2(currentWalkerPosition.x, currentWalkerPosition.y);
 
@@ -504,27 +642,27 @@ public class GridGenerator : MonoBehaviour
     
         // As non-random direction we can use a weighted method.
         // Expecting the one that enters here comes from x=106y=30 so we want to go to the opposite corner, aka= 0,0 x-- y --
-        float _rand = (int)Random.Range(0, 2); // 0, 1, 2, 3
-        switch (_rand)
-        {
-            //case 0: //up x=0 y++
-                //currentWalkerPosition.y += 1.0f;
-                //break;
-            case 0: //down x=0 y--
-                currentWalkerPosition.y -= 1.0f;
-                break;
-            case 1: //left x-- y=0
-                currentWalkerPosition.x -= 1.0f;
-                break;
-            //case 3://right x++ y=0
-                //currentWalkerPosition.x += 1.0f;
-                //break;
-            default:
-                break;
+        //float _rand = (int)Random.Range(2, 3); // 0, 1, 2, 3
+        //switch (_rand)
+        //{
+        //    //case 0: //up x=0 y++
+        //        //currentWalkerPosition.y += 1.0f;
+        //        //break;
+        //    //case 0: //down x=0 y--
+        //        //currentWalkerPosition.y -= 1.0f;
+        //        //break;
+        //    case 1: //left x-- y=0
+        //        currentWalkerPosition.x -= 1.0f;
+        //        break;
+        //    //case 3://right x++ y=0
+        //        //currentWalkerPosition.x += 1.0f;
+        //        //break;
+        //    default:
+        //        break;
 
-        }
+        //}
 
-        return new Vector2(currentWalkerPosition.x, currentWalkerPosition.y);
+        return new Vector2(currentWalkerPosition.x+1, currentWalkerPosition.y);
 
     }
 
@@ -537,11 +675,14 @@ public class GridGenerator : MonoBehaviour
 
         //float _mapDensity = (listOfWallTiles.Count / listOfFloorTiles.Count) * 100;
         float _mapDensity = (float)listOfFloorTiles.Count / (mapWidthX * mapHeightY);
+        float _region1MapDensity = (float)listOfRegion1FloorTiles.Count / (listOfFloorTiles.Count);
+        float _region2MapDensity = (float)listOfRegion2FloorTiles.Count / (listOfFloorTiles.Count); // Right now 0%.
         //Debug.Log(listOfFloorTiles.Count);
         //Debug.Log(mapWidthX);
         //Debug.Log(mapHeightY);
-        Debug.Log("Map Density " + (_mapDensity * 100) + "% | Floor: " + listOfFloorTiles.Count.ToString() + " | Walls: " + listOfWallTiles.Count.ToString());
-
+        //Debug.Log("Map Density " + (_mapDensity * 100) + "% | Floor: " + listOfFloorTiles.Count.ToString() + " | Walls: " + listOfWallTiles.Count.ToString());
+        //Debug.Log("Region 1 density: " + (_region1MapDensity * 100 ) + "%");
+        //Debug.Log("Region 2 density: " + (_region2MapDensity * 100) + "%");
         return _mapDensity;
     }
 
@@ -559,6 +700,15 @@ public class GridGenerator : MonoBehaviour
     // TODO: Most likely we can place this in a different place, for example on GameStateManager to generate enemies as new events or states happen.
     private void PlaceEntities()
     {
+        // Place player
+        //GameObject _test_player = Resources.Load<GameObject>("Prefabs/Player");
+        //int _randomIndexP = Random.Range(1, GridGenerator.listOfFloorTiles.Count);
+        //Vector2 _randomVectorP = GridGenerator.listOfFloorTiles[_randomIndexP];
+        //Entity playerInstance = new Entity((int)_randomVectorP.x, (int)_randomVectorP.y, "Player", _test_player, new Vector3(_randomVectorP.x, _randomVectorP.y, 0));
+        //Engine.__player = Instantiate(playerInstance.entityGameObject, playerInstance.entityLocation, Quaternion.identity);
+        //Engine.__player.name = Engine.__player.tag;
+        //listOfGameObjects.Add(Engine.__player);
+
         // Random number of enemies:
         int _numberOfEnemyEntities = Random.Range(1,10);
         //Debug.Log("Monsters: " + _numberOfEnemyEntities);
@@ -576,7 +726,7 @@ public class GridGenerator : MonoBehaviour
             Entity npcInstance = new Entity((int)_randomVector.x, (int)_randomVector.y, "Enemy", _test_npc, new Vector3(_randomVector.x, _randomVector.y, 0));
 
             //Engine.SchedulingSystem.Add(npcInstance); // We don't instantiate a new schedule, but add the npc's to the global instance declared in Engine.cs
-            Debug.Log("npc instances are added");
+            //Debug.Log("npc instances are added");
             Instantiate(npcInstance.entityGameObject, npcInstance.entityLocation, Quaternion.identity);
             Engine.SchedulingSystem.Add(npcInstance);
             //npcInstance.name = npcInstance.tag;
@@ -709,4 +859,565 @@ public class GridGenerator : MonoBehaviour
             //_testing_closestFovMap.SetColor(new Vector3Int((int)_entityLocation.x + _entityVisibilityRadius, (int)_entityLocation.y - _entityVisibilityRadius + i , 0), Color.yellow);
         }
     }
+
+    // ORIGINAL
+    struct Coord
+    {
+        public int tileX;
+        public int tileY;
+
+        public Coord(int x, int y) {
+
+            tileX = x;
+            tileY = y;
+        }
+    }
+
+
+
+    void ProcessMap() {
+        // no modifications = o in both threesholds
+
+        List<List<Coord>> wallRegions = GetRegions(1); // Get regions of walls (1)
+
+
+        int wallThresholdSize = 0; // 100 map is almost empty, 10 opens up map, 3 no sucede casi nada pero veo bordes desaparecer.
+        foreach (List<Coord> wallRegion in wallRegions)
+        {
+            if (wallRegion.Count < wallThresholdSize)
+            {
+                foreach (Coord tile in wallRegion)
+                {
+                    // This is getting holes in the map and filling them up with walls:
+                    map[tile.tileX, tile.tileY] = 0; // setting it to an empty space.
+                    wallMap.SetTile(new Vector3Int((int)tile.tileX, (int)tile.tileY, 0), null);
+                    //floorMap.SetTile(new Vector3Int((int)tile.tileX, (int)tile.tileY, 0), floorTile);
+                    //floorMap.SetColor(new Vector3Int((int)tile.tileX, (int)tile.tileY, 0), Color.red);
+                    wallMap.SetTile(new Vector3Int((int)tile.tileX, (int)tile.tileY, 0), wallTile);
+                    wallMap.SetColor(new Vector3Int((int)tile.tileX, (int)tile.tileY, 0), Color.red);
+
+                }
+            }
+        }
+        Debug.Log("How many wallRegions?" + wallRegions.Count.ToString()); // 932 wrong
+
+        // TODO este no funciona para nada, está cogiendo todas las walls del escenario una por una
+        // We set a threeshold for Floors, if our room size is smaller (<) than our thresshold, 
+        List<List<Coord>> roomRegions = GetRegions(0); // Get regions of floors (0)
+
+        int roomThresholdSize = 0; // 100 nothing happened, 10 nothing, 3 nothing.
+        List<Room> survivingRooms = new List<Room>(); // Added later on: List of rooms which survive the culling process:
+
+        foreach (List<Coord> roomRegion in roomRegions)
+        {
+            if (roomRegion.Count < roomThresholdSize) // If our tile count for the rooms is < than our threeshold, then remove athe floor?
+            {
+                foreach (Coord tile in roomRegion)
+                {
+                    map[tile.tileX, tile.tileY] = 1; // setting it to null floor, and then adding a walled space
+                    wallMap.SetTile(new Vector3Int((int)tile.tileX, (int)tile.tileY, 0), null);
+                    //wallMap.SetTile(new Vector3Int((int)tile.tileX, (int)tile.tileY, 0), wallTile);
+                    //wallMap.SetColor(new Vector3Int((int)tile.tileX, (int)tile.tileY, 0), Color.red);
+                    floorMap.SetTile(new Vector3Int((int)tile.tileX, (int)tile.tileY, 0), floorTile);
+                    floorMap.SetColor(new Vector3Int((int)tile.tileX, (int)tile.tileY, 0), Color.red);
+
+                }
+            }
+            else
+            {
+                survivingRooms.Add(new Room(roomRegion, map));
+            }
+        }
+        Debug.Log("How many roomRegions?" + roomRegions.Count.ToString()); // Doesn't even trigger. Code does not reach.
+
+        ConnectClosestRooms(survivingRooms); // At the end of the process we'll pass our list of surviving rooms to connect them to eachother
+    }
+
+    // Method that given a certain tile type can return all of the regions of tha type, a list of regions instead of coordinates. A list of a list of coordinates
+    List<List<Coord>> GetRegions(int tileType)
+    {
+
+        // TODO this seems to fail and is teturning the initial list.
+        List<List<Coord>> regions = new List<List<Coord>>();
+        int[,] mapFlags = new int[mapWidthX, mapHeightY]; // which regions we've already look at
+
+        // Then we want to look into all the adjacent tiles:
+        for (int x = 0; x < mapWidthX; x++)
+        {
+            for (int y = 0; y < mapHeightY; y++)
+            {
+                // We go through all map and check if these flags are equal to 0 (Not checked) && tile at x and y is the right type (0, floor, 1 wall)
+                if (mapFlags[x, y] == 0 && map[x, y] == tileType)
+                {
+                    // then we want to create a new list of coordinates:
+                    List<Coord> newRegion = GetRegionTiles(x, y);// We'll create a new list of coordinates via GetRegionTiles() and passing x and y as starting values
+                    regions.Add(newRegion);
+
+                    // mark all tiles of the new region as "looked at"
+                    foreach (Coord tile in newRegion)
+                    {
+                        mapFlags[tile.tileX, tile.tileY] = 1; // 1= looked at
+                    }
+                }
+            }
+        }
+
+        Debug.Log("regions" + regions.Count.ToString());
+        return regions; // return a list of regions // TODO: Problem, regions return 900+when should be 2 or 3.
+    }
+
+    // This gets if the tiles are set to 0: floor or 1: wall
+    List<Coord> GetRegionTiles(int startX, int startY)
+    {
+
+        List<Coord> tiles = new List<Coord>(); // To store tiles, either stores the floors or the walls.
+        int[,] mapFlags = new int[mapWidthX, mapHeightY]; // System.Int32[106,30] which tiles we've already look at, 1 vs 0 
+        ////TODO this seems to be broken here: in tileType
+        int tileType = map[startX, startY]; // 0 // Which type of Tile are we looking for
+
+        Queue<Coord> _queue = new Queue<Coord>(); // create a new queue of coordinates
+        _queue.Enqueue(new Coord(startX, startY)); // enqueue our first coordinate
+
+        mapFlags[startX, startY] = 1; // Set this to one to mark that we have already looked at this tile (set to 1)
+        // Last element [105,29] so this was enqueued correctly
+
+        while (_queue.Count > 0) // While there's still stuff in the queue...
+        {
+
+            //    //Debug.Log("Queue: " + _queue.Count.ToString());
+
+            Coord tile = _queue.Dequeue(); // returns the first item in the queue, AND removed the item from the queue
+            tiles.Add(tile); // We add this tile to our list
+                             //    Debug.Log("added" + tile.ToString());
+
+
+            // Then we want to look into all the adjacent tiles:
+            for (int x = tile.tileX - 1; x < tile.tileX + 1; x++)
+            {
+                for (int y = tile.tileY - 1; y < tile.tileY + 1; y++)
+                {
+                    //            // Check if tile is in range and NOT diagonal
+                    if (H_IsInMapRange(x, y) && (y == tile.tileY || x == tile.tileX))
+                    {
+                        //                // We make sure we haven't checked this vector yet && we want to make sure is the right tile of tile
+                        if (mapFlags[x, y] == 0 && map[x, y] == tileType)
+                        {
+                            mapFlags[x, y] = 1; // We set the tile as checked
+                            _queue.Enqueue(new Coord(x, y)); // And finally we add the new coordinate to the queue to be checked in the next iteration
+
+                            //                    // Testing visible:
+                            //                    map.SetTile(new Vector3Int(x, y, 0), floorTile);
+                            //                    map.SetColor(new Vector3Int(x, y, 0), Color.red);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return tiles;
+        //Count = 3180 seems to sum both walls and floors
+        //Count = 714 with the floortile = 1 check which is more similar to 932 via floorlist check
+    }
+
+    void ConnectClosestRooms(List<Room> allRooms)
+    {
+        int bestDistance = 0;
+        Coord bestTileA = new Coord(); // We'll store here which tiles resulted as "best distance"
+        Coord bestTileB = new Coord(); // We'll store here which tiles resulted as "best distance"
+        Room bestRoomA = new Room(); // We'll want to know from which room the best tiles come from. This is why we make the second empty constructor for room
+        Room bestRoomB = new Room();
+        bool possibleConnectionFound = false;
+
+        // we'll go through all rooms and compare them to every other room to find the closest one
+        foreach (Room roomA in allRooms)
+        {
+            possibleConnectionFound = false; // Once best connection is found, its going to move on to the next room, so we want to reset this.
+
+            foreach (Room roomB in allRooms)
+            {
+                // case1: At some point roomA = roomB and we don't want to try to find a connecting to the same room, we'll skip ahead to the next
+                if (roomA == roomB)
+                {
+                    continue;
+                }
+                // case2: roomA is actually connected to roomB, as already has a connection we'll break, skip all of this and go to next room A
+                if (roomA.isConnected(roomB))
+                {
+                    possibleConnectionFound = false; // so it does not create the pagae anyway when exiting the loop and hitting "if (possibleConnectionFound)" check
+                    break;
+                }
+                // Look at the distance between all the edge tiles in both rooms:
+                for (int tileIndexA = 0; tileIndexA < roomA.edgeTiles.Count; tileIndexA++)
+                {
+                    for (int tileIndexB = 0; tileIndexB < roomB.edgeTiles.Count; tileIndexB++)
+                    {
+                        // create a coordinate:
+                        Coord tileA = roomA.edgeTiles[tileIndexA];
+                        Coord tileB = roomB.edgeTiles[tileIndexB];
+                        int distanceBetweenRooms = (int)Mathf.Pow(tileA.tileX - tileB.tileX, 2) + (int)Mathf.Pow(tileA.tileY - tileB.tileY, 2);
+
+                        if (distanceBetweenRooms < bestDistance || !possibleConnectionFound)
+                        {
+                            bestDistance = distanceBetweenRooms;
+                            possibleConnectionFound = true;
+                            bestTileA = tileA;
+                            bestTileB = tileB;
+                            bestRoomA = roomA;
+                            bestRoomB = roomB;
+                        }
+                    }
+                }
+            }
+
+            // Once we finish the foreach() and found out our connection between A and B
+            if (possibleConnectionFound)
+            {
+                CreatePassage(bestRoomA, bestRoomB, bestTileA, bestTileB);
+            }
+        }
+    }
+
+    void CreatePassage(Room roomA, Room roomB, Coord tileA, Coord tileB) {
+
+        // We tell them that they're now connected to eachother
+        Room.ConnectRooms(roomA,roomB);
+        Debug.DrawLine(CoordToWorldPoint(tileA), CoordToWorldPoint(tileB), Color.green, 100);
+    }
+
+    // A helper method that transforms a coordinate in an actual world position
+    Vector3 CoordToWorldPoint(Coord tile) {
+
+        return new Vector3(-mapWidthX/ 2 + 0.5f + tile.tileX, 2, -mapHeightY / 2 + 0.5f + tile.tileY);
+    }
+
+    //void GetRegions() {
+
+    //    Debug.Log("Getting regions ... ");
+
+    //    // At this point we already can calculate listOfRegion1FloorTiles, so listOfRegion2FloorTiles could be the rest of tiles
+
+    //    foreach (var item in listOfFloorTiles)
+    //    {
+    //        if (!listOfRegion1FloorTiles.Contains(item))
+    //        {
+    //            listOfRegion2FloorTiles.Add(item);
+    //        }
+    //    }
+
+
+    //    // Get all floor tiles that don't have wall neighbor?
+    //    //1) GET ALL FLOOR TILES
+    //    //2) SET THEM TO GROUP 0
+    //    //3) GO OVER THE GRID TILE, EVERYTIME A GROUP 0 IS MET, MARK IT AS NEXT REGION (1,2,...)
+    //    //4)
+
+    //    // TESTING QUEUES:
+    //    //Queue<Vector2> _queue = new Queue<Vector2>();
+
+    //    //_queue.Enqueue(new Vector2(0, 0)); // adds element to the END of the queue
+    //    //_queue.Enqueue(new Vector2(1, 0));
+    //    //_queue.Enqueue(new Vector2(2, 0));
+    //    //_queue.Enqueue(new Vector2(3, 0));
+
+    //    //foreach (var item in _queue)
+    //    //{
+    //    //    Debug.Log(item.ToString());
+    //    //}
+
+    //    //_queue.Dequeue(); // removes oldest element from the start of the queue . In this case (0,0)
+
+    //    //foreach (var item in _queue)
+    //    //{
+    //    //    Debug.Log(item.ToString());
+    //    //}
+
+
+    //}
+
+
+    void GetBorderVolumes() {
+
+        foreach (var item in listOfFloorTiles) {
+
+            Vector2 neighborUp = new Vector2(item.x, item.y + 1);
+            Vector2 neighbordown = new Vector2(item.x, item.y - 1);
+            Vector2 neighborLeft = new Vector2(item.x - 1, item.y);
+            Vector2 neighborRight = new Vector2(item.x + 1, item.y);
+
+            if (!listOfFloorTiles.Contains(neighborUp)) //|| listOfFloorTiles.Contains(neighbordown) || listOfFloorTiles.Contains(neighborLeft) || listOfFloorTiles.Contains(neighborRight))
+            {
+                floorMap.SetColor(new Vector3Int((int)item.x, (int)item.y, 0), Color.magenta);
+
+            }
+            if (!listOfFloorTiles.Contains(neighbordown))
+            {
+                floorMap.SetColor(new Vector3Int((int)item.x, (int)item.y, 0), Color.magenta);
+
+            }
+            if (!listOfFloorTiles.Contains(neighborLeft))
+            {
+                floorMap.SetColor(new Vector3Int((int)item.x, (int)item.y, 0), Color.magenta);
+
+            }
+            if (!listOfFloorTiles.Contains(neighborRight))
+            {
+                floorMap.SetColor(new Vector3Int((int)item.x, (int)item.y, 0), Color.magenta);
+
+            }
+        }
+    }
+
+    //  Checks for borders in the level and paint them red graphically.
+    void GetBorderNeighbors() {
+
+
+        //1- Use listOfFloorTiles
+        // TODO : Using SetcColor works without set tile, most likely this gets broken from this somwhere along the line of generating the level
+        foreach (var item in listOfFloorTiles)
+        {
+            Vector2 neighborUp = new Vector2(item.x, item.y+1);
+            Vector2 neighbordown = new Vector2(item.x, item.y - 1);
+            Vector2 neighborLeft = new Vector2(item.x-1, item.y);
+            Vector2 neighborRight = new Vector2(item.x + 1, item.y);
+
+            // If the up neighbor is in the list as well, means is a floor, do nothing
+            if (!listOfFloorTiles.Contains(neighborUp)) //|| listOfFloorTiles.Contains(neighbordown) || listOfFloorTiles.Contains(neighborLeft) || listOfFloorTiles.Contains(neighborRight))
+            {
+                wallMap.SetColor(new Vector3Int((int)neighborUp.x, (int)neighborUp.y, 0), Color.red);
+                borders.Add(new Vector2(neighborUp.x, neighborUp.y));
+                //continue; //skips to the next part, breaking the loop will get us entirely out
+
+            }
+            if (!listOfFloorTiles.Contains(neighbordown)) //|| listOfFloorTiles.Contains(neighbordown) || listOfFloorTiles.Contains(neighborLeft) || listOfFloorTiles.Contains(neighborRight))
+            {
+                wallMap.SetColor(new Vector3Int((int)neighbordown.x, (int)neighbordown.y, 0), Color.red);
+                borders.Add(new Vector2(neighbordown.x, neighbordown.y));
+                //continue; //skips to the next part, breaking the loop will get us entirely out
+
+            }
+            if (!listOfFloorTiles.Contains(neighborLeft)) //|| listOfFloorTiles.Contains(neighbordown) || listOfFloorTiles.Contains(neighborLeft) || listOfFloorTiles.Contains(neighborRight))
+            {
+                wallMap.SetColor(new Vector3Int((int)neighborLeft.x, (int)neighborLeft.y, 0), Color.red);
+                borders.Add(new Vector2(neighborLeft.x, neighborLeft.y));
+                //continue; //skips to the next part, breaking the loop will get us entirely out
+
+            }
+            if (!listOfFloorTiles.Contains(neighborRight)) //|| listOfFloorTiles.Contains(neighbordown) || listOfFloorTiles.Contains(neighborLeft) || listOfFloorTiles.Contains(neighborRight))
+            {
+                wallMap.SetColor(new Vector3Int((int)neighborRight.x, (int)neighborRight.y, 0), Color.red);
+                borders.Add(new Vector2(neighborLeft.x, neighborLeft.y));
+                //continue; //skips to the next part, breaking the loop will get us entirely out
+
+            }
+      
+
+
+        }
+
+    }
+
+    bool H_IsInMapRange(int x, int y) {
+
+        return x >= 0 && x < mapWidthX && y >= 0 && y < mapHeightY;
+    }
+
+    Tilemap FloodRegions(Tilemap tilemap) {
+
+        //Tilemap tilemap = new Tilemap();
+
+        //region1.FloodFill(new Vector3Int(1, 1, 0), wallTile);
+        //tilemap.FloodFill(new Vector3Int(1, 1, 0), wallTile);
+        tilemap.FloodFill(new Vector3Int(3, 27, 0), wallTile);
+
+        return tilemap;
+        //FloodRegion _region1 = new FloodRegion();
+        //Queue<Vector2> _queue = new Queue<Vector2>();
+
+        // _region1.floodRegion = // list of v2
+        //foreach (var item in listOfFloorTiles)
+        //{
+        //    if (floorMap.GetTile(new Vector3Int((int)item.x, (int)item.y, 0)) == floorTile)
+        //    {
+
+        //    }
+        //}
+
+        //for (int x = 0; x < mapWidthX; x++)
+        //{
+        //    for (int y = 0; y < mapHeightY; y++)
+        //    {
+        //            if (floorMap.GetTile(new Vector3Int(x, y, 0)) == floorTile)
+        //            {
+
+        //            }
+        //    }
+        //}
+    }
+
+    void FloodingTilesWIP() { 
+    
+        List<Vector2> _region1 = new List<Vector2>();
+
+        Vector2 _initialTile = new Vector2(1,1);
+        Queue<Vector2> _queue = new Queue<Vector2>(); // create a new queue of coordinates
+
+        _queue.Enqueue(_initialTile); // enqueue our first coordinate
+
+        for (int x = 0; x < mapWidthX; x++)
+        {
+            for (int y = 0; y < mapHeightY; y++)
+            {
+                Vector2 _s = new Vector2(x + x, y + y); // check tiles around
+
+                if (listOfFloorTiles.Contains(_s))
+                {
+                    Vector2 _ok = new Vector2(x, y);
+                    Debug.Log("valid floor tiles: " + _s.ToString());
+                    _region1.Add(new Vector2(x,y)); // add current tile
+                    Debug.Log("adding _ok floor tiles: " + _ok.ToString());
+
+                } else {
+                    Debug.Log("skipping tile: " + _s.ToString());
+                    continue;
+                }
+            }
+        }
+        //if (listOfFloorTiles.Contains(new Vector2(oneone.x, oneone.y-1)))
+        //{
+        //    Debug.Log("yes: y-1");
+        //}
+        //else
+        //{
+        //    Debug.Log("nope: y-1");
+        //}
+        //if (listOfFloorTiles.Contains(new Vector2(oneone.x+1, oneone.y)))
+        //{
+        //    Debug.Log("yes: x+1");
+        //}
+        //else
+        //{
+        //    Debug.Log("nope: x+1");
+        //}
+
+        // Add all x= 0 y = 1 vectors to _listOfFloodedFloors
+        //for (int x = 0; x < mapWidthX; x++)
+        //{
+        //    _listOfFirstLine.Add(new Vector2(x, 1));
+        //}
+
+        //// for each item in _listOfFloodedFloors , is the same coincides with listOfFloorTiles then == floor
+        //foreach (var item in _listOfFirstLine)
+        //{
+        //    if (listOfFloorTiles.Contains(item))
+        //    {
+        //        _region1.Add(item);
+        //    } else {
+        //        break; // stop when a wall is found
+        //    }
+        //}
+
+        Debug.Log("region 1 contains: " + _region1.Count.ToString()); // 21 --> 14 when added the break; statement, so only gets the first region.
+        // TODO: Improve to check the tiles around.
+
+
+
+    }
+
+    void ProcGenBorderFixtures() {
+
+        Debug.Log("border tiles: " + borders.Count.ToString());
+    }
+
+    /// <summary>
+    ///  Creates a map of 0's and 1's for map[,]
+    /// </summary>
+    void SetIntegerMap() {
+
+        map = new int[mapWidthX, mapHeightY];
+        //Debug.Log(map.Length); //System.Int32[106,30]
+
+        int _floors = 0;
+        int _walls = 0;
+
+
+        for (int x = 0; x < mapWidthX; x++)
+        {
+            for (int y = 0; y < mapHeightY; y++)
+            {
+                Vector2 _v = new Vector2(x,y);
+
+                if (listOfFloorTiles.Contains(_v))
+                {
+                    map[x,y] = 1;
+                    _floors++;
+                }
+                else
+                {
+                    map[x, y] = 0;
+                    _walls++;
+
+                }
+            }
+        }
+
+        Debug.Log("Check FLOOR validation: " + listOfFloorTiles.Count.ToString() + "floor tiles && " + _floors.ToString());
+        Debug.Log("Check WALLS validation: " + listOfWallTiles.Count.ToString() + "wall tiles && " + _walls.ToString());
+    }
+
+    class Room {
+
+        public List<Coord> tiles;
+        public List<Coord> edgeTiles; // I have this already on a different func that I used before
+        public List<Room> connectedRooms;
+        public int roomSize; // how many tiles there are in the room
+
+        // We create a second constructor (?) that takes no parameters in case we want to setup the room to empty room
+        public Room() { 
+        
+        }
+        // !! Adding this second constructor doesn't allow me to use the other one when creating a new room.
+
+        // constructor, will take a list of coords and a 2d integer array that makes up the map so we can detect which tiles are edges
+        public Room(List<Coord> roomTiles, int[,] map) {
+
+            tiles = roomTiles;
+            roomSize = tiles.Count;
+            connectedRooms = new List<Room>();
+
+            edgeTiles = new List<Coord>();
+            foreach (Coord tile in tiles)
+            {
+                // we want to check to all the neighbors, if any is a wall tile, then is an edge
+                for (int x = tile.tileX -1; x < tile.tileX+1; x++)
+                {
+                    for (int y = tile.tileY - 1; y < tile.tileY + 1; y++)
+                    {
+                        if (x == tile.tileX || y == tile.tileY) // we're excluding the diagonal neighbors, we're just looking at the cross ones
+                        {
+                            if (map[x,y] == 1) // if is a wall tile
+                            {
+                                edgeTiles.Add(tile); // add the current tile to the list of edges
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+        public static void ConnectRooms(Room roomA, Room roomB) {
+
+            roomA.connectedRooms.Add(roomB);
+            roomB.connectedRooms.Add(roomA);
+        }
+
+        // will return wether or not connected rooms contain the other room
+        public bool isConnected(Room otherRoom) {
+
+            return connectedRooms.Contains(otherRoom); 
+        }
+    }
+
+
 }

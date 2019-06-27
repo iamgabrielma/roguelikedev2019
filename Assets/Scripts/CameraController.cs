@@ -27,6 +27,7 @@ public class CameraController : MonoBehaviour
         {
             target = GameObject.FindWithTag("Player").transform; // Find the Player
             gameObject.transform.SetParent(target); // Assign the camera game object as a child of the Player Transform
+            gameObject.transform.localPosition = new Vector3(0,0,-1); // Reset its position to 0,0,-1 from the parent game object
             isPlayerFound = true; // Switch the bool so this is not triggered again
         }
     }

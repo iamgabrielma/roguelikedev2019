@@ -27,12 +27,15 @@ public class Engine : MonoBehaviour
     List<Entity> listOfEntities = new List<Entity>(); // To keep track of created Entities
     List<GameObject> listOfGameObjects = new List<GameObject>(); // To keep track of created GameObjects
 
+    bool isPlayerPlaced;
+
 
     public static SchedulingSystem SchedulingSystem { get; private set; }
 
     public void Start()
     {
 
+        isPlayerPlaced = false;
         // TODO: Add it from the GameMap class.
         _floorHolder = new GameObject("floorHolder").transform; // Will hold all our floor tiles, so the Inspector is not cluttered with GameObjects
         _wallHolder = new GameObject("wallHolder").transform; // Will hold all our wall tiles, so the Inspector is not cluttered with GameObjects
@@ -41,6 +44,22 @@ public class Engine : MonoBehaviour
         SchedulingSystem = new SchedulingSystem();
         Debug.Log("Schedulungsystem is created"); // this seems to be the first, so shouldn't be problems
 
+        // Places player in a valid floorTile
+        GameObject _test_player = Resources.Load<GameObject>("Prefabs/Player");
+        int playerX = 106/2;
+        int playerY = 30/2; // If we spawn the player in the center, waklkers always have opened the place up:
+
+        Entity playerInstance = new Entity(playerX, playerY, "Player", _test_player, new Vector3(playerX, playerY, 0)); // Place player in a fixed place (temporary)
+        //int _randomIndex = Random.Range(1, GridGenerator.listOfFloorTiles.Count);
+        //Vector2 _randomVector = GridGenerator.listOfFloorTiles[_randomIndex];
+        //Entity playerInstance = new Entity((int)_randomVector.x, (int)_randomVector.y, "Player", _test_player, new Vector3(_randomVector.x, _randomVector.y, 0));
+
+        //SchedulingSystem.Add(playerInstance); // Now I can pass an Entity as a parameter because the Entity implements IScheduleable
+        // Console message: Null added to the schedule. we'll see :D 
+        //Debug.Log("player instance is added");
+        __player = Instantiate(playerInstance.entityGameObject, playerInstance.entityLocation, Quaternion.identity);
+        __player.name = __player.tag;
+        listOfGameObjects.Add(__player);
 
         // TODO: Move this into a separate h_helper function
         //Stopwatch stopwatch = new Stopwatch();
@@ -50,34 +69,34 @@ public class Engine : MonoBehaviour
         //TimeSpan ts = stopwatch.Elapsed;
         //int _ms = ts.Milliseconds; // Calculated 14ms for a 20x20 via GameMap.cs . 14ms as well for 20x20 instantiating Prefabs. 165ms for 80x80
 
-        //FloorSetup(map_width,map_height); // -> Testing via GameMap.cs
-        //WallsSetup(mapX_width, mapY_height);
 
-        // Coordinates where we'll instantiate the player.
-        // TODO: Make Sure the Player Starts on a Floor Cell
-        //int player_x = 1;
-        //int player_y = 1;
 
-        // Moved the Player to be an instance of Entity.
-        GameObject _test_player = Resources.Load<GameObject>("Prefabs/Player");
-        Entity playerInstance = new Entity(1, 1, "Player", _test_player, new Vector3(1, 1, 0)); // Place player in a fixed place (temporary)
-
-        SchedulingSystem.Add(playerInstance); // Now I can pass an Entity as a parameter because the Entity implements IScheduleable
-        // Console message: Null added to the schedule. we'll see :D 
-        Debug.Log("player instance is added");
-        __player = Instantiate(playerInstance.entityGameObject, playerInstance.entityLocation, Quaternion.identity);
-        __player.name = __player.tag;
-        listOfGameObjects.Add(__player);
 
     }
 
     // WIP: Adding gamestate changes here for the moment.
     private void Update()
     {
-
+        //if (__player != null && isPlayerPlaced == false && GridGenerator.__isMapReady == true)
+        //{
+        //    PlacePlayer();
+        //}
+        //else
+        //{
+        //    return;
+        //}
 
         // If player turn, we can move and do actions
         // If enemy turn, we’re looping through each of the entities (excluding the player) and allowing them to take a turn. 
+    }
+
+    private void PlacePlayer() {
+        // Moved the Player to be an instance of Entity.
+        int _randomIndex = Random.Range(1, GridGenerator.listOfFloorTiles.Count);
+        Vector2 _randomVector = GridGenerator.listOfFloorTiles[_randomIndex];
+        __player.gameObject.transform.localPosition = new Vector3((int)_randomVector.x, (int)_randomVector.y, 0);
+        isPlayerPlaced = true;
+
     }
 
     public void FloorSetup(int width, int height)

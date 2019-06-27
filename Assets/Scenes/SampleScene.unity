@@ -3113,7 +3113,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1452537873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3380,7 +3380,7 @@ MonoBehaviour:
   _testing_map: {fileID: 1630649868}
   _testing_closestFovMap: {fileID: 687331346}
   seed: 2
-  useRandomSeed: 0
+  useRandomSeed: 1
   listOfEnemyEntities: []
 --- !u!156049354 &1743562588
 Grid:

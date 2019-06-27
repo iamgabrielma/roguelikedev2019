@@ -20,7 +20,11 @@ public class EnemyAI : MonoBehaviour
         //enemyReference = transform.parent.gameObject;
         //enemyTransform = enemyReference.transform;
         // TODO nullcheck
-        enemy = transform.parent.gameObject; // initial transform value
+        if (enemy != null)
+        {
+            enemy = transform.parent.gameObject; // initial transform value
+        }
+
     }
 
     // Update is called once per frame

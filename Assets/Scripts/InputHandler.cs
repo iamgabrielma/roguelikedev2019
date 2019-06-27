@@ -29,6 +29,11 @@ public class InputHandler : MonoBehaviour
     {
         // TODO: add nullcheck. We assign player to the static __player instance, shouldn't be null but check for safety.
         player = Engine.__player;
+        if (player = null)
+        {
+            player = GameObject.FindWithTag("Player");
+        }
+        player = Engine.__player;
         isFOVrecompute = true; // When the player appears for first time, we need to calculate the initial FOV
     }
 
