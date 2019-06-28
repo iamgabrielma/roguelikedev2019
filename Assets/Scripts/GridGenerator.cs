@@ -11,7 +11,7 @@ using UnityEditor;
 
 public class GridGenerator : MonoBehaviour
 {
-    public static bool __isMapReady;
+    public static bool __isMapReady; // Once this is ready , I should move the map into int[,] map
     int[,] map; // Creating this for the flood generation. We'll have to store our map here with 0's and 1's
 
     // FOV variables
@@ -102,6 +102,7 @@ public class GridGenerator : MonoBehaviour
         // 
         ProcGenAdditionalWalkers();
         ProcGenWallFixtures(mapWidthX, mapHeightY);
+        __isMapReady = true; // Use this for enemyAI, Once this is ready , I should move the map into int[,] map
 
         PlaceEntities();
 
@@ -584,7 +585,7 @@ public class GridGenerator : MonoBehaviour
             //Debug.Log("number of walkers: "+ listOfWalkers.Count.ToString());
         }
 
-        __isMapReady = true;
+        //__isMapReady = true;
     }
 
     Vector2 RandomDirection(Vector2 currentWalkerPosition) {

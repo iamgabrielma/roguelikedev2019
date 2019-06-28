@@ -119,6 +119,7 @@ public class InputHandler : MonoBehaviour
 
     }
 
+    // TODO: Move this to PlayerBrain.cs
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // This checks if the player has touched a wall or enemy, if does, "teleports" the player to its last position, as cannon be crossed. This is done this way because physics and the rigidbody moves the player to a float position after colliding, breaking the logic afterwards as movement relies on integer vectors

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic; // Lists
 
 // inherits from Monobehavior so we can use Destroy()
 // inherits from ISchedulable so can be added to our scheduling system
@@ -12,14 +13,16 @@ public class Entity : MonoBehaviour , IScheduleable
     public bool isBlockingEntity; // This will differentiate if is a physic body or we can pass through (potion), without need to check colliders or is trigger.
     public int health;
     public int speed;
+    //public int attackPower; // Move these to other subclasses.
+    //public int defensePower;
 
     // If sentient ... possibly needs a new class inherits from this one Sentient : Entity , and we add Move() there.
-    //enum EntityMode
-    //{
-    //    Wander,
-    //    Hunt,
-    //    Sleep
-    //}
+    public enum EntityMode
+    {
+        Wander,
+        Hunt,
+        Sleep
+    }
 
     // If sentient
     //enum EntityStatus
@@ -42,6 +45,8 @@ public class Entity : MonoBehaviour , IScheduleable
         entityLocation = reallocateEntity(aX, aY);
         health = 3;
         speed = 1;
+        //attackPower = 1;
+        //attackPower = 2;
 
         // Reallocates the Entities to fit the tiles by offsetting its position +0.5f in X and Y
         Vector3 reallocateEntity(int ax, int ay)
@@ -109,10 +114,8 @@ public class Entity : MonoBehaviour , IScheduleable
     public static void ResolveDefense(GameObject attacker, GameObject defender)
     {
 
-        //defender.health
-        //int _defenderHealthHit = 
-
         // resolve properly . Attack vs Defense, if success then hit, otherwise nope.
+
         defender.gameObject.GetComponent<EnemyAI>().health--;
         //_defenderHealth = _defenderHealth - 1;
         Debug.Log("_defenderHealth" + defender.gameObject.GetComponent<EnemyAI>().health.ToString());
@@ -129,16 +132,118 @@ public class Entity : MonoBehaviour , IScheduleable
         }
     }
 
-    public static void TestMove(GameObject entityThatMoves, float dx, float dy)
+    public static void TestMove(GameObject entityThatMoves, EntityMode _entityMode, float dx, float dy)
+    {
+        // TODO: refactor
+        // dx and dy can be speed, in this case they move 1
+        float _dx = entityThatMoves.gameObject.GetComponent<Transform>().localPosition.x; //+ dx;
+        float _dy = entityThatMoves.gameObject.GetComponent<Transform>().localPosition.y; //+ dy;
+
+        // Before passing the parameters, each entity should check around them for valid tiles, if tile is invalid, roll again or wait:
+        List<Vector2> _globalMapTiles = GridGenerator.listOfFloorTiles; // reference to the global map
+        List<Vector2> _tilesAroundEntity = GridGenerator.listOfFloorTiles; // reference to the tiles around entity
+
+        Vector2 _ePos = entityThatMoves.gameObject.GetComponent<Transform>().localPosition;
+        //float _ey = entityThatMoves.gameObject.GetComponent<Transform>().localPosition.y;
+
+        Vector2 neighborUp = new Vector2(_ePos.x, _ePos.y + 1);
+        Vector2 neighbordown = new Vector2(_ePos.x, _ePos.y - 1);
+        Vector2 neighborLeft = new Vector2(_ePos.x - 1, _ePos.y);
+        Vector2 neighborRight = new Vector2(_ePos.x + 1, _ePos.y);
+        _tilesAroundEntity.Add(neighborUp);
+        _tilesAroundEntity.Add(neighbordown);
+        _tilesAroundEntity.Add(neighborLeft);
+        _tilesAroundEntity.Add(neighborRight);
+
+        float _rand = (int)Random.Range(0, 3.99f);
+        //Q: Does this gets a new _rand for each entity?  A: Yes.
+        Debug.Log(entityThatMoves.name + " moves " + _rand); 
+        //Q: Once assigned, they always take the same direction for all moves? A: No. 
+        if (_entityMode == EntityMode.Wander)
+        {
+
+            switch (_rand)
+            {
+                case 0: //up x=0 y++
+                    //_dy += 1.0f;
+                    entityThatMoves.gameObject.GetComponent<Transform>().localPosition = new Vector3(_dx, _dy +1, 0);
+                    break;
+                case 1: //down x=0 y--
+                    //_dy -= 1.0f;
+                    entityThatMoves.gameObject.GetComponent<Transform>().localPosition = new Vector3(_dx, _dy -1, 0);
+                    break;
+                case 2: //left x-- y=0
+                    //_dx -= 1.0f;
+                    entityThatMoves.gameObject.GetComponent<Transform>().localPosition = new Vector3(_dx -1, _dy, 0);
+                    break;
+                case 3://right x++ y=0
+                    //_dx += 1.0f;
+                    entityThatMoves.gameObject.GetComponent<Transform>().localPosition = new Vector3(_dx +1, _dy, 0);
+                    break;
+            }
+        }
+
+        // If the new Vector3(_dx, _dy, 0); is valid, move, if is not, do nothing
+        //foreach (var _coordinate in _tilesAroundEntity)
+        //{
+        //    // These 4 directions can be either floor or wall. If the global FLOOR tiles contains the coordinate, this is valid, can walk
+        //    if (_globalMapTiles.Contains(_coordinate))
+        //    {
+        //        // valid, we use this direction and get out of the loop
+        //        float _x = _coordinate.x + _dx;
+        //        float _y = _coordinate.y + _dy;
+        //        entityThatMoves.gameObject.GetComponent<Transform>().localPosition = new Vector3(_x,_y, 0);
+        //        break;
+        //    }
+
+        //}
+        //entityThatMoves.gameObject.GetComponent<Transform>().localPosition = new Vector3(_dx, _dy, 0);
+
+    }
+
+    void AnalizeMapAroundEntity()
     {
 
-        Debug.Log("TESTMOVE() called: " + dx + dy);
 
-        float _dx = entityThatMoves.gameObject.GetComponent<Transform>().localPosition.x + dx;
-        float _dy = entityThatMoves.gameObject.GetComponent<Transform>().localPosition.y + dy;
+        //1- Use listOfFloorTiles
+        // TODO : Using SetcColor works without set tile, most likely this gets broken from this somwhere along the line of generating the level
+        //foreach (var item in listOfFloorTiles)
+        //{
+        //    Vector2 neighborUp = new Vector2(item.x, item.y + 1);
+        //    Vector2 neighbordown = new Vector2(item.x, item.y - 1);
+        //    Vector2 neighborLeft = new Vector2(item.x - 1, item.y);
+        //    Vector2 neighborRight = new Vector2(item.x + 1, item.y);
 
-        // New direction:
-        entityThatMoves.gameObject.GetComponent<Transform>().localPosition = new Vector3(_dx, _dy, 0);
+        //    // If the up neighbor is in the list as well, means is a floor, do nothing
+        //    if (!listOfFloorTiles.Contains(neighborUp)) //|| listOfFloorTiles.Contains(neighbordown) || listOfFloorTiles.Contains(neighborLeft) || listOfFloorTiles.Contains(neighborRight))
+        //    {
+        //        wallMap.SetColor(new Vector3Int((int)neighborUp.x, (int)neighborUp.y, 0), Color.red);
+        //        borders.Add(new Vector2(neighborUp.x, neighborUp.y));
+        //        //continue; //skips to the next part, breaking the loop will get us entirely out
+
+        //    }
+        //    if (!listOfFloorTiles.Contains(neighbordown)) //|| listOfFloorTiles.Contains(neighbordown) || listOfFloorTiles.Contains(neighborLeft) || listOfFloorTiles.Contains(neighborRight))
+        //    {
+        //        wallMap.SetColor(new Vector3Int((int)neighbordown.x, (int)neighbordown.y, 0), Color.red);
+        //        borders.Add(new Vector2(neighbordown.x, neighbordown.y));
+        //        //continue; //skips to the next part, breaking the loop will get us entirely out
+
+        //    }
+        //    if (!listOfFloorTiles.Contains(neighborLeft)) //|| listOfFloorTiles.Contains(neighbordown) || listOfFloorTiles.Contains(neighborLeft) || listOfFloorTiles.Contains(neighborRight))
+        //    {
+        //        wallMap.SetColor(new Vector3Int((int)neighborLeft.x, (int)neighborLeft.y, 0), Color.red);
+        //        borders.Add(new Vector2(neighborLeft.x, neighborLeft.y));
+        //        //continue; //skips to the next part, breaking the loop will get us entirely out
+
+        //    }
+        //    if (!listOfFloorTiles.Contains(neighborRight)) //|| listOfFloorTiles.Contains(neighbordown) || listOfFloorTiles.Contains(neighborLeft) || listOfFloorTiles.Contains(neighborRight))
+        //    {
+        //        wallMap.SetColor(new Vector3Int((int)neighborRight.x, (int)neighborRight.y, 0), Color.red);
+        //        borders.Add(new Vector2(neighborLeft.x, neighborLeft.y));
+        //        //continue; //skips to the next part, breaking the loop will get us entirely out
+
+        //    }
+        //}
 
     }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : MonoBehaviour, IFight // IFight implementation temporary until final decision.
 {
     public bool enemyCanMove;
     public GameObject enemy; //Self refence
@@ -10,6 +10,8 @@ public class EnemyAI : MonoBehaviour
 
     public int health;
     private bool isEnemyTimeToDoOneAction;
+
+    private Vector3 _lastKnownEnemyPosition;
 
     void Start()
     {
@@ -33,6 +35,8 @@ public class EnemyAI : MonoBehaviour
         // TODO: Check for __gameticks instead and compare with inner clock. Variable _bornInTimestamp = __gametick to compare this and the difference for actions.
         if (GameStateManager.__gameState == GameStateManager.GameState.enemyTurn && isEnemyTimeToDoOneAction == false)
         {
+            _lastKnownEnemyPosition = enemy.transform.localPosition;
+
             // TODO nullcheck
             isEnemyTimeToDoOneAction = true; // We switch this to true so stops after just this one
             GameObject newenemypost = this.gameObject;
@@ -47,11 +51,31 @@ public class EnemyAI : MonoBehaviour
 
         // TODO: Check for valid walls/floors around before performing a movement. Before fixing this I'll fix the map interconnected rooms as I have to get valid tiles from there already.
         // TODO: Will also need the above to implement A*
-        Entity.TestMove(_newenemypost, 1.0f, 0.0f);
+        Entity.TestMove(_newenemypost, Entity.EntityMode.Wander, 1.0f, 0.0f);
 
         isEnemyTimeToDoOneAction = false; // We switch this to false so they can move again once is their turn
 
 
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        // This checks if the player has touched a wall or enemy, if does, "teleports" the player to its last position, as cannon be crossed. This is done this way because physics and the rigidbody moves the player to a float position after colliding, breaking the logic afterwards as movement relies on integer vectors
+        // Elements must be "isTrigger" and "Static collider" at the moment for this to work, if changes, still breaks the player position.
+        if (collision.tag == "Wall" || collision.tag == "Enemy")
+        {
+            enemy.transform.position = new Vector3(_lastKnownEnemyPosition.x, _lastKnownEnemyPosition.y, 0);
+        }
+
+        // TODO: Bump attack when the player hits the enemy by hittings its tile
+        //if (collision.tag == "Enemy")
+        //{
+        //    //Entity _enemy = new Entity((int)collision.transform.localPosition.x, (int)collision.transform.localPosition.y, "Enemy", _test_npc, new Vector3(_randomVector.x, _randomVector.y, 0)); ;
+        //    Debug.Log("Bump attack: resolving defense!");
+        //    Entity.ResolveDefense(player, collision.gameObject);
+        //    Entity.ResolveDeath(collision.gameObject);
+
+        //}
     }
 
     //public void _temp_MoveEnemy(int _rand_direction)
