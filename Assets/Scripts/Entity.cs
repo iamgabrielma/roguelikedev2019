@@ -3,7 +3,7 @@ using System.Collections.Generic; // Lists
 
 // inherits from Monobehavior so we can use Destroy()
 // inherits from ISchedulable so can be added to our scheduling system
-public class Entity : MonoBehaviour , IScheduleable
+public class Entity : MonoBehaviour //, IScheduleable
 {
     public int x;
     public int y;
@@ -11,20 +11,20 @@ public class Entity : MonoBehaviour , IScheduleable
     public GameObject entityGameObject;
     public Vector3 entityLocation;
     public bool isBlockingEntity; // This will differentiate if is a physic body or we can pass through (potion), without need to check colliders or is trigger.
-    public int health;
-    public int speed;
-    //public int attackPower; // Move these to other subclasses.
-    //public int defensePower;
+    //public int health;
+
 
     // If sentient ... possibly needs a new class inherits from this one Sentient : Entity , and we add Move() there.
     public enum EntityMode
     {
         Wander, // Done
-        Hunt, // TODO
+        Hunt, // TODO // A*
         Sleep, // TODO Change to start the game as Sleep or Wander, wakes up if player is near.
         Alerted, // Done . If player within FOV, enemy changes from wander to alerted .
-        CombatEngaged // TODO: combat started. Once receive or do damage.
+        CombatEngaged // TODO: WIP combat started. Once receive or do damage.
     }
+
+    private Entity _currentStatus;
 
     // If sentient
     //enum EntityStatus
@@ -45,10 +45,8 @@ public class Entity : MonoBehaviour , IScheduleable
         entityName = aName;
         entityGameObject = aEntityGameObject;
         entityLocation = reallocateEntity(aX, aY);
-        health = 3;
-        speed = 1;
-        //attackPower = 1;
-        //attackPower = 2;
+
+        //health = 3; // Base health and speed and then ++ based on subclasses?
 
         // Reallocates the Entities to fit the tiles by offsetting its position +0.5f in X and Y
         Vector3 reallocateEntity(int ax, int ay)
@@ -85,13 +83,13 @@ public class Entity : MonoBehaviour , IScheduleable
     }
 
     // Make sure the Entity class implements IScheduleable so that we can add them to our scheduling system.int Time()
-    public int Time
-    {
-        // Error: Does not implement interface member Ischeduleable.Time , this was because I was using () on Time declaration:
-        // https://stackoverflow.com/questions/15215900/c-sharp-get-accessor-not-recognised
-        // The () part is incorrect , this will declare a method rather than a property.
-        get { return speed; }
-    }
+    //public int Time
+    //{
+    //    // Error: Does not implement interface member Ischeduleable.Time , this was because I was using () on Time declaration:
+    //    // https://stackoverflow.com/questions/15215900/c-sharp-get-accessor-not-recognised
+    //    // The () part is incorrect , this will declare a method rather than a property.
+    //    get { return speed; }
+    //}
 
     void Move(int dx, int dy) { 
 
@@ -116,17 +114,46 @@ public class Entity : MonoBehaviour , IScheduleable
     public static void ResolveDefense(GameObject attacker, GameObject defender)
     {
 
-        // resolve properly . Attack vs Defense, if success then hit, otherwise nope.
 
-        defender.gameObject.GetComponent<EnemyAI>().health--;
+        int _resolved = defender.gameObject.GetComponent<Fighter>().defense - attacker.gameObject.GetComponent<Fighter>().attack;
+        if (_resolved == 0) // Will be because at the moment both are 10
+        {
+            float _rand = (int)Random.Range(0, 100);
+            if (_rand < 50)
+            {
+                Debug.Log("Attack blocked!");
+            }
+            else
+            {
+                Debug.Log("Attack successful!");
+                defender.gameObject.GetComponent<Fighter>().health--;
+            }
+        }
+
+        // Whoever resolves its defense, success or fail, attacking an enemy will put them aggressive back as well in their next turn
+        defender.gameObject.GetComponent<Fighter>().isAgressive = true;
+        ResolveDeath(defender); // Check if somebody is death after a successful attack
+
+        // Resolve defense means as well that the enemy moves from whatever state they are, to EntityMode.CombatEngaged
+        //defender.
+        // resolve properly . Attack vs Defense, if success then hit, otherwise nope.
+        //defender.gameObject.GetComponent<EnemyAI>().isEnemyAttacked = true;
+        //defender.gameObject.GetComponent<EnemyAI>().health--; // TODO this only takes into account emeies, not the player health. 
         //_defenderHealth = _defenderHealth - 1;
-        Debug.Log("_defenderHealth" + defender.gameObject.GetComponent<EnemyAI>().health.ToString());
+        //Debug.Log("_defenderHealth" + defender.gameObject.GetComponent<EnemyAI>().health.ToString());
+
+    }
+
+    public static void ResolveAttack(GameObject attacker, GameObject defender, EntityMode _entityMode) {
+
+        Debug.Log("Entity attacks back!!");
+        ResolveDefense(attacker, defender);
 
     }
 
     public static void ResolveDeath(GameObject defender)
     {
-        if (defender.gameObject.GetComponent<EnemyAI>().health <= 0)
+        if (defender.gameObject.GetComponent<Fighter>().health <= 0) // TODO: Move this health too to different place, not in enemyAI, either full entity or subclasses
         {
             // Note 23.06.19 -> Now inherits from Monobehavior so we can use Destroy()
 

@@ -762,7 +762,7 @@ public class GridGenerator : MonoBehaviour
             //Engine.SchedulingSystem.Add(npcInstance); // We don't instantiate a new schedule, but add the npc's to the global instance declared in Engine.cs
             //Debug.Log("npc instances are added");
             Instantiate(npcInstance.entityGameObject, npcInstance.entityLocation, Quaternion.identity);
-            Engine.SchedulingSystem.Add(npcInstance);
+            //Engine.SchedulingSystem.Add(npcInstance);
             //npcInstance.name = npcInstance.tag;
 
             listOfEnemyEntities.Add(npcInstance); // Add current enemies to a List 
@@ -776,7 +776,7 @@ public class GridGenerator : MonoBehaviour
         //monsterTest.entityName = "the monster";
         Monster monsterTest = new Monster(); //(6, 6, "Monster", _test_npc, new Vector3(6,6,0)); // ERROR Monster does not have a constructor that accept 5 arguments.
         Instantiate(monsterTest.entityGameObject, new Vector3(6.5f, 6.5f, 0), Quaternion.identity); // This monster clone appears on 6,6 as expected, but the game object is still in 0,0 , wut
-        Engine.SchedulingSystem.Add(monsterTest);
+        //Engine.SchedulingSystem.Add(monsterTest);
 
     }
 

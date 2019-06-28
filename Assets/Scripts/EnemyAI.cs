@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyAI : MonoBehaviour, IFight // IFight implementation temporary until final decision.
+public class EnemyAI : MonoBehaviour
 {
     public bool enemyCanMove;
     public GameObject enemy; //Self refence
@@ -14,14 +14,17 @@ public class EnemyAI : MonoBehaviour, IFight // IFight implementation temporary 
 
     private Vector3 _lastKnownEnemyPosition;
 
+    //public bool isEnemyAttacked;
+
+    Entity.EntityMode _currentEntityMode;
+
     void Start()
     {
-        //enemyCanMove = true;
-        //enemyCanMove = false;
+
         health = 3; // TODO: rename EnemyAi to something else
         isEnemyTimeToDoOneAction = false; // by default, enemy is idle.
-        //enemyReference = transform.parent.gameObject;
-        //enemyTransform = enemyReference.transform;
+        _currentEntityMode = Entity.EntityMode.Wander;
+
         // TODO nullcheck
         if (enemy == null)
         {
@@ -47,6 +50,9 @@ public class EnemyAI : MonoBehaviour, IFight // IFight implementation temporary 
             isEnemyTimeToDoOneAction = true; // We switch this to true so stops after just this one
             GameObject newenemypost = this.gameObject;
             //EnemyMoves(newenemypost);
+            // Updates status from Alert or Wander to Agressive:
+
+            /* ## Important: this only happens here, not on Update() ##*/
             CheckCurrentState(newenemypost); // We change EnemyMoves() for CheckCurrentState()
 
 
@@ -54,11 +60,23 @@ public class EnemyAI : MonoBehaviour, IFight // IFight implementation temporary 
 
     }
 
+    // If is enemy turn, check their current state to decide which action will be next:
     void CheckCurrentState(GameObject _newenemypost)
     {
+        // TODO switch statement + functions better organized?
+        // Default mode = wander
+
         // If player is within reach: Entity.Alerted -> IsEntityAlerted()
         bool isEnemyAlerted = IsEntityAlerted();
-        if (isEnemyAlerted)
+        bool isEnemyAttacked = IsEnemyAtacked();
+        //isEnemyAttacked = IsEnemyAtacked();
+
+        if (isEnemyAlerted && isEnemyAttacked)
+        { 
+            // If enemy is attacked, will attack back.
+            Entity.ResolveAttack(_newenemypost, playerReference, Entity.EntityMode.CombatEngaged);
+        }
+        else if (isEnemyAlerted)
         {
             Entity.Alert(_newenemypost, Entity.EntityMode.Alerted);
         }
@@ -78,6 +96,18 @@ public class EnemyAI : MonoBehaviour, IFight // IFight implementation temporary 
 
 
     //}
+    bool IsEnemyAtacked() {
+
+        if (gameObject.GetComponent<Fighter>().isAgressive == true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
 
     bool IsEntityAlerted()
     {
