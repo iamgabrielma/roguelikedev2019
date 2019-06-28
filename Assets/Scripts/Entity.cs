@@ -22,8 +22,8 @@ public class Entity : MonoBehaviour , IScheduleable
         Wander, // Done
         Hunt, // TODO
         Sleep, // TODO Change to start the game as Sleep or Wander, wakes up if player is near.
-        Alerted, // WIP . If player within FOV, enemy changes wander to alerted . This can work with CalculateEntityClosestFOV()
-        CombatEngaged // TODO: combat started
+        Alerted, // Done . If player within FOV, enemy changes from wander to alerted .
+        CombatEngaged // TODO: combat started. Once receive or do damage.
     }
 
     // If sentient
@@ -136,6 +136,9 @@ public class Entity : MonoBehaviour , IScheduleable
 
     public static void Move(GameObject entityThatMoves, EntityMode _entityMode, float dx, float dy)
     {
+
+        Color _wanderColor = new Color32(255, 255, 255, 255);
+        entityThatMoves.gameObject.GetComponent<SpriteRenderer>().color = _wanderColor;
         // TODO: refactor
         // dx and dy can be speed, in this case they move 1
         float _dx = entityThatMoves.gameObject.GetComponent<Transform>().localPosition.x; //+ dx;
@@ -176,7 +179,10 @@ public class Entity : MonoBehaviour , IScheduleable
 
     public static void Alert(GameObject _entity, EntityMode _entityMode) {
         // Entity.Alert(_newenemypost, Entity.EntityMode.Alerted);
+        Color _alertColor = new Color32(226,44,10, 255);
         Debug.Log("!!! " + _entity.name + " has been alerted.");
+        // TESTING WIP Switch sprite
+        _entity.gameObject.GetComponent<SpriteRenderer>().color = _alertColor;
     }
 
     void AnalizeMapAroundEntity()

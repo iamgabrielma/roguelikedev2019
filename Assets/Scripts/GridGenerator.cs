@@ -98,10 +98,10 @@ public class GridGenerator : MonoBehaviour
         // Close gaps in the map: Finds floorTiles in the borders and changes them for wallTiles
         //ProcGenWallFixtures(mapWidthX, mapHeightY);
         // Get floor borders graphically
-        GetProcGenMapBorders();
+        //GetProcGenMapBorders();
         // 
-        ProcGenAdditionalWalkers();
-        ProcGenWallFixtures(mapWidthX, mapHeightY);
+        //ProcGenAdditionalWalkers();
+        //ProcGenWallFixtures(mapWidthX, mapHeightY);
         __isMapReady = true; // Use this for enemyAI, Once this is ready , I should move the map into int[,] map
 
         PlaceEntities();
