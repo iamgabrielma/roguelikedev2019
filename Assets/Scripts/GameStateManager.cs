@@ -52,10 +52,10 @@ public class GameStateManager: MonoBehaviour
         // Turns are managed here.
         if (__gameState == GameState.enemyTurn)
         {
-            Debug.Log("Enemy turn");
+            //Debug.Log("Enemy turn");
             DoEnemyStuff();
             __gameState = GameState.playerTurn;
-            Debug.Log("Player turn");
+            //Debug.Log("Player turn");
 
         }
     }

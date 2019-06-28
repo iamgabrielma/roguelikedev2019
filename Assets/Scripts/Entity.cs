@@ -19,9 +19,11 @@ public class Entity : MonoBehaviour , IScheduleable
     // If sentient ... possibly needs a new class inherits from this one Sentient : Entity , and we add Move() there.
     public enum EntityMode
     {
-        Wander,
-        Hunt,
-        Sleep
+        Wander, // Done
+        Hunt, // TODO
+        Sleep, // TODO Change to start the game as Sleep or Wander, wakes up if player is near.
+        Alerted, // WIP . If player within FOV, enemy changes wander to alerted . This can work with CalculateEntityClosestFOV()
+        CombatEngaged // TODO: combat started
     }
 
     // If sentient
@@ -132,32 +134,16 @@ public class Entity : MonoBehaviour , IScheduleable
         }
     }
 
-    public static void TestMove(GameObject entityThatMoves, EntityMode _entityMode, float dx, float dy)
+    public static void Move(GameObject entityThatMoves, EntityMode _entityMode, float dx, float dy)
     {
         // TODO: refactor
         // dx and dy can be speed, in this case they move 1
         float _dx = entityThatMoves.gameObject.GetComponent<Transform>().localPosition.x; //+ dx;
         float _dy = entityThatMoves.gameObject.GetComponent<Transform>().localPosition.y; //+ dy;
 
-        // Before passing the parameters, each entity should check around them for valid tiles, if tile is invalid, roll again or wait:
-        List<Vector2> _globalMapTiles = GridGenerator.listOfFloorTiles; // reference to the global map
-        List<Vector2> _tilesAroundEntity = GridGenerator.listOfFloorTiles; // reference to the tiles around entity
-
-        Vector2 _ePos = entityThatMoves.gameObject.GetComponent<Transform>().localPosition;
-        //float _ey = entityThatMoves.gameObject.GetComponent<Transform>().localPosition.y;
-
-        Vector2 neighborUp = new Vector2(_ePos.x, _ePos.y + 1);
-        Vector2 neighbordown = new Vector2(_ePos.x, _ePos.y - 1);
-        Vector2 neighborLeft = new Vector2(_ePos.x - 1, _ePos.y);
-        Vector2 neighborRight = new Vector2(_ePos.x + 1, _ePos.y);
-        _tilesAroundEntity.Add(neighborUp);
-        _tilesAroundEntity.Add(neighbordown);
-        _tilesAroundEntity.Add(neighborLeft);
-        _tilesAroundEntity.Add(neighborRight);
-
         float _rand = (int)Random.Range(0, 3.99f);
         //Q: Does this gets a new _rand for each entity?  A: Yes.
-        Debug.Log(entityThatMoves.name + " moves " + _rand); 
+        //Debug.Log(entityThatMoves.name + " moves " + _rand); 
         //Q: Once assigned, they always take the same direction for all moves? A: No. 
         if (_entityMode == EntityMode.Wander)
         {
@@ -183,6 +169,35 @@ public class Entity : MonoBehaviour , IScheduleable
             }
         }
 
+
+
+    }
+
+
+    public static void Alert(GameObject _entity, EntityMode _entityMode) {
+        // Entity.Alert(_newenemypost, Entity.EntityMode.Alerted);
+        Debug.Log("!!! " + _entity.name + " has been alerted.");
+    }
+
+    void AnalizeMapAroundEntity()
+    {
+
+        // Before passing the parameters, each entity should check around them for valid tiles, if tile is invalid, roll again or wait:
+        //List<Vector2> _globalMapTiles = GridGenerator.listOfFloorTiles; // reference to the global map
+        //List<Vector2> _tilesAroundEntity = GridGenerator.listOfFloorTiles; // reference to the tiles around entity
+
+        //Vector2 _ePos = entityThatMoves.gameObject.GetComponent<Transform>().localPosition;
+        //float _ey = entityThatMoves.gameObject.GetComponent<Transform>().localPosition.y;
+
+        //Vector2 neighborUp = new Vector2(_ePos.x, _ePos.y + 1);
+        //Vector2 neighbordown = new Vector2(_ePos.x, _ePos.y - 1);
+        //Vector2 neighborLeft = new Vector2(_ePos.x - 1, _ePos.y);
+        //Vector2 neighborRight = new Vector2(_ePos.x + 1, _ePos.y);
+        //_tilesAroundEntity.Add(neighborUp);
+        //_tilesAroundEntity.Add(neighbordown);
+        //_tilesAroundEntity.Add(neighborLeft);
+        //_tilesAroundEntity.Add(neighborRight);
+
         // If the new Vector3(_dx, _dy, 0); is valid, move, if is not, do nothing
         //foreach (var _coordinate in _tilesAroundEntity)
         //{
@@ -198,12 +213,6 @@ public class Entity : MonoBehaviour , IScheduleable
 
         //}
         //entityThatMoves.gameObject.GetComponent<Transform>().localPosition = new Vector3(_dx, _dy, 0);
-
-    }
-
-    void AnalizeMapAroundEntity()
-    {
-
 
         //1- Use listOfFloorTiles
         // TODO : Using SetcColor works without set tile, most likely this gets broken from this somwhere along the line of generating the level

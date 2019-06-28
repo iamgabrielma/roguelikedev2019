@@ -7,6 +7,7 @@ public class EnemyAI : MonoBehaviour, IFight // IFight implementation temporary 
     public bool enemyCanMove;
     public GameObject enemy; //Self refence
     public Transform enemyTransform; //Self transform
+    public GameObject playerReference;// player reference
 
     public int health;
     private bool isEnemyTimeToDoOneAction;
@@ -22,9 +23,14 @@ public class EnemyAI : MonoBehaviour, IFight // IFight implementation temporary 
         //enemyReference = transform.parent.gameObject;
         //enemyTransform = enemyReference.transform;
         // TODO nullcheck
-        if (enemy != null)
+        if (enemy == null)
         {
             enemy = transform.parent.gameObject; // initial transform value
+        }
+
+        if (playerReference == null)
+        {
+            playerReference = Engine.__player;
         }
 
     }
@@ -40,22 +46,75 @@ public class EnemyAI : MonoBehaviour, IFight // IFight implementation temporary 
             // TODO nullcheck
             isEnemyTimeToDoOneAction = true; // We switch this to true so stops after just this one
             GameObject newenemypost = this.gameObject;
-            EnemyMoves(newenemypost);
-            Debug.Log("State 2.1: Enemy turn. This was called as well!");
+            //EnemyMoves(newenemypost);
+            CheckCurrentState(newenemypost); // We change EnemyMoves() for CheckCurrentState()
+
 
         }
 
     }
 
-    void EnemyMoves(GameObject _newenemypost) {
-
-        // TODO: Check for valid walls/floors around before performing a movement. Before fixing this I'll fix the map interconnected rooms as I have to get valid tiles from there already.
-        // TODO: Will also need the above to implement A*
-        Entity.TestMove(_newenemypost, Entity.EntityMode.Wander, 1.0f, 0.0f);
+    void CheckCurrentState(GameObject _newenemypost)
+    {
+        // If player is within reach: Entity.Alerted -> IsEntityAlerted()
+        bool isEnemyAlerted = IsEntityAlerted();
+        if (isEnemyAlerted)
+        {
+            Entity.Alert(_newenemypost, Entity.EntityMode.Alerted);
+        }
+        else
+        {
+            // if is not, Entity.Wander
+            Entity.Move(_newenemypost, Entity.EntityMode.Wander, 1.0f, 0.0f);
+        }
 
         isEnemyTimeToDoOneAction = false; // We switch this to false so they can move again once is their turn
+    }
+    //void EnemyMoves(GameObject _newenemypost) {
+    
+    //    Entity.TestMove(_newenemypost, Entity.EntityMode.Wander, 1.0f, 0.0f);
+
+    //    isEnemyTimeToDoOneAction = false; // We switch this to false so they can move again once is their turn
 
 
+    //}
+
+    bool IsEntityAlerted()
+    {
+
+        //Vector3 _entityLocation = new Vector3(enemy.entityLocation.x, enemy.entityLocation.y, 0); // Gets the position vector of each entity
+        List<Vector2> _entityVisibilityArea = new List<Vector2>();
+        _entityVisibilityArea.Clear(); // Reset for safely from prvious iterations
+
+        // // player coord: x53.5 y 53.5 -- . Area has 121 items: pero son int tipo 40,75, no tienen decimales. We use Mathf.Floor to remove this 0.5f bit
+        Vector2 _playerCoordinates = new Vector2(Mathf.Floor(playerReference.transform.localPosition.x), Mathf.Floor(playerReference.transform.localPosition.y));
+        //Debug.Log("_playerCoordinates" + _playerCoordinates.ToString());
+        //Debug.Log("player ref" + playerReference.transform.position.ToString());
+
+        int _entityVisibilityRadius = 5; // 
+                
+        int _offsetQuadrant4 = (int)enemyTransform.localPosition.x - _entityVisibilityRadius;
+        int _offsetQuadrant1 = (int)enemyTransform.localPosition.y - _entityVisibilityRadius;
+                                                                                        
+        for (int x = _offsetQuadrant4; x < enemyTransform.localPosition.x + _entityVisibilityRadius; x++) // from x-5 to x+5
+        {
+            for (int y = _offsetQuadrant1; y < enemyTransform.localPosition.y + _entityVisibilityRadius; y++) // from y-5 to y+5
+            {
+                 _entityVisibilityArea.Add(new Vector2(x, y));
+            }
+        }
+
+
+        if (_entityVisibilityArea.Contains(_playerCoordinates)) 
+        {
+            Debug.Log("Enemy alerted");
+            return true;
+        }
+        else 
+        {
+            //Debug.Log("Enemy NOT alerted");
+            return false; 
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

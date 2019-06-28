@@ -789,7 +789,7 @@ public class GridGenerator : MonoBehaviour
             {
                 Vector3 _entityLocation = new Vector3(enemy.entityLocation.x, enemy.entityLocation.y, 0); // Gets the position vector of each entity
                 //Debug.Log("Enemy at: " + _entityLocation.ToString());
-                int _entityVisibilityRadius = 3; // 
+                int _entityVisibilityRadius = 5; // 
                                                  //int _entityVisibilityDiameter = 6; // _entityVisibilityRadius * 2
                 int _offsetQuadrant4 = (int)_entityLocation.x - _entityVisibilityRadius; // Top left corner of the enemy quadrant (4). Position -3
                 int _offsetQuadrant1 = (int)_entityLocation.y - _entityVisibilityRadius; // Top left corner of the enemy quadrant (4). Position -3
@@ -819,7 +819,6 @@ public class GridGenerator : MonoBehaviour
         }
     }
 
-    // TODO: We can remove this after testing, Player is not an Entity as well.
     // Adapted from CalculateEntityClosestFOV , as we can't pass the Player as an argument because is not generated as an Entity, once we change this we can get rid of the function as well.
     // Is inside our GridGenerator because regenerates / re-pain our grid constantly
     void CalculatePlayerClosestFOV()
