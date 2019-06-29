@@ -114,18 +114,19 @@ public class Entity : MonoBehaviour //, IScheduleable
     public static void ResolveDefense(GameObject attacker, GameObject defender)
     {
 
-
+        Debug.Log("## COMBAT MODE: Enabled");
         int _resolved = defender.gameObject.GetComponent<Fighter>().defense - attacker.gameObject.GetComponent<Fighter>().attack;
+        Debug.Log("## COMBAT: Attack vs Defense resolved:" + _resolved);
         if (_resolved == 0) // Will be because at the moment both are 10
         {
             float _rand = (int)Random.Range(0, 100);
             if (_rand < 50)
             {
-                Debug.Log("Attack blocked!");
+                Debug.Log("## COMBAT: Attack blocked!");
             }
             else
             {
-                Debug.Log("Attack successful!");
+                Debug.Log("## COMBAT: Attack successful!");
                 defender.gameObject.GetComponent<Fighter>().health--;
             }
         }
@@ -146,7 +147,7 @@ public class Entity : MonoBehaviour //, IScheduleable
 
     public static void ResolveAttack(GameObject attacker, GameObject defender, EntityMode _entityMode) {
 
-        Debug.Log("Entity attacks back!!");
+        Debug.Log("## COMBAT: Entity attacks back!!");
         ResolveDefense(attacker, defender);
 
     }
@@ -156,7 +157,8 @@ public class Entity : MonoBehaviour //, IScheduleable
         if (defender.gameObject.GetComponent<Fighter>().health <= 0) // TODO: Move this health too to different place, not in enemyAI, either full entity or subclasses
         {
             // Note 23.06.19 -> Now inherits from Monobehavior so we can use Destroy()
-
+            Debug.Log("## COMBAT: Entity has been destroyed");
+            Debug.Log("## COMBAT MODE: Disabled");
             Destroy(defender);
         }
     }

@@ -96,7 +96,7 @@ public class GridGenerator : MonoBehaviour
         // Walls setup
         ProcGenWallSetup();
         // Close gaps in the map: Finds floorTiles in the borders and changes them for wallTiles
-        //ProcGenWallFixtures(mapWidthX, mapHeightY);
+        ProcGenWallFixtures(mapWidthX, mapHeightY);
         // Get floor borders graphically
         //GetProcGenMapBorders();
         // 
@@ -744,11 +744,12 @@ public class GridGenerator : MonoBehaviour
         //listOfGameObjects.Add(Engine.__player);
 
         // Random number of enemies:
-        int _numberOfEnemyEntities = Random.Range(1,10);
-        //Debug.Log("Monsters: " + _numberOfEnemyEntities);
+        //int _numberOfEnemyEntities = Random.Range(1,10);
+        int _numberOfEnemyEntities = 10; // temporary for testing.
 
-        // Reference to which Prefab to use:
+        // Reference to which Prefab to use, also test by instantiating the monster class:
         GameObject _test_npc = Resources.Load<GameObject>("Prefabs/Enemy");
+         
 
         // For each entity to be created, find a suitable spawning place and Instantiate an enemy
         for (int i = 0; i < _numberOfEnemyEntities; i++)
@@ -770,12 +771,16 @@ public class GridGenerator : MonoBehaviour
             //Debug.Log("Available vector: " + _randomVector.ToString());
         }
 
+        // TEST instantiating Monster class:
+        //Monster monsterTest = new Monster();
+        //Entity npcInstance = new Entity((int)_randomVector.x, (int)_randomVector.y, "Enemy", _test_npc, new Vector3(_randomVector.x, _randomVector.y, 0)); //(6, 6, "Monster", _test_npc, new Vector3(6,6,0)); // ERROR Monster does not have a constructor that accept 5 arguments.
+
         // WIP: Testing create new Monster class. KINDA WORKS.
         //monsterTest.entityLocation = new Vector3(6.5f, 6.5f, 0);
         //monsterTest.entityGameObject = Resources.Load<GameObject>("Prefabs/EnemyRed");
         //monsterTest.entityName = "the monster";
-        Monster monsterTest = new Monster(); //(6, 6, "Monster", _test_npc, new Vector3(6,6,0)); // ERROR Monster does not have a constructor that accept 5 arguments.
-        Instantiate(monsterTest.entityGameObject, new Vector3(6.5f, 6.5f, 0), Quaternion.identity); // This monster clone appears on 6,6 as expected, but the game object is still in 0,0 , wut
+
+
         //Engine.SchedulingSystem.Add(monsterTest);
 
     }

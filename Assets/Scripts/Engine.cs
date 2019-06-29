@@ -15,6 +15,7 @@ public class Engine : MonoBehaviour
     // Temporary screen_width & height
     public Transform _floorHolder;
     public Transform _wallHolder;
+    //public Transform _FOVCollisionHolder;
     //readonly int screen_width = 20;
     //readonly int screen_height = 20;
     // 30 rows allow each row to be 36 pixels high in 1080p, the most common monitor size.
@@ -40,6 +41,7 @@ public class Engine : MonoBehaviour
         _floorHolder = new GameObject("floorHolder").transform; // Will hold all our floor tiles, so the Inspector is not cluttered with GameObjects
         _wallHolder = new GameObject("wallHolder").transform; // Will hold all our wall tiles, so the Inspector is not cluttered with GameObjects
 
+
         // We instantiate our static schedule system:
         SchedulingSystem = new SchedulingSystem();
         Debug.Log("Schedulungsystem is created"); // this seems to be the first, so shouldn't be problems
@@ -57,9 +59,21 @@ public class Engine : MonoBehaviour
         //SchedulingSystem.Add(playerInstance); // Now I can pass an Entity as a parameter because the Entity implements IScheduleable
         // Console message: Null added to the schedule. we'll see :D 
         //Debug.Log("player instance is added");
+
+        //_FOVCollisionHolder = new GameObject("_FOVCollisionHolder").transform;
+        //_FOVCollisionHolder.transform.SetParent(playerInstance.transform);
+        //BoxCollider2D _fovbc2d = (BoxCollider2D)_FOVCollisionHolder.gameObject.AddComponent(typeof(BoxCollider2D));
+
         __player = Instantiate(playerInstance.entityGameObject, playerInstance.entityLocation, Quaternion.identity);
         __player.name = __player.tag;
         listOfGameObjects.Add(__player);
+
+        //Hack -> Setting FOV holder this way because unity crashes if I try to add it as nested Object to the player. Doesn't seem to work either. Spawns the player in 0,0
+        //_FOVCollisionHolder = new GameObject("_FOVCollisionHolder").transform;
+        //_FOVCollisionHolder.transform.SetParent(__player.transform);
+        //BoxCollider2D _fovbc2d = (BoxCollider2D)_FOVCollisionHolder.gameObject.AddComponent(typeof(BoxCollider2D));
+        //_fovbc2d.tag = "FOVCollisionHolder";
+        //_fovbc2d.size = new Vector2(10, 10);
 
         // TODO: Move this into a separate h_helper function
         //Stopwatch stopwatch = new Stopwatch();

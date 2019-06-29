@@ -4,8 +4,6 @@ using UnityEngine;
 
 public interface IFight 
 {
-    //public int attack;
-    //public int defense;
-    //public int speed;
-    //public int health;
+    // TESTING INTERFACES. Resources:
+    // - https://publicstringnotes.wordpress.com/2016/09/24/understanding-interfaces/
 }
