@@ -122,10 +122,12 @@ public class Entity : MonoBehaviour //, IScheduleable
             float _rand = (int)Random.Range(0, 100);
             if (_rand < 50)
             {
+                MessageLogManager.Instance.AddToQueue("Attack blocked!");
                 Debug.Log("## COMBAT: Attack blocked!");
             }
             else
             {
+                MessageLogManager.Instance.AddToQueue("Attack successful for (1) hit point!");
                 Debug.Log("## COMBAT: Attack successful for (1) hit point!"); // TODO this number will be dynamic
                 defender.gameObject.GetComponent<Fighter>().health--;
             }
@@ -147,6 +149,7 @@ public class Entity : MonoBehaviour //, IScheduleable
 
     public static void ResolveAttack(GameObject attacker, GameObject defender, EntityMode _entityMode) {
 
+        MessageLogManager.Instance.AddToQueue("Entity attacks back!");
         Debug.Log("## COMBAT: Entity attacks back!!");
         ResolveDefense(attacker, defender);
 
@@ -165,6 +168,7 @@ public class Entity : MonoBehaviour //, IScheduleable
             else
             {
                 // Note 23.06.19 -> Now inherits from Monobehavior so we can use Destroy()
+                MessageLogManager.Instance.AddToQueue("Entity has been destroyed");
                 Debug.Log("## COMBAT: Entity has been destroyed");
                 Debug.Log("## COMBAT MODE: Disabled");
                 //Destroy(defender);

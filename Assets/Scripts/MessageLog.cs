@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class MessageLog: MonoBehaviour
 {
-    private static readonly int __maxNumberOfMessagesInTheLog = 10;
+    //private static readonly int __maxNumberOfMessagesInTheLog = 10;
     public string _foo;
 
     // _lines will keep track of the lines of text via a Queue
@@ -29,10 +29,10 @@ public class MessageLog: MonoBehaviour
 
         _lines.Enqueue(message);
 
-        if (_lines.Count > __maxNumberOfMessagesInTheLog)
-        {
-            _lines.Dequeue(); // Removes the oldest one
-        }
+        //if (_lines.Count > __maxNumberOfMessagesInTheLog)
+        //{
+        //    _lines.Dequeue(); // Removes the oldest one
+        //}
     }
 
     public string OutputLogs()

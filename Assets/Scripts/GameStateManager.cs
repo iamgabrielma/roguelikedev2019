@@ -62,7 +62,7 @@ public class GameStateManager: MonoBehaviour
 
     void DoEnemyStuff() {
 
-        Debug.Log("Enemy AI does their stuff. We shouldn't call any action here, but just enemyAI reading the current game State");
+        //Debug.Log("Enemy AI does their stuff. We shouldn't call any action here, but just enemyAI reading the current game State");
         //Entity.TestMove();
     }
 
