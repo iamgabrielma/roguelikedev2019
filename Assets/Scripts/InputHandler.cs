@@ -22,7 +22,7 @@ public class InputHandler : MonoBehaviour
     private Vector3 _lastKnownPlayerPosition; // We use this to track players last position before their next move
 
     public static bool isFOVrecompute; // If True, FOV is recomputed on GridGenerator.cs (temporary, maybe this needs to go into GameMap or something)
-
+    //public static MessageLog MessageLog { get; private set; }
 
 
     private void Start()
@@ -110,7 +110,12 @@ public class InputHandler : MonoBehaviour
         GameStateManager.__gameTimeTicks++; // Adds a tick to Game Time.
         GameStateManager.__gameState = GameStateManager.GameState.enemyTurn; // Finished our turn, is enemy turn.
 
-        ActivateEnemies(); // When a movement is sucess, enemies may have their turn as well.
+        /* TESTING */
+        //MessageLog = new MessageLog();
+        //MessageLog.Add("Welcome Rogue...");
+        //MessageLog.OutputLogs();
+
+        //ActivateEnemies(); // When a movement is sucess, enemies may have their turn as well.
 
         //GameStateManager.__gameState = GameStateManager.GameState.playerTurn; // Call player turn for turn completed and debug log gametime
         // Once we've moved, is the Enemy turn:

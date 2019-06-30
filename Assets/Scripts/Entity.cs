@@ -96,7 +96,7 @@ public class Entity : MonoBehaviour //, IScheduleable
         // TODO: Enemy movement logic
     }
 
-
+    // TODO MOVE THESE TO FIGHTER.CS
     public void Attack(Entity attacker, Entity defender) {
 
         // Resolve attack __static
@@ -126,7 +126,7 @@ public class Entity : MonoBehaviour //, IScheduleable
             }
             else
             {
-                Debug.Log("## COMBAT: Attack successful!");
+                Debug.Log("## COMBAT: Attack successful for (1) hit point!"); // TODO this number will be dynamic
                 defender.gameObject.GetComponent<Fighter>().health--;
             }
         }
@@ -156,10 +156,20 @@ public class Entity : MonoBehaviour //, IScheduleable
     {
         if (defender.gameObject.GetComponent<Fighter>().health <= 0) // TODO: Move this health too to different place, not in enemyAI, either full entity or subclasses
         {
-            // Note 23.06.19 -> Now inherits from Monobehavior so we can use Destroy()
-            Debug.Log("## COMBAT: Entity has been destroyed");
-            Debug.Log("## COMBAT MODE: Disabled");
-            Destroy(defender);
+            if (defender.tag == "Player")
+            {
+                // Run PlayerDeath() function
+                defender.SetActive(false);
+
+            }
+            else
+            {
+                // Note 23.06.19 -> Now inherits from Monobehavior so we can use Destroy()
+                Debug.Log("## COMBAT: Entity has been destroyed");
+                Debug.Log("## COMBAT MODE: Disabled");
+                //Destroy(defender);
+                defender.SetActive(false); // TODO Instead of killing them, we can disable them, and reactivate them after x turns. Start a turn checker here and add them to a list:
+            }
         }
     }
 
@@ -212,6 +222,13 @@ public class Entity : MonoBehaviour //, IScheduleable
         Debug.Log("!!! " + _entity.name + " has been alerted.");
         // TESTING WIP Switch sprite
         _entity.gameObject.GetComponent<SpriteRenderer>().color = _alertColor;
+    }
+
+    public void PlayerDeath(GameObject player)
+    {
+
+        player.SetActive(false);
+        Debug.Log("You die!");
     }
 
     void AnalizeMapAroundEntity()

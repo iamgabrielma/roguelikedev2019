@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 //using System.Diagnostics;
 //using System;
 
 public class Engine : MonoBehaviour
 {
+
+    //public Text messageLogText;
     //Monster monsterTest;
     //public enum CurrentState { player_turn, enemy_turn };
     /* DEBUG FUNCTIONS */
@@ -32,6 +35,9 @@ public class Engine : MonoBehaviour
 
 
     public static SchedulingSystem SchedulingSystem { get; private set; }
+
+    // Message Logs:
+    //public static MessageLog MessageLog { get; private set; }
 
     public void Start()
     {
@@ -83,6 +89,27 @@ public class Engine : MonoBehaviour
         //TimeSpan ts = stopwatch.Elapsed;
         //int _ms = ts.Milliseconds; // Calculated 14ms for a 20x20 via GameMap.cs . 14ms as well for 20x20 instantiating Prefabs. 165ms for 80x80
 
+        // NullReferenceException: Object reference not set to an instance of an object... so we create an instance of _guiText...but not possible due to its protection level
+        //MessageLog._guiText = MessageLog.OutputLogs();
+        //Text _guiText_prefab = Resources.Load<Text>("Prefabs/_guiText");
+        //Text tempTextBox = Instantiate(_guiText_prefab, new Vector3(0,0,0), Quaternion.identity) as Text;
+        //tempTextBox.transform.SetParent();
+
+
+        //MessageLog.OutputLogs();
+        //messageLogText.text = "";
+        //var _foo = MessageLog.OutputLogs();
+
+        //var _foo = MessageLog;
+        //foreach (var item in _foo.OutputLogs())
+        //{
+        //    messageLogText.text += _foo[item].ToString();
+        //}
+        //messageLogText.text = "hello";//MessageLog.OutputLogs().ToString();
+        //messageLogText = GetComponent<Text>();
+
+
+
 
 
 
@@ -91,20 +118,15 @@ public class Engine : MonoBehaviour
     // WIP: Adding gamestate changes here for the moment.
     private void Update()
     {
-        //if (__player != null && isPlayerPlaced == false && GridGenerator.__isMapReady == true)
+        //if (true)
         //{
-        //    PlacePlayer();
+        //    MessageLog.OutputLogs();
         //}
-        //else
-        //{
-        //    return;
-        //}
-
-        // If player turn, we can move and do actions
-        // If enemy turn, we’re looping through each of the entities (excluding the player) and allowing them to take a turn. 
+        //messageLogText.text = "hello";
     }
 
-    private void PlacePlayer() {
+    /* DEPRECATED */
+    private void DEPRECATED_PlacePlayer() {
         // Moved the Player to be an instance of Entity.
         int _randomIndex = Random.Range(1, GridGenerator.listOfFloorTiles.Count);
         Vector2 _randomVector = GridGenerator.listOfFloorTiles[_randomIndex];
@@ -113,7 +135,7 @@ public class Engine : MonoBehaviour
 
     }
 
-    public void FloorSetup(int width, int height)
+    public void DEPRECATED_FloorSetup(int width, int height)
     {
         GameObject _test_tileObject = Resources.Load<GameObject>("Prefabs/Floor1");
 
@@ -127,7 +149,7 @@ public class Engine : MonoBehaviour
         }
     }
 
-    public void WallsSetup(int width, int height) {
+    public void DEPRECATED_WallsSetup(int width, int height) {
 
         GameObject _test_wallObject = Resources.Load<GameObject>("Prefabs/Wall1");
 
