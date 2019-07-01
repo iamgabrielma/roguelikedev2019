@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/* ToolTip for UI Elements in the scene: Works by hovering over the elements */
 public class ItemButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private ToolTipManager toolTip;
@@ -17,19 +18,4 @@ public class ItemButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         toolTip.HideInfo();
     }
-
-    //public void OnMouseDown ()
-    //{
-    //    Debug.Log("Clicking in GO 2");
-    //}
-
-    // TESTING FOR GAMEOBJECTS:
-    //public void OnPointerDown(PointerEventData eventData)
-    //{
-    //    Debug.Log("Clicking in GO");
-    //}
-    //public void OnMouseDown ()
-    //{
-    //    Debug.Log("Clicking in GO 2");
-    //}
 }

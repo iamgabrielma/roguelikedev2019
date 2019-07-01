@@ -3,36 +3,35 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ItemButtonGo : MonoBehaviour //, IPointerEnterHandler, IPointerExitHandler
+/* ToolTip for GameObjects in the scene: Works by click-hold over the object*/
+public class ItemButtonGo : MonoBehaviour
 {
     [SerializeField] private ToolTipManager toolTip;
     [SerializeField] private Item item;
 
-    //public void OnPointerEnter(PointerEventData eventData)
-    //{
-    //    //toolTip.DisplayInfo(item);
-    //    Debug.Log("Enter");
-    //}
+    // Shows tooltip if click-hold mouse
+    public void OnMouseDown ()
+    {
+        toolTip.DisplayInfo(item);
+    }
 
+    // Hides tooltip if mouse is released
     public void OnMouseUp()
     {
         toolTip.HideInfo();
     }
 
-    public void OnMouseDown ()
+    // Shows tooltip if mouse is over the GameObject and "I" (Inspect) is pressed
+    public void OnMouseOver()
     {
-        Debug.Log("Clicking in GO "); // OK
-        toolTip.DisplayInfo(item);
-
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            toolTip.DisplayInfo(item);
+        }
     }
-
-    // TESTING FOR GAMEOBJECTS:
-    //public void OnPointerDown(PointerEventData eventData)
-    //{
-    //    Debug.Log("Clicking in GO");
-    //}
-    //public void OnMouseDown ()
-    //{
-    //    Debug.Log("Clicking in GO 2");
-    //}
+    // Hides tooltip if mouse exits the GameObject collider area
+    public void OnMouseExit()
+    {
+        toolTip.HideInfo();
+    }
 }
