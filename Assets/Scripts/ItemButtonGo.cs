@@ -3,25 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ItemButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ItemButtonGo : MonoBehaviour //, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private ToolTipManager toolTip;
     [SerializeField] private Item item;
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        toolTip.DisplayInfo(item);
-    }
+    //public void OnPointerEnter(PointerEventData eventData)
+    //{
+    //    //toolTip.DisplayInfo(item);
+    //    Debug.Log("Enter");
+    //}
 
-    public void OnPointerExit(PointerEventData eventData)
+    public void OnMouseUp()
     {
         toolTip.HideInfo();
     }
 
-    //public void OnMouseDown ()
-    //{
-    //    Debug.Log("Clicking in GO 2");
-    //}
+    public void OnMouseDown ()
+    {
+        Debug.Log("Clicking in GO "); // OK
+        toolTip.DisplayInfo(item);
+
+    }
 
     // TESTING FOR GAMEOBJECTS:
     //public void OnPointerDown(PointerEventData eventData)
