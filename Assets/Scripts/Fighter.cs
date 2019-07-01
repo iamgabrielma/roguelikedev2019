@@ -10,6 +10,8 @@ public class Fighter : MonoBehaviour
     public int defense;
     public int speed;
     public int health;
+    public int energy;
+    public int oxygen;
 
     public bool isAgressive;
 
@@ -21,6 +23,8 @@ public class Fighter : MonoBehaviour
         defense = 10;
         speed = 1;
         health = 3;
+        energy = 10;
+        oxygen = 1000;
 
         isAgressive = false;
 

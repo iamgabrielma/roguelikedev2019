@@ -37,7 +37,7 @@ public class MessageLogManager : MonoBehaviour
 
 
     }
-    //TODO: Add message color
+    //TODO: Add message color, possibly can be done via ColorUtility.ToHTMLStringRGB -> https://www.youtube.com/watch?v=pg4-7aSf_Co
     public void AddToQueue(string message)
     {
         messageQueue.Enqueue(message); // Enqueue our message to our messageQueue Queue
