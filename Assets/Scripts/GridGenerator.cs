@@ -102,10 +102,11 @@ public class GridGenerator : MonoBehaviour
         // 
         //ProcGenAdditionalWalkers();
         //ProcGenWallFixtures(mapWidthX, mapHeightY);
-        __isMapReady = true; // Use this for enemyAI, Once this is ready , I should move the map into int[,] map
+
 
         PlaceEntities();
-
+        PlaceItems();
+        __isMapReady = true; // Use this for enemyAI and placing items, Once this is ready , I should move the map into int[,] map . Also as well AFTER entities have been placed.
         //ProcessMap();
         GetMapData();
         // Testing filling map generation for more density - SUCCESS
@@ -783,6 +784,12 @@ public class GridGenerator : MonoBehaviour
 
         //Engine.SchedulingSystem.Add(monsterTest);
 
+    }
+
+    void PlaceItems() {
+
+        ItemGenerator itemGenerator = new ItemGenerator();
+        itemGenerator.GenerateItems(listOfFloorTiles);
     }
 
     // Is inside our GridGenerator because regenerates / re-pain our grid constantly

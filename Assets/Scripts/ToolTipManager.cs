@@ -7,7 +7,8 @@ using UnityEngine.UI;
 public class ToolTipManager : MonoBehaviour
 {
 
-    [SerializeField] private GameObject toolTipCanvasObject; // So we can reference it for enable/disable
+    //[SerializeField] private GameObject toolTipCanvasObject; // So we can reference it for enable/disable
+    public GameObject toolTipCanvasObject; // So we can reference it for enable/disable
     [SerializeField] private RectTransform toolTipObject; // UI
     [SerializeField] private Text infoText;
     [SerializeField] private Vector3 offset;
@@ -53,6 +54,12 @@ public class ToolTipManager : MonoBehaviour
 
     public void DisplayInfo(Item item) {
 
+        if (toolTipCanvas == null)
+        {
+            toolTipCanvas = GameObject.FindWithTag("ToolTip").GetComponent<Canvas>();
+        }
+
+        Debug.Log("called successfully");
         StringBuilder builder = new StringBuilder();
 
         builder.Append("<size=14>").Append(item.ColoredName).Append("</size>").AppendLine();

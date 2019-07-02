@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 715695089108404139}
   m_Layer: 0
   m_Name: ToolTipObject
-  m_TagString: Untagged
+  m_TagString: ToolTip
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -129,7 +129,13 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Item text
+  m_Text: '<size=14><color=#2A81D1> Repair Unit </color></size>
+
+    Rarity_Rare
+
+    <color=green>Use: Use: Recovers submarine integrity</color>
+
+    Sell Price: 10 credits'
 --- !u!114 &7401188627608573527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -394,7 +400,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5206097403874526139
 RectTransform:
   m_ObjectHideFlags: 0
