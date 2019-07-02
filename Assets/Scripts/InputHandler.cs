@@ -143,6 +143,11 @@ public class InputHandler : MonoBehaviour
             Entity.ResolveDeath(collision.gameObject);
 
         }
+
+        if (collision.tag == "Item")
+        {
+            Entity.ResolveItem(player, collision.gameObject);
+        }
     }
 
     public void ActivateEnemies()

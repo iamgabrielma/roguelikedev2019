@@ -228,6 +228,25 @@ public class Entity : MonoBehaviour //, IScheduleable
         _entity.gameObject.GetComponent<SpriteRenderer>().color = _alertColor;
     }
 
+    public static void ResolveItem(GameObject _entity, GameObject _item)
+    {
+    
+        if (_item.name == "ItemHealth(Clone)")
+        {
+            _entity.gameObject.GetComponent<Fighter>().health += 1;
+            MessageLogManager.Instance.AddToQueue(_entity.name + " Hull Integrity repaired (+1)");
+
+        }
+         else if(_item.name == "ItemOxygen(Clone)")
+        {
+            _entity.gameObject.GetComponent<Fighter>().oxygen += 1;
+            MessageLogManager.Instance.AddToQueue(_entity.name + " Oxygen tanks replenished (+1)");
+        }
+
+        Destroy(_item);
+
+    }
+
     public void PlayerDeath(GameObject player)
     {
 

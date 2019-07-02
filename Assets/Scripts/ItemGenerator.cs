@@ -4,12 +4,13 @@ using System.Collections.Generic;
 
 public class ItemGenerator: MonoBehaviour
 {
+
+    [SerializeField] private int numberOfItems;
+    private List<GameObject> listOfItems = new List<GameObject>();
+
     public void GenerateItems(List<Vector2> floorTiles) {
 
-        List<GameObject> listOfItems = new List<GameObject>();
-
-        //int numberOfItems = 10;
-        int numberOfItems = 1;
+        numberOfItems = 10;
 
         GameObject itemPrefab = null;
         GameObject itemConsumableHealth = Resources.Load<GameObject>("Prefabs/ItemHealth");
@@ -36,8 +37,9 @@ public class ItemGenerator: MonoBehaviour
             }
 
             // Instantiate
-            //Instantiate(itemPrefab, new Vector3(floorTiles[_randPos].x + 0.5f, floorTiles[_randPos].y + 0.5f, 0), Quaternion.identity);
-            Instantiate(itemPrefab, new Vector3(50 + 0.5f, 50 + 0.5f, 0), Quaternion.identity);
+
+            Instantiate(itemPrefab, new Vector3(floorTiles[_randPos].x + 0.5f, floorTiles[_randPos].y + 0.5f, 0), Quaternion.identity);
+
             // Add to list to keep track
             listOfItems.Add(itemPrefab);
         }

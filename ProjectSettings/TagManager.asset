@@ -9,6 +9,7 @@ TagManager:
   - Floor
   - FOVCollisionHolder
   - ToolTip
+  - Item
   layers:
   - Default
   - TransparentFX
