@@ -10,6 +10,7 @@ TagManager:
   - FOVCollisionHolder
   - ToolTip
   - Item
+  - UIItem
   layers:
   - Default
   - TransparentFX

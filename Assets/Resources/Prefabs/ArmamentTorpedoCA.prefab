@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 618565177552923878}
   - component: {fileID: 618565177552923876}
   - component: {fileID: 618565177552923877}
-  - component: {fileID: 7653231140222708891}
+  - component: {fileID: 8878563845101109187}
   m_Layer: 0
-  m_Name: ItemOxygen
+  m_Name: ArmamentTorpedoCA
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71,12 +71,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: d7668dadf5b5c40b79fd19fa14497e66, type: 3}
-  m_Color: {r: 0.07564971, g: 0.65840083, b: 0.9433962, a: 1}
+  m_Sprite: {fileID: 21300000, guid: e050afd7af5574ff4ae050b112533bdc, type: 3}
+  m_Color: {r: 0.93333334, g: 0.72073007, b: 0.42745093, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.2, y: 0.2}
+  m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   toolTip: {fileID: 0}
-  item: {fileID: 11400000, guid: 494bbdfe73c8e44f5aca4eb5c1f46808, type: 2}
+  item: {fileID: 11400000, guid: 8dcc5d45bef824377b747e8ba87dcea4, type: 2}
 --- !u!61 &618565177552923877
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -114,7 +114,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1, y: 1}
-    newSize: {x: 0.2, y: 0.2}
+    newSize: {x: 0.16, y: 0.16}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -122,7 +122,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.95, y: 0.95}
   m_EdgeRadius: 0
---- !u!50 &7653231140222708891
+--- !u!50 &8878563845101109187
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -130,7 +130,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 618565177552923881}
-  m_BodyType: 2
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -141,5 +141,5 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0

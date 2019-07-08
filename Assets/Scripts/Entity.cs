@@ -230,7 +230,10 @@ public class Entity : MonoBehaviour //, IScheduleable
 
     public static void ResolveItem(GameObject _entity, GameObject _item)
     {
-    
+        // TODO: At the moment ResolveItem() is called when the item is picked up, but we want to have an Inventory system in the middle of this.
+        _entity.gameObject.GetComponent<InventoryManager>().AddItem(_item, 1);
+
+        // Temporary logic for pick-up item + use
         if (_item.name == "ItemHealth(Clone)")
         {
             _entity.gameObject.GetComponent<Fighter>().health += 1;
@@ -243,7 +246,9 @@ public class Entity : MonoBehaviour //, IScheduleable
             MessageLogManager.Instance.AddToQueue(_entity.name + " Oxygen tanks replenished (+1)");
         }
 
-        Destroy(_item);
+        // TODO: Create a copy of the item and pass this to the inventory, otherwise when we Destroy() it below, a missing reference is added to the inventory
+        //Destroy(_item); DOn't destroy it yet, move it to the inventory.
+        _item.SetActive(false); // This was disappears from the scene but is in our inventory, not sure if will cause other problems along the way.
 
     }
 

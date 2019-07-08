@@ -137,7 +137,7 @@ public class EnemyAI : MonoBehaviour
 
         if (_entityVisibilityArea.Contains(_playerCoordinates)) 
         {
-            Debug.Log("Enemy alerted");
+            //Debug.Log("Enemy alerted");
             return true;
         }
         else 

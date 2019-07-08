@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 618565177552923878}
   - component: {fileID: 618565177552923876}
   - component: {fileID: 618565177552923877}
-  - component: {fileID: 7653231140222708891}
+  - component: {fileID: 8878563845101109187}
   m_Layer: 0
-  m_Name: ItemOxygen
+  m_Name: ItemEnergy
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72,7 +72,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: d7668dadf5b5c40b79fd19fa14497e66, type: 3}
-  m_Color: {r: 0.07564971, g: 0.65840083, b: 0.9433962, a: 1}
+  m_Color: {r: 0.4273318, g: 0.9339623, b: 0.4366945, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   toolTip: {fileID: 0}
-  item: {fileID: 11400000, guid: 494bbdfe73c8e44f5aca4eb5c1f46808, type: 2}
+  item: {fileID: 11400000, guid: e1c8f603dc07c4c058419b739b5b604e, type: 2}
 --- !u!61 &618565177552923877
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -122,7 +122,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.95, y: 0.95}
   m_EdgeRadius: 0
---- !u!50 &7653231140222708891
+--- !u!50 &8878563845101109187
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -130,7 +130,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 618565177552923881}
-  m_BodyType: 2
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -141,5 +141,5 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0

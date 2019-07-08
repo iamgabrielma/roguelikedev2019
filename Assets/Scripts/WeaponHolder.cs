@@ -36,6 +36,7 @@ public class WeaponHolder : MonoBehaviour
         lr.SetWidth(0.1f, 0.1f);
         lr.SetPosition(0, start);
         lr.SetPosition(1, end);
+        // Add gradient?
         Destroy(myLine, duration);
     }
 }

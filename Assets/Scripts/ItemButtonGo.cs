@@ -35,10 +35,10 @@ public class ItemButtonGo : MonoBehaviour
     // Shows tooltip if mouse is over the GameObject and "I" (Inspect) is pressed
     public void OnMouseOver()
     {
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             toolTip.DisplayInfo(item);
-            Debug.Log("hover + I");
+            Debug.Log("hover + p");
         }
     }
     // Hides tooltip if mouse exits the GameObject collider area

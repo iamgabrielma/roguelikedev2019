@@ -16,7 +16,7 @@ public class H_Stealth : MonoBehaviour
 
         if (collision.tag == "FOVCollisionHolder")
         {
-            Debug.Log("Enemy is visible");
+            //Debug.Log("Enemy is visible");
             gameObject.GetComponent<Renderer>().enabled = true;
         }
     }
@@ -25,7 +25,7 @@ public class H_Stealth : MonoBehaviour
     {
         if (collision.tag == "FOVCollisionHolder")
         {
-            Debug.Log("Enemy is hidden");
+            //Debug.Log("Enemy is hidden");
             gameObject.GetComponent<Renderer>().enabled = false;
         }
     }

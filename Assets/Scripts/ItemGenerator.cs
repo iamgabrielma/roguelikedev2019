@@ -5,18 +5,18 @@ using System.Collections.Generic;
 public class ItemGenerator: MonoBehaviour
 {
 
-    [SerializeField] private int numberOfItems;
+    private int numberOfItemsPerLevel;
     private List<GameObject> listOfItems = new List<GameObject>();
 
     public void GenerateItems(List<Vector2> floorTiles) {
 
-        numberOfItems = 10;
+        numberOfItemsPerLevel = 5;
 
         GameObject itemPrefab = null;
         GameObject itemConsumableHealth = Resources.Load<GameObject>("Prefabs/ItemHealth");
         GameObject itemConsumableOxygen = Resources.Load<GameObject>("Prefabs/ItemOxygen");
 
-        for (int i = 0; i < numberOfItems; i++)
+        for (int i = 0; i < numberOfItemsPerLevel; i++)
         {
             // Random vector where we'll instantiate this
             int _randPos = UnityEngine.Random.Range(0, floorTiles.Count); 
@@ -32,11 +32,9 @@ public class ItemGenerator: MonoBehaviour
                     itemPrefab = itemConsumableOxygen;
                     break;
                 default:
-                    itemPrefab = itemConsumableOxygen;
+                    itemPrefab = itemConsumableOxygen; // Defaults to Oxygen and not Health
                     break;
             }
-
-            // Instantiate
 
             Instantiate(itemPrefab, new Vector3(floorTiles[_randPos].x + 0.5f, floorTiles[_randPos].y + 0.5f, 0), Quaternion.identity);
 

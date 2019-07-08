@@ -1,20 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Consumable", menuName ="Items/Consumable")]
-public class Consumable : Item
+[CreateAssetMenu(fileName = "New Armament", menuName = "Items/Armament")]
+public class Armament : Item
 {
 
     [SerializeField] private Rarity rarity;
+    [SerializeField] private int damage;
     [SerializeField] private string useText = "Use: Something";
 
     public Rarity Rarity { get { return rarity; } }
 
-    //public override string ColoredName => throw new System.NotImplementedException();
-    public override string ColoredName {
-        get {
+    // TODO: Both ColoredName and GetToolTipInfoText() methods are cloned from the Consumables class, most likely I can abstract this somewhere else as I'll be using it more often.
+    public override string ColoredName
+    {
+        get
+        {
             string hexcolor = ColorUtility.ToHtmlStringRGB(rarity.TextColor);
             return $"<color=#{hexcolor}> { Name } </color>";
         }

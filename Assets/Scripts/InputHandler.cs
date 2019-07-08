@@ -19,6 +19,7 @@ public class InputHandler : MonoBehaviour
     //private bool isPlayerMovementTurn; // Allows/Disallows the Player to perform movement based on the Game State.
 
     GameObject player; // Self reference, in order to use MovePlayer() easily
+    GameObject[] itemInPlayerInventoryReference;
     private Vector3 _lastKnownPlayerPosition; // We use this to track players last position before their next move
 
     public static bool isFOVrecompute; // If True, FOV is recomputed on GridGenerator.cs (temporary, maybe this needs to go into GameMap or something)
@@ -47,7 +48,7 @@ public class InputHandler : MonoBehaviour
         {
             IsPlayerTurn = false;
         }
-
+        // MOVEMENT
         if (Input.GetKeyDown(KeyCode.W) && isPlayerMoving == false && IsPlayerTurn)
             {
                 isPlayerMoving = true;
@@ -67,13 +68,28 @@ public class InputHandler : MonoBehaviour
             {
                 isPlayerMoving = true;
                 MovePlayer("left");
-           }
+            }
+        // USING ITEMS
+        if (Input.GetKeyDown(KeyCode.Alpha0) && isPlayerMoving == false && IsPlayerTurn)
+        {
+            isPlayerMoving = true; // While is not moving we activate this to avoid multiple actions
+            Debug.Log("Using item assigned to 0");
+            UseItem(0);
+        }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             // TODO: Will implement game menu screen here in the future.
         }
 
+    }
+
+    public void UseItem(int _numericKeycode) {
+
+        // TODO: WIP, still figuring this out. Something like "if item position x in inventory is not null, use it".
+        itemInPlayerInventoryReference = player.gameObject.GetComponent<InventoryManager>().itemsInInventory;
+        InventoryManager.InputHandlerAndUseItem(_numericKeycode);
+        EndOfPlayerTurn(); //We need to end the turn if the player decides to use an item
     }
 
     public void MovePlayer(string direction)
@@ -103,25 +119,20 @@ public class InputHandler : MonoBehaviour
                 break;
 
         }
+
+        EndOfPlayerTurn();
+
+    }
+
+    // After a movement, or other player action, we end the turn
+    private void EndOfPlayerTurn()
+    {
         isFOVrecompute = true; // When a movement is success, then we recompute FOV
         isPlayerMoving = false;
         IsPlayerTurn = false;
 
         GameStateManager.__gameTimeTicks++; // Adds a tick to Game Time.
         GameStateManager.__gameState = GameStateManager.GameState.enemyTurn; // Finished our turn, is enemy turn.
-
-        /* TESTING */
-        //MessageLog = new MessageLog();
-        //MessageLog.Add("Welcome Rogue...");
-        //MessageLog.OutputLogs();
-
-        //ActivateEnemies(); // When a movement is sucess, enemies may have their turn as well.
-
-        //GameStateManager.__gameState = GameStateManager.GameState.playerTurn; // Call player turn for turn completed and debug log gametime
-        // Once we've moved, is the Enemy turn:
-        //Debug.Log("State 1: Setting enemy turn");
-        //GameStateManager.__gameState = GameStateManager.GameState.enemyTurn; // OFF.
-
     }
 
     // TODO: Move this to PlayerBrain.cs
@@ -160,12 +171,5 @@ public class InputHandler : MonoBehaviour
             Debug.Log("Player turn!");
             Engine.SchedulingSystem.Add(scheduleable);
         }
-//         TESTING
-        //if (scheduleable is Monster) // TODO: We'll need to create more classes that inherit from Entity, otherwise only this will be used.
-        //{
-        //    IsPlayerTurn = true;
-        //    Debug.Log("MONSTER turn!");
-        //    Engine.SchedulingSystem.Add(scheduleable);
-        //}
     }
 }
