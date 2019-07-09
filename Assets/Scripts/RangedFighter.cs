@@ -4,33 +4,45 @@ using UnityEngine;
 
 public class RangedFighter : MonoBehaviour
 {
-    // GetCurrentMouseVectorPosition
     private Camera cam;
-    private Canvas targetLockCanvas;
-    public GameObject targetLockCanvasObject; // So we can reference it for enable/disable
+    //public GameObject targetLockCanvasObject; // So we can reference it for enable/disable
 
-    GridGenerator grid;
+    public GameObject aim;
+    private Sprite aimSprite;
 
-    // SetMouseToRangedLockTexture
-    //public Texture2D cursorTexture;
-    //private CursorMode cursorMode = CursorMode.Auto;
+    private bool targetLocked;
+
+    //GridGenerator grid;
 
     void Start()
     {
+        targetLocked = false;
         cam = Camera.main;
-        targetLockCanvas = targetLockCanvasObject.GetComponent<Canvas>();
 
-        grid = FindObjectOfType<GridGenerator>();
+        aimSprite = aim.GetComponent<SpriteRenderer>().sprite;
+        HideAim();
+
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T)) // (T)arget
+        if (Input.GetKeyDown(KeyCode.T) && targetLocked == false) // (T)arget
         {
             GetCurrentMouseVectorPosition();
+            ShowAim();
+            targetLocked = true;
+            //TargetLocked();
             //CheckIfObjectWhereMouseClick();
 
         }
+        else if (Input.GetKeyDown(KeyCode.T) && targetLocked == true) // Shoot
+        {
+            targetLocked = false;
+            // shoot + pass turn + resolve combat
+            ShootEffect();
+            HideAim();
+        }
+
 
     }
 
@@ -47,6 +59,8 @@ public class RangedFighter : MonoBehaviour
         currentMousePosition = Input.mousePosition;
 
         point = cam.ScreenToWorldPoint(new Vector2(currentMousePosition.x, currentMousePosition.y));
+
+        aim.transform.position = point; //Setting GO to this position
 
         Debug.Log(point);
         //SetVectorToTexture(point);
@@ -76,8 +90,51 @@ public class RangedFighter : MonoBehaviour
         //Vector2.zero as the direction of the Raycast to ensure only objects located directly at the point of the click are detected:
         if (hit.collider != null)
         {
-            Debug.Log("Something was clicked!");
+            //Debug.Log("Something was clicked!");
+            MessageLogManager.Instance.AddToQueue("Target " + hit.collider.gameObject.name + " Locked!");
             Debug.Log(hit.collider.gameObject.name);
         }
     }
+
+    void ShowAim()
+    {
+
+        aim.SetActive(true);
+    }
+    void HideAim()
+    {
+
+        aim.SetActive(false);
+
+    }
+
+    void TargetLocked()
+    {
+        // Target locked!
+
+
+    }
+
+    void ShootEffect()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        DrawLine(gameObject.transform.position, new Vector3(ray.origin.x, ray.origin.y, 0), Color.red, 0.3f);
+        MessageLogManager.Instance.AddToQueue("piu piu! shooting piu piu!");
+    }
+
+    void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
+    {
+        GameObject myLine = new GameObject();
+        myLine.transform.position = start;
+        myLine.AddComponent<LineRenderer>();
+        LineRenderer lr = myLine.GetComponent<LineRenderer>();
+        //lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
+        lr.SetColors(color, color);
+        lr.SetWidth(0.1f, 0.1f);
+        lr.SetPosition(0, start);
+        lr.SetPosition(1, end);
+        // Add gradient?
+        Destroy(myLine, duration);
+    }
+
 }
