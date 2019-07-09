@@ -11,6 +11,7 @@ TagManager:
   - ToolTip
   - Item
   - UIItem
+  - Canvas
   layers:
   - Default
   - TransparentFX

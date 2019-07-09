@@ -39,9 +39,15 @@ public class InventoryManager : MonoBehaviour
 
     }
 
-    public static void InputHandlerAndUseItem(int _numericKeycode) {
+    public void InputHandlerAndUseItem(GameObject entity, int _numericKeycode) {
 
         Debug.Log("Method linked, using item located on " + _numericKeycode);
+        itemsInInventoryList.Remove(itemsInInventoryList[_numericKeycode]); // remove it from the list
+        itemsInInventory[_numericKeycode] = null; // Set the item in array to null --> Works: This is the one we're using, not the list above.
+        // Use item functionality
+        StatusManager.__updateInventoryUI = true; // update UI. Doesn't seem to work.
+        StatusManager.__removeUsedItems = true;
+
     }
 
     public void AddItem(GameObject item, int itemCount) 

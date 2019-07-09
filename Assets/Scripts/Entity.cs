@@ -230,20 +230,20 @@ public class Entity : MonoBehaviour //, IScheduleable
 
     public static void ResolveItem(GameObject _entity, GameObject _item)
     {
-        // TODO: At the moment ResolveItem() is called when the item is picked up, but we want to have an Inventory system in the middle of this.
-        _entity.gameObject.GetComponent<InventoryManager>().AddItem(_item, 1);
+        _entity.gameObject.GetComponent<InventoryManager>().AddItem(_item, 1); // Adds the item to the inventory
 
         // Temporary logic for pick-up item + use
         if (_item.name == "ItemHealth(Clone)")
         {
-            _entity.gameObject.GetComponent<Fighter>().health += 1;
-            MessageLogManager.Instance.AddToQueue(_entity.name + " Hull Integrity repaired (+1)");
+            //_entity.gameObject.GetComponent<Fighter>().health += 1;
+            //MessageLogManager.Instance.AddToQueue(_entity.name + " Hull Integrity repaired (+1)");
+            MessageLogManager.Instance.AddToQueue(_entity.name + " Hull repair unit found (+10%)"); // Removing the consume-on-pickup funct, as now goes to the inventory
 
         }
          else if(_item.name == "ItemOxygen(Clone)")
         {
-            _entity.gameObject.GetComponent<Fighter>().oxygen += 1;
-            MessageLogManager.Instance.AddToQueue(_entity.name + " Oxygen tanks replenished (+1)");
+            //_entity.gameObject.GetComponent<Fighter>().oxygen += 1;
+            MessageLogManager.Instance.AddToQueue(_entity.name + " Oxygen tanks found (+1)");
         }
 
         // TODO: Create a copy of the item and pass this to the inventory, otherwise when we Destroy() it below, a missing reference is added to the inventory

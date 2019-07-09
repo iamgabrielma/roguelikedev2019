@@ -19,7 +19,7 @@ public class InputHandler : MonoBehaviour
     //private bool isPlayerMovementTurn; // Allows/Disallows the Player to perform movement based on the Game State.
 
     GameObject player; // Self reference, in order to use MovePlayer() easily
-    GameObject[] itemInPlayerInventoryReference;
+    InventoryManager playerInventoryReference;
     private Vector3 _lastKnownPlayerPosition; // We use this to track players last position before their next move
 
     public static bool isFOVrecompute; // If True, FOV is recomputed on GridGenerator.cs (temporary, maybe this needs to go into GameMap or something)
@@ -69,13 +69,22 @@ public class InputHandler : MonoBehaviour
                 isPlayerMoving = true;
                 MovePlayer("left");
             }
-        // USING ITEMS
-        if (Input.GetKeyDown(KeyCode.Alpha0) && isPlayerMoving == false && IsPlayerTurn)
-        {
-            isPlayerMoving = true; // While is not moving we activate this to avoid multiple actions
-            Debug.Log("Using item assigned to 0");
-            UseItem(0);
-        }
+        // USING ITEMS DEACTIVATED FOR NOW UNTIL I CAN RETHINK THE INVENTORY SYSTEM
+        //if (Input.GetKeyDown(KeyCode.Alpha0) && isPlayerMoving == false && IsPlayerTurn)
+        //{
+        //    // Check if item is in inventory, otherwise skip:
+        //    if (gameObject.GetComponent<InventoryManager>().itemsInInventory[0] != null)
+        //    {
+        //        isPlayerMoving = true; // While is not moving we activate this to avoid multiple actions
+        //        Debug.Log("Using item assigned to 0");
+        //        UseItem(0);
+        //    }
+        //    else
+        //    {
+        //        Debug.Log("No item in [0]");
+        //    }
+
+        //}
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -87,8 +96,10 @@ public class InputHandler : MonoBehaviour
     public void UseItem(int _numericKeycode) {
 
         // TODO: WIP, still figuring this out. Something like "if item position x in inventory is not null, use it".
-        itemInPlayerInventoryReference = player.gameObject.GetComponent<InventoryManager>().itemsInInventory;
-        InventoryManager.InputHandlerAndUseItem(_numericKeycode);
+        playerInventoryReference = player.gameObject.GetComponent<InventoryManager>();
+        //InventoryManager.InputHandlerAndUseItem(player, _numericKeycode);
+        playerInventoryReference.InputHandlerAndUseItem(player, _numericKeycode);
+
         EndOfPlayerTurn(); //We need to end the turn if the player decides to use an item
     }
 

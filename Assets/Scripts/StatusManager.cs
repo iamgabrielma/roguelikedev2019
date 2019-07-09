@@ -20,6 +20,7 @@ public class StatusManager : MonoBehaviour
 
     // WIP: Items-Inventory TODO: Move this to local-scoped variables inside other function?
     [SerializeField] private GameObject[] itemsInInventory;
+    [SerializeField] private List<GameObject> itemsInVisibleUI = new List<GameObject>(); // we'll use this to keep track of instantiated objects in UI and remove them when used.
     [SerializeField] private List<GameObject> itemsInUi = new List<GameObject>();
 
     // Equipment-Inventory
@@ -36,6 +37,7 @@ public class StatusManager : MonoBehaviour
 
     bool areComponentReferencesLinked;
     public static bool __updateInventoryUI;
+    public static bool __removeUsedItems;
 
     void Start()
     {
@@ -43,6 +45,7 @@ public class StatusManager : MonoBehaviour
 
         areComponentReferencesLinked = false;
         __updateInventoryUI = false;
+        __removeUsedItems = false;
 
         itemsInUi.Clear();
 
@@ -88,7 +91,14 @@ public class StatusManager : MonoBehaviour
         if (__updateInventoryUI)
         {
             GrabNewInventoryReferences();
+
             __updateInventoryUI = !__updateInventoryUI;
+        }
+
+        if (__removeUsedItems)
+        {
+            RemoveItemFromUI(0); // TESTING
+            __removeUsedItems = !__removeUsedItems;
         }
     }
 
@@ -133,7 +143,15 @@ public class StatusManager : MonoBehaviour
                 _newItemUISLot.name = i + " " + itemsInInventory[i].name; // Set UI settings like the original item, adding the "i" to the name to avoid "(clone)" and also works as key input selection
                 itemsInUi.Add(_newItemUISLot); // Add them to UI items list
             }
+
+            // Esto no funciona aquí porque el item ya no es parte de itemsInInventory
+            //else // For items that are null (existed, but have been [U]sed)
+            //{
+            //    itemsInUi.Remove(itemsInInventory[i]);
+            //}
         }
+
+
         //foreach (var item in itemsInUi)
         for (int i = 0; i < itemsInUi.Count; i++)
         {
@@ -143,8 +161,27 @@ public class StatusManager : MonoBehaviour
             // 1- Get its type, modify the scriptable object. NOPE, THIS SHOULD ONLY DISPLAY
             // 2- Get its text, display it
             itemsInUi[i].GetComponentInChildren<Text>().text = itemsInUi[i].name;
+            itemsInVisibleUI.Add(itemsInUi[i]);
+            Debug.Log("itemsInInventory[i].name " + itemsInInventory[i].name);
+            Debug.Log("itemsInUi[i].name " + itemsInUi[i].name);
+            Debug.Log("itemsInVisibleUI[i].name " + itemsInVisibleUI[i].name);
+
         }
         itemsInUi.Clear(); // Here we cleat the itemsInUi list so next item will regenerate the list from zero, otherwise will replicate and sum to the previous ones.
 
+
+    }
+
+    // _numericKeycode is hardcoded to 0 for testing, improve.
+    public void RemoveItemFromUI(int _numericKeycode)
+    {
+
+        if (_newItemUISLotReference.transform.GetChild(_numericKeycode).gameObject != null)
+        {
+            Destroy(_newItemUISLotReference.transform.GetChild(_numericKeycode).gameObject);
+        }
+
+
+        Debug.Log("RemoveItemFromUI");
     }
 }
