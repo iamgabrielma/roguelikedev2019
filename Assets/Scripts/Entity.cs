@@ -111,6 +111,7 @@ public class Entity : MonoBehaviour //, IScheduleable
 
     }
 
+    /* Used mainly when PLAYER attacks ENEMIES */
     public static void ResolveDefense(GameObject attacker, GameObject defender)
     {
 
@@ -147,15 +148,25 @@ public class Entity : MonoBehaviour //, IScheduleable
 
     }
 
+    /* Used mainly when ENEMIES attack the PLAYER */
     public static void ResolveAttack(GameObject attacker, GameObject defender, EntityMode _entityMode) {
-
+        // TODO: Ranged attacks works nicely and the player is hit back, but there's no graphical cue of this YET
         MessageLogManager.Instance.AddToQueue(attacker.name + " counter attacks back!");
+        //ShootEffect(attacker, defender);
         //Debug.Log("## COMBAT: Entity attacks back!!");
         ResolveDefense(attacker, defender);
 
     }
 
-    public static void ResolveDeath(GameObject defender)
+    public static void ResolveRangedAttack(GameObject attacker, GameObject defender, EntityMode _entityMode)
+    {
+        MessageLogManager.Instance.AddToQueue("WIP. RESOLVERANGEDATTACK");
+        // chance of malfunction
+        ResolveDefense(attacker, defender);
+
+    }
+
+        public static void ResolveDeath(GameObject defender)
     {
         if (defender.gameObject.GetComponent<Fighter>().health <= 0) // TODO: Move this health too to different place, not in enemyAI, either full entity or subclasses
         {
@@ -258,6 +269,27 @@ public class Entity : MonoBehaviour //, IScheduleable
         player.SetActive(false);
         Debug.Log("You die!");
     }
+
+    //public static void ShootEffect(GameObject attacker, GameObject defender)
+    //{
+    //    Ray ray = Camera.main.ScreenPointToRay(defender.transform.position);
+    //    DrawLine(attacker.transform.position, new Vector3(ray.origin.x, ray.origin.y, 0), Color.blue, 0.3f);
+    //}
+
+    //public static void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
+    //{
+    //    GameObject myLine = new GameObject();
+    //    myLine.transform.position = start;
+    //    myLine.AddComponent<LineRenderer>();
+    //    LineRenderer lr = myLine.GetComponent<LineRenderer>();
+    //    //lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
+    //    lr.SetColors(color, color);
+    //    lr.SetWidth(0.1f, 0.1f);
+    //    lr.SetPosition(0, start);
+    //    lr.SetPosition(1, end);
+    //    // Add gradient?
+    //    Destroy(myLine, duration);
+    //}
 
     void AnalizeMapAroundEntity()
     {

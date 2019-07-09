@@ -12,11 +12,15 @@ public class RangedFighter : MonoBehaviour
 
     private bool targetLocked;
 
+    [SerializeField] private GameObject playerReference;
+    [SerializeField] private GameObject enemyTarget;
     //GridGenerator grid;
 
     void Start()
     {
+        playerReference = Engine.__player;
         targetLocked = false;
+        enemyTarget = null;
         cam = Camera.main;
 
         aimSprite = aim.GetComponent<SpriteRenderer>().sprite;
@@ -35,12 +39,27 @@ public class RangedFighter : MonoBehaviour
             //CheckIfObjectWhereMouseClick();
 
         }
-        else if (Input.GetKeyDown(KeyCode.T) && targetLocked == true) // Shoot
+        else if (Input.GetKeyDown(KeyCode.T) && targetLocked == true && enemyTarget != null) // Shoot
         {
             targetLocked = false;
             // shoot + pass turn + resolve combat
+            // TODO NEEDS AN INTERMEDIATE STEP CONDITION THAT CHECKS IF THERE'S WALLS IN THE MIDDLE OR ENEMY IS WITHIN RANGE.
+            // TODO NEEDS TO SKIP TURN AS WELL ONCE ATTACK IS COMPLETED AND RESOLVED.
             ShootEffect();
             HideAim();
+        }
+        else if(Input.GetKeyDown(KeyCode.T) && targetLocked == true && enemyTarget == null)
+        {
+            targetLocked = false;
+            HideAim();
+            MessageLogManager.Instance.AddToQueue("No target");
+        }
+
+        if (targetLocked == true && Input.GetKeyDown(KeyCode.Escape))
+        {
+            targetLocked = false;
+            HideAim();
+            MessageLogManager.Instance.AddToQueue("Lock cancelled");
         }
 
 
@@ -93,6 +112,16 @@ public class RangedFighter : MonoBehaviour
             //Debug.Log("Something was clicked!");
             MessageLogManager.Instance.AddToQueue("Target " + hit.collider.gameObject.name + " Locked!");
             Debug.Log(hit.collider.gameObject.name);
+
+            if (hit.collider.gameObject.tag == "Enemy")
+            {
+                enemyTarget = hit.collider.gameObject;
+            }
+            else
+            {
+                enemyTarget = null;
+            }
+
         }
     }
 
@@ -108,18 +137,29 @@ public class RangedFighter : MonoBehaviour
 
     }
 
-    void TargetLocked()
-    {
-        // Target locked!
+    //void TargetLocked()
+    //{
+    //    // Target locked!
 
 
-    }
+    //}
 
     void ShootEffect()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         DrawLine(gameObject.transform.position, new Vector3(ray.origin.x, ray.origin.y, 0), Color.red, 0.3f);
         MessageLogManager.Instance.AddToQueue("piu piu! shooting piu piu!");
+
+        if (playerReference == null)
+        {
+            playerReference = GameObject.FindWithTag("Player");
+        }
+        //Entity.ResolveRangedAttack(playerReference, enemyTarget, Entity.EntityMode.CombatEngaged);
+        Entity.ResolveDefense(playerReference, enemyTarget);
+
+        GameStateManager.__gameTimeTicks++; // Adds a tick to Game Time.
+        GameStateManager.__gameState = GameStateManager.GameState.enemyTurn; // Finished our turn, is enemy turn.
+
     }
 
     void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
