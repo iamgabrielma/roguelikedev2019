@@ -37,23 +37,22 @@ public class Save
         // Component: Equipment Manager
 
         /* 2 - Enemies */
-        // Fail, this seems to save only the last one, like is overwriting all of them to 0 except the last of the list.
-        //for (int i = 0; i < enemies.Length; i++)
-        //{
-        //    enemyPositions = new float[enemies.Length,3]; // 1 slot per enemy + 3 slots for their single location
-        //    // Position
-        //    enemyPositions[i, 0] = enemies[i].transform.position.x;
-        //    enemyPositions[i, 1] = enemies[i].transform.position.y;
-        //    enemyPositions[i, 2] = enemies[i].transform.position.z;
-        //}
-
-        enemyPositions = new float[enemies.Length, 3];
+        enemyPositions = new float[enemies.Length, 4];
 
         for (int i = 0; i < enemies.Length; i++)
         {
             enemyPositions[i,0] = enemies[i].transform.position.x;
             enemyPositions[i,1] = enemies[i].transform.position.y;
             enemyPositions[i,2] = enemies[i].transform.position.z;
+
+            if (enemies[i].GetComponent<Fighter>().isAgressive == true)
+            {
+                enemyPositions[i, 3] = 1;
+            }
+            else
+            {
+                enemyPositions[i, 3] = 0;
+            }
         }
     }
 }

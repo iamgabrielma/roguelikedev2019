@@ -227,16 +227,24 @@ public class Engine : MonoBehaviour
             //_playerInstance.entityLocation = new Vector3(save.playerPosition[0], save.playerPosition[1], save.playerPosition[2]);
             //Debug.Log("Player position loaded at x:" + _playerInstance.entityLocation.x + " y:" + _playerInstance.entityLocation.y + " z:" + _playerInstance.entityLocation.z);
 
+            // 1. Load player
             GameObject _currentPlayerReference = GameObject.Find("Player");
             _currentPlayerReference.transform.localPosition = new Vector3(save.playerPosition[0], save.playerPosition[1], save.playerPosition[2]);
 
+            // 2. Load enemies
             GameObject[] _currentListOfEnemies = GameObject.FindGameObjectsWithTag("Enemy");
             for (int i = 0; i < _currentListOfEnemies.Length; i++)
             {
                 _currentListOfEnemies[i].transform.localPosition = new Vector3(save.enemyPositions[i,0], save.enemyPositions[i, 1], save.enemyPositions[i, 2]);
+                if (save.enemyPositions[i, 3] >= 1)
+                {
+                    _currentListOfEnemies[i].GetComponent<Fighter>().isAgressive = true;
+                }
+                else
+                {
+                    _currentListOfEnemies[i].GetComponent<Fighter>().isAgressive = false;
+                }
             }
-            //Debug.Log("Player position loaded at x:" + _playerInstance.entityLocation.x + " y:" + _playerInstance.entityLocation.y + " z:" + _playerInstance.entityLocation.z);
-            // 4. Update UI
 
             Debug.Log("Game Loaded");
         }
