@@ -177,15 +177,6 @@ public class Engine : MonoBehaviour
 
     }
 
-    // https://www.raywenderlich.com/418-how-to-save-and-load-a-game-in-unity
-    private Save CreateSaveGameObject()
-    {
-        // Instance of the Save() class with all the Entity information 
-        GameObject _currentPlayerReference = GameObject.Find("Player");
-        Save save = new Save(_currentPlayerReference);
-
-        return save;
-    }
 
     public void SaveGame()
     {
@@ -203,6 +194,18 @@ public class Engine : MonoBehaviour
 
         Debug.Log("Game Saved");
 
+    }
+
+    // https://www.raywenderlich.com/418-how-to-save-and-load-a-game-in-unity
+    private Save CreateSaveGameObject()
+    {
+        // Instance of the Save() class with all the Entity information 
+        GameObject _currentPlayerReference = GameObject.Find("Player");
+        GameObject[] _currentListOfEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+        Save save = new Save(_currentPlayerReference, _currentListOfEnemies);
+
+        return save;
     }
 
     public void LoadGame()
@@ -226,7 +229,13 @@ public class Engine : MonoBehaviour
 
             GameObject _currentPlayerReference = GameObject.Find("Player");
             _currentPlayerReference.transform.localPosition = new Vector3(save.playerPosition[0], save.playerPosition[1], save.playerPosition[2]);
-            Debug.Log("Player position loaded at x:" + _playerInstance.entityLocation.x + " y:" + _playerInstance.entityLocation.y + " z:" + _playerInstance.entityLocation.z);
+
+            GameObject[] _currentListOfEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+            for (int i = 0; i < _currentListOfEnemies.Length; i++)
+            {
+                _currentListOfEnemies[i].transform.localPosition = new Vector3(save.enemyPositions[i,0], save.enemyPositions[i, 1], save.enemyPositions[i, 2]);
+            }
+            //Debug.Log("Player position loaded at x:" + _playerInstance.entityLocation.x + " y:" + _playerInstance.entityLocation.y + " z:" + _playerInstance.entityLocation.z);
             // 4. Update UI
 
             Debug.Log("Game Loaded");
