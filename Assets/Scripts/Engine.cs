@@ -181,9 +181,6 @@ public class Engine : MonoBehaviour
     private Save CreateSaveGameObject()
     {
         // Instance of the Save() class with all the Entity information 
-        // todo: (I may want to make this more generic so other objects fit in as well)
-        // todo: this seems to save always the position 53.5, 53.5 instead of grabbing the moving player.
-
         GameObject _currentPlayerReference = GameObject.Find("Player");
         Save save = new Save(_currentPlayerReference);
 
@@ -224,7 +221,11 @@ public class Engine : MonoBehaviour
             file.Close();
 
             // 3. we have the save information, we still need to convert that into the game state.
-            _playerInstance.entityLocation = new Vector3(save.playerPosition[0], save.playerPosition[1], save.playerPosition[2]);
+            //_playerInstance.entityLocation = new Vector3(save.playerPosition[0], save.playerPosition[1], save.playerPosition[2]);
+            //Debug.Log("Player position loaded at x:" + _playerInstance.entityLocation.x + " y:" + _playerInstance.entityLocation.y + " z:" + _playerInstance.entityLocation.z);
+
+            GameObject _currentPlayerReference = GameObject.Find("Player");
+            _currentPlayerReference.transform.localPosition = new Vector3(save.playerPosition[0], save.playerPosition[1], save.playerPosition[2]);
             Debug.Log("Player position loaded at x:" + _playerInstance.entityLocation.x + " y:" + _playerInstance.entityLocation.y + " z:" + _playerInstance.entityLocation.z);
             // 4. Update UI
 
