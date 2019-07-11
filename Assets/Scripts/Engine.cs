@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO; // files + OS
+using System.Runtime.Serialization.Formatters.Binary; // BinaryFormatter access
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -39,6 +41,8 @@ public class Engine : MonoBehaviour
     // Message Logs:
     //public static MessageLog MessageLog { get; private set; }
 
+    Entity _playerInstance;
+
     public void Start()
     {
 
@@ -58,17 +62,7 @@ public class Engine : MonoBehaviour
         int playerY = 106/2; // If we spawn the player in the center, waklkers always have opened the place up:
 
         Entity playerInstance = new Entity(playerX, playerY, "Player", _test_player, new Vector3(playerX, playerY, 0)); // Place player in a fixed place (temporary)
-        //int _randomIndex = Random.Range(1, GridGenerator.listOfFloorTiles.Count);
-        //Vector2 _randomVector = GridGenerator.listOfFloorTiles[_randomIndex];
-        //Entity playerInstance = new Entity((int)_randomVector.x, (int)_randomVector.y, "Player", _test_player, new Vector3(_randomVector.x, _randomVector.y, 0));
-
-        //SchedulingSystem.Add(playerInstance); // Now I can pass an Entity as a parameter because the Entity implements IScheduleable
-        // Console message: Null added to the schedule. we'll see :D 
-        //Debug.Log("player instance is added");
-
-        //_FOVCollisionHolder = new GameObject("_FOVCollisionHolder").transform;
-        //_FOVCollisionHolder.transform.SetParent(playerInstance.transform);
-        //BoxCollider2D _fovbc2d = (BoxCollider2D)_FOVCollisionHolder.gameObject.AddComponent(typeof(BoxCollider2D));
+        _playerInstance = playerInstance; // Assigned here to use later within Save()
 
         __player = Instantiate(playerInstance.entityGameObject, playerInstance.entityLocation, Quaternion.identity);
         __player.name = __player.tag;
@@ -181,6 +175,61 @@ public class Engine : MonoBehaviour
         }
 
 
+    }
+
+    // https://www.raywenderlich.com/418-how-to-save-and-load-a-game-in-unity
+    private Save CreateSaveGameObject()
+    {
+        // Instance of the Save() class with all the Entity information 
+        // todo: (I may want to make this more generic so other objects fit in as well)
+        // todo: this seems to save always the position 53.5, 53.5 instead of grabbing the moving player.
+
+        GameObject _currentPlayerReference = GameObject.Find("Player");
+        Save save = new Save(_currentPlayerReference);
+
+        return save;
+    }
+
+    public void SaveGame()
+    {
+        // Create a Save instance with all the data for the current session saved into it.
+        Save save = CreateSaveGameObject();
+
+        // It serializes the data (into bytes) and writes it in binary to disk, and closes the FileStream.
+        // Loading works the other way around, the binary formatter reads from the binary source and converts it to Unity stuff
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Create(Application.persistentDataPath + "/gamesave.save");
+        bf.Serialize(file, save);
+        file.Close();
+
+        // (?) Reset the game so after saving everything in in default state? Why?
+
+        Debug.Log("Game Saved");
+
+    }
+
+    public void LoadGame()
+    {
+
+        if (File.Exists(Application.persistentDataPath + "/gamesave.save"))
+        {
+            Debug.Log("Game Loaded");
+
+            // 1. Clear the game before loading the saving?
+
+            // 2. again create a BinaryFormatter, only this time we are providing it with a stream of bytes to read instead of write.
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Open(Application.persistentDataPath + "/gamesave.save", FileMode.Open);
+            Save save = (Save)bf.Deserialize(file);
+            file.Close();
+
+            // 3. we have the save information, we still need to convert that into the game state.
+            _playerInstance.entityLocation = new Vector3(save.playerPosition[0], save.playerPosition[1], save.playerPosition[2]);
+            Debug.Log("Player position loaded at x:" + _playerInstance.entityLocation.x + " y:" + _playerInstance.entityLocation.y + " z:" + _playerInstance.entityLocation.z);
+            // 4. Update UI
+
+            Debug.Log("Game Loaded");
+        }
     }
 
 }

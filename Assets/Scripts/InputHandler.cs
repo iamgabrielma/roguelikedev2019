@@ -88,7 +88,9 @@ public class InputHandler : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            // TODO: Will implement game menu screen here in the future.
+            GameObject tempObject = GameObject.Find("Canvas");
+            var menu = tempObject.GetComponent<_testingUIElements>();
+            menu.ToggleMenu();
         }
 
     }

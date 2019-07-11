@@ -45,7 +45,7 @@ public class RangedFighter : MonoBehaviour
             // shoot + pass turn + resolve combat
             // TODO NEEDS AN INTERMEDIATE STEP CONDITION THAT CHECKS IF THERE'S WALLS IN THE MIDDLE OR ENEMY IS WITHIN RANGE.
             // TODO NEEDS TO SKIP TURN AS WELL ONCE ATTACK IS COMPLETED AND RESOLVED.
-            ShootEffect();
+            ShootAttackAndEffect();
             HideAim();
         }
         else if(Input.GetKeyDown(KeyCode.T) && targetLocked == true && enemyTarget == null)
@@ -137,26 +137,22 @@ public class RangedFighter : MonoBehaviour
 
     }
 
-    //void TargetLocked()
-    //{
-    //    // Target locked!
 
-
-    //}
-
-    void ShootEffect()
+    void ShootAttackAndEffect()
     {
+        // Draws the effect
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         DrawLine(gameObject.transform.position, new Vector3(ray.origin.x, ray.origin.y, 0), Color.red, 0.3f);
-        MessageLogManager.Instance.AddToQueue("piu piu! shooting piu piu!");
 
+        // Resolves the combat outcome
         if (playerReference == null)
         {
             playerReference = GameObject.FindWithTag("Player");
         }
-        //Entity.ResolveRangedAttack(playerReference, enemyTarget, Entity.EntityMode.CombatEngaged);
         Entity.ResolveDefense(playerReference, enemyTarget);
+        MessageLogManager.Instance.AddToQueue("piu piu! shooting piu piu!");
 
+        // Ends player turn
         GameStateManager.__gameTimeTicks++; // Adds a tick to Game Time.
         GameStateManager.__gameState = GameStateManager.GameState.enemyTurn; // Finished our turn, is enemy turn.
 
