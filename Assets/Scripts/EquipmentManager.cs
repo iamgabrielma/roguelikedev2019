@@ -28,6 +28,11 @@ public class EquipmentManager : MonoBehaviour{
         communication = new GameObject("VLF (Low Freq)");
     }
 
+    private void EquipmentSwitch()
+    {
+        // Each time there's an equipment switch, we should update both the player stats and the UI
+    }
+
     private void Update()
     {
         // If there an update, call a switcher function

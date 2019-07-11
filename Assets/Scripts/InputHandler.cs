@@ -164,7 +164,7 @@ public class InputHandler : MonoBehaviour
             //Entity _enemy = new Entity((int)collision.transform.localPosition.x, (int)collision.transform.localPosition.y, "Enemy", _test_npc, new Vector3(_randomVector.x, _randomVector.y, 0)); ;
             Debug.Log("Bump attack: resolving defense!");
             Entity.ResolveDefense(player, collision.gameObject);
-            Entity.ResolveDeath(collision.gameObject);
+            Entity.ResolveDeath(player, collision.gameObject);
 
         }
 

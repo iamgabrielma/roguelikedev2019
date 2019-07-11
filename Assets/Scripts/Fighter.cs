@@ -10,6 +10,7 @@ public class Fighter : MonoBehaviour
     public int health;
     public int energy;
     public int oxygen;
+    public int xp;
 
     public bool isAgressive;
 
@@ -23,13 +24,14 @@ public class Fighter : MonoBehaviour
         health = 3;
         energy = 10;
         oxygen = 1000;
+        xp = 5; // xp an entity gives when dies
 
         isAgressive = false;
 
-        // Temporary approach, we should move this to Interfaces
         if (gameObject.tag == "Player")
         {
             health = 10;
+            xp = 0; // player xp
 
         }
     }

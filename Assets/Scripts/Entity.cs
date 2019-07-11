@@ -136,7 +136,7 @@ public class Entity : MonoBehaviour //, IScheduleable
 
         // Whoever resolves its defense, success or fail, attacking an enemy will put them aggressive back as well in their next turn
         defender.gameObject.GetComponent<Fighter>().isAgressive = true;
-        ResolveDeath(defender); // Check if somebody is death after a successful attack
+        ResolveDeath(attacker, defender); // Check if somebody is death after a successful attack
 
         // Resolve defense means as well that the enemy moves from whatever state they are, to EntityMode.CombatEngaged
         //defender.
@@ -166,7 +166,7 @@ public class Entity : MonoBehaviour //, IScheduleable
 
     }
 
-        public static void ResolveDeath(GameObject defender)
+        public static void ResolveDeath(GameObject attacker, GameObject defender)
     {
         if (defender.gameObject.GetComponent<Fighter>().health <= 0) // TODO: Move this health too to different place, not in enemyAI, either full entity or subclasses
         {
@@ -180,6 +180,11 @@ public class Entity : MonoBehaviour //, IScheduleable
             {
                 // Note 23.06.19 -> Now inherits from Monobehavior so we can use Destroy()
                 MessageLogManager.Instance.AddToQueue(defender.name + " has been destroyed");
+
+                // Add XP parameter from the defender that dies, to the attacker that wins:
+                int _xp = defender.GetComponent<Fighter>().xp;
+                attacker.GetComponent<Level>().AddXP(_xp);
+
                 //Debug.Log("## COMBAT: Entity has been destroyed");
                 //Debug.Log("## COMBAT MODE: Disabled");
                 //Destroy(defender);
