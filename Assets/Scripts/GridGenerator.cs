@@ -12,6 +12,7 @@ using UnityEditor;
 public class GridGenerator : MonoBehaviour
 {
     public static bool __isMapReady; // Once this is ready , I should move the map into int[,] map
+    public static bool __generateNextFloor;
     int[,] map; // Creating this for the flood generation. We'll have to store our map here with 0's and 1's
 
     // FOV variables
@@ -36,6 +37,7 @@ public class GridGenerator : MonoBehaviour
 
     public int seed;
     public bool useRandomSeed;
+    private int currentFloor;
 
     private int mapWidthX = 106;
     private int mapHeightY = 106;
@@ -71,6 +73,7 @@ public class GridGenerator : MonoBehaviour
     List<Vector2> borders = new List<Vector2>();
 
     public List<Entity> listOfEnemyEntities = new List<Entity>();
+    public List<Entity> listOfItems = new List<Entity>();
 
 
     //public TileBase tileBase; // Asigned to our floor tilebase in the editor.
@@ -78,7 +81,9 @@ public class GridGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currentFloor = 1;
         __isMapReady = false;
+        __generateNextFloor = false;
         playerReference = GameObject.FindWithTag("Player").transform;
         playerVisibilityRadius = 4;
         isFOVrecompute = InputHandler.isFOVrecompute; // We set this to the Static bool
@@ -170,9 +175,16 @@ public class GridGenerator : MonoBehaviour
 
 
     }
+
+    public int CurrentFloor { get { return currentFloor; } }
     
     void Update()
     {
+        if (__generateNextFloor)
+        {
+            NextFloor();
+        }
+
         isFOVrecompute = InputHandler.isFOVrecompute; // We set this to the Static bool
         //Debug.Log("isFOVrecompute" + isFOVrecompute);
 
@@ -292,10 +304,26 @@ public class GridGenerator : MonoBehaviour
 
     void ClearReferences() {
 
+        // Map - Working.
         floorMap.ClearAllTiles(); // clears all floor tiles
         listOfFloorTiles.Clear(); // clear this count list as well
         listOfWallTiles.Clear(); // clear this count list as well
         listOfWalkers.Clear(); // clears all walkers for the new iteration this may need to go at the end of the script, or will clear them before generates the level.
+
+        // Enemies and Items - WIP.
+        Debug.Log("listOfEnemyEntities" + listOfEnemyEntities.Count.ToString()); // 10 all the time, but there's 10x for each keystroke
+        listOfEnemyEntities.Clear();
+        foreach (var item in listOfEnemyEntities)
+        {
+            Destroy(item);
+        }
+         
+        Debug.Log("listOfItems" + listOfItems.Count.ToString()); // 0 all the time
+        gameObject.GetComponent<GridGenerator>().listOfItems.Clear();
+        foreach (var item in gameObject.GetComponent<GridGenerator>().listOfItems)
+        {
+            Destroy(item);
+        }
 
     }
 
@@ -612,7 +640,7 @@ public class GridGenerator : MonoBehaviour
         Vector2 _randomVector = listOfFloorTiles[_randomIndex];
         //Instantiate(_exit, new Vector3(_randomVector.x + 0.5f, _randomVector.y + 0.5f, 0), Quaternion.identity);
         //TESTING:
-        Instantiate(_exit, new Vector3(55 + 0.5f, 55 + 0.5f, 0), Quaternion.identity);
+        Instantiate(_exit, new Vector3(56 + 0.5f, 56 + 0.5f, 0), Quaternion.identity);
     }
 
     // Is inside our GridGenerator because regenerates / re-paints our grid constantly
@@ -1302,59 +1330,25 @@ public class GridGenerator : MonoBehaviour
         Debug.Log("Check WALLS validation: " + listOfWallTiles.Count.ToString() + "wall tiles && " + _walls.ToString());
     }
 
-    //class Room {
+    public void NextFloor()
+    {
+        currentFloor++;
+        __generateNextFloor = false;
+        Debug.Log("Newfloor");
 
-    //    public List<Coord> tiles;
-    //    public List<Coord> edgeTiles; // I have this already on a different func that I used before
-    //    public List<Room> connectedRooms;
-    //    public int roomSize; // how many tiles there are in the room
+        // Clear the current floor
+        __isMapReady = false;
+        ClearReferences();
 
-    //    // We create a second constructor (?) that takes no parameters in case we want to setup the room to empty room
-    //    public Room() { 
-        
-    //    }
-    //    // !! Adding this second constructor doesn't allow me to use the other one when creating a new room.
-
-    //    // constructor, will take a list of coords and a 2d integer array that makes up the map so we can detect which tiles are edges
-    //    public Room(List<Coord> roomTiles, int[,] map) {
-
-    //        tiles = roomTiles;
-    //        roomSize = tiles.Count;
-    //        connectedRooms = new List<Room>();
-
-    //        edgeTiles = new List<Coord>();
-    //        foreach (Coord tile in tiles)
-    //        {
-    //            // we want to check to all the neighbors, if any is a wall tile, then is an edge
-    //            for (int x = tile.tileX -1; x < tile.tileX+1; x++)
-    //            {
-    //                for (int y = tile.tileY - 1; y < tile.tileY + 1; y++)
-    //                {
-    //                    if (x == tile.tileX || y == tile.tileY) // we're excluding the diagonal neighbors, we're just looking at the cross ones
-    //                    {
-    //                        if (map[x,y] == 1) // if is a wall tile
-    //                        {
-    //                            edgeTiles.Add(tile); // add the current tile to the list of edges
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-
-    //    }
-
-    //    public static void ConnectRooms(Room roomA, Room roomB) {
-
-    //        roomA.connectedRooms.Add(roomB);
-    //        roomB.connectedRooms.Add(roomA);
-    //    }
-
-    //    // will return wether or not connected rooms contain the other room
-    //    public bool isConnected(Room otherRoom) {
-
-    //        return connectedRooms.Contains(otherRoom); 
-    //    }
-    //}
-
+        // Generate a new floor
+        ProcGenFloorWalkersSetup();
+        TEST_ProcGenNewWalkers();
+        ProcGenWallSetup();
+        ProcGenWallFixtures(mapWidthX, mapHeightY);
+        PlaceEntities();
+        PlaceItems();
+        PlaceExit();
+        __isMapReady = true;
+    }
 
 }

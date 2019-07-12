@@ -98,6 +98,7 @@ public class InputHandler : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Less) && isPlayerOnTopOfExitTile == true )
         {
             Debug.Log("Discovering new depths");
+            GridGenerator.__generateNextFloor = true; // Switches the generateNewFloor to True and the rest is dealt within the Grid Generator.
         }
 
     }

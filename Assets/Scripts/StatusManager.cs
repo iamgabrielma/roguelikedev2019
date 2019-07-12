@@ -44,10 +44,12 @@ public class StatusManager : MonoBehaviour
     public Text currentPlayerLevelText;
     public Text currentLevelDepthText;
 
+    private GridGenerator _gridReference;
+
     void Start()
     {
         playerReference = Engine.__player;
-
+        _gridReference = FindObjectOfType<GridGenerator>();
         areComponentReferencesLinked = false;
         __updateInventoryUI = false;
         __removeUsedItems = false;
@@ -94,6 +96,12 @@ public class StatusManager : MonoBehaviour
         {
             currentPlayerLevel = playerReference.GetComponent<Level>().CurrentLevel;
             currentPlayerLevelText.text = "Level: " + currentPlayerLevel.ToString();
+        }
+
+        if (_gridReference != null)
+        {
+            currentLevelDepth = _gridReference.CurrentFloor;
+            currentLevelDepthText.text = "Depth: " + currentLevelDepth.ToString();
         }
 
         if (__updateInventoryUI)

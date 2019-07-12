@@ -6,7 +6,7 @@ public class ItemGenerator: MonoBehaviour
 {
 
     private int numberOfItemsPerLevel;
-    private List<GameObject> listOfItems = new List<GameObject>();
+    public List<GameObject> listOfItems = new List<GameObject>();
 
     public void GenerateItems(List<Vector2> floorTiles) {
 
