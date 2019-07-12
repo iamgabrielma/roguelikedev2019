@@ -75,7 +75,7 @@ public class InputHandler : MonoBehaviour
             {
             // Give +1Health for waiting
                 Entity.WaitAndRegenerate(player);
-                EndPlayerTurn(); 
+                EndOfPlayerTurn(); 
             }
         // USING ITEMS DEACTIVATED FOR NOW UNTIL I CAN RETHINK THE INVENTORY SYSTEM
         //if (Input.GetKeyDown(KeyCode.Alpha0) && isPlayerMoving == false && IsPlayerTurn)
