@@ -71,6 +71,12 @@ public class InputHandler : MonoBehaviour
                 isPlayerMoving = true;
                 MovePlayer("left");
             }
+            else if (Input.GetKeyDown(KeyCode.Z) && isPlayerMoving == false && IsPlayerTurn)
+            {
+            // Give +1Health for waiting
+                Entity.WaitAndRegenerate(player);
+                EndPlayerTurn(); 
+            }
         // USING ITEMS DEACTIVATED FOR NOW UNTIL I CAN RETHINK THE INVENTORY SYSTEM
         //if (Input.GetKeyDown(KeyCode.Alpha0) && isPlayerMoving == false && IsPlayerTurn)
         //{

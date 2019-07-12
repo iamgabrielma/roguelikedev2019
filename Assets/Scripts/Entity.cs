@@ -166,7 +166,15 @@ public class Entity : MonoBehaviour //, IScheduleable
 
     }
 
-        public static void ResolveDeath(GameObject attacker, GameObject defender)
+    public static void WaitAndRegenerate(GameObject _entity) {
+
+        if (_entity.GetComponent<Fighter>().health < 10)
+        {
+            _entity.GetComponent<Fighter>().health += 1;
+        }
+    }
+
+    public static void ResolveDeath(GameObject attacker, GameObject defender)
     {
         if (defender.gameObject.GetComponent<Fighter>().health <= 0) // TODO: Move this health too to different place, not in enemyAI, either full entity or subclasses
         {
