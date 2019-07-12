@@ -174,6 +174,28 @@ public class Entity : MonoBehaviour //, IScheduleable
         }
     }
 
+    public static void LevelUp(GameObject _entity, string _parameter)
+    {
+        GameObject tempObject = GameObject.Find("Canvas");
+        var menu = tempObject.GetComponent<_testingUIElements>();
+
+        switch (_parameter)
+        {
+            case "hull":
+                Debug.Log(" selected: " + _parameter.ToString());
+                _entity.GetComponent<Fighter>().maxHealth += 1;
+                menu.ToggleLevelUpMenu();
+                break;
+            case "energy":
+                Debug.Log(" selected: " + _parameter.ToString());
+                _entity.GetComponent<Fighter>().maxEnergy += 1;
+                menu.ToggleLevelUpMenu();
+                break;
+            default:
+                break;
+        }
+    }
+
     public static void ResolveDeath(GameObject attacker, GameObject defender)
     {
         if (defender.gameObject.GetComponent<Fighter>().health <= 0) // TODO: Move this health too to different place, not in enemyAI, either full entity or subclasses

@@ -7,7 +7,9 @@ public class Fighter : MonoBehaviour
     public int attack;
     public int defense;
     public int speed;
+    public int maxHealth;
     public int health;
+    public int maxEnergy;
     public int energy;
     public int oxygen;
     public int xp;
@@ -21,8 +23,10 @@ public class Fighter : MonoBehaviour
         attack = 10;
         defense = 10;
         speed = 1;
-        health = 3;
-        energy = 10;
+        maxHealth = 3;
+        health = maxHealth;
+        maxEnergy = 10;
+        energy = maxEnergy;
         oxygen = 1000;
         xp = 5; // xp an entity gives when dies
 
@@ -30,7 +34,8 @@ public class Fighter : MonoBehaviour
 
         if (gameObject.tag == "Player")
         {
-            health = 10;
+            maxHealth = 10;
+            health = maxHealth;
             xp = 0; // player xp
 
         }

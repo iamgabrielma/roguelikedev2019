@@ -76,8 +76,8 @@ public class StatusManager : MonoBehaviour
         }
         if (playerReference.GetComponent<Fighter>() != null)
         {
-            integrityText.text = "INTEGRITY " + (playerReference.GetComponent<Fighter>().health * 10).ToString() + "%";
-            energyText.text = "ENERGY " + energy.ToString();
+            integrityText.text = "INTEGRITY " + playerReference.GetComponent<Fighter>().health.ToString() + "/" + playerReference.GetComponent<Fighter>().maxHealth.ToString();
+            energyText.text = "ENERGY " + playerReference.GetComponent<Fighter>().energy.ToString() + "/" + playerReference.GetComponent<Fighter>().maxEnergy.ToString();
         }
         if (playerReference.GetComponent<InventoryManager>() != null)
         {

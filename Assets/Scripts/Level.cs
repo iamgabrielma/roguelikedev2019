@@ -48,6 +48,11 @@ public class Level : MonoBehaviour
             currentxp = 0;
             MessageLogManager.Instance.AddToQueue("Your battle skills grow stronger! You reached level " + currentLevel);
             CalculateXPNextLevel();
+
+            // Pop upgrade selection menu:
+            GameObject tempObject = GameObject.Find("Canvas");
+            var menu = tempObject.GetComponent<_testingUIElements>();
+            menu.ToggleLevelUpMenu();
         }
     }
 

@@ -643,9 +643,9 @@ public class GridGenerator : MonoBehaviour
         GameObject _exit = Resources.Load("Prefabs/ItemExit") as GameObject;
         int _randomIndex = Random.Range(1, listOfFloorTiles.Count);
         Vector2 _randomVector = listOfFloorTiles[_randomIndex];
-        //Instantiate(_exit, new Vector3(_randomVector.x + 0.5f, _randomVector.y + 0.5f, 0), Quaternion.identity);
+        Instantiate(_exit, new Vector3(_randomVector.x + 0.5f, _randomVector.y + 0.5f, 0), Quaternion.identity);
         //TESTING:
-        Instantiate(_exit, new Vector3(56 + 0.5f, 56 + 0.5f, 0), Quaternion.identity);
+        //Instantiate(_exit, new Vector3(56 + 0.5f, 56 + 0.5f, 0), Quaternion.identity);
     }
 
     // Is inside our GridGenerator because regenerates / re-paints our grid constantly
