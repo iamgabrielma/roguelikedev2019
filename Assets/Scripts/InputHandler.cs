@@ -24,6 +24,7 @@ public class InputHandler : MonoBehaviour
 
     public static bool isFOVrecompute; // If True, FOV is recomputed on GridGenerator.cs (temporary, maybe this needs to go into GameMap or something)
     //public static MessageLog MessageLog { get; private set; }
+    private bool isPlayerOnTopOfExitTile;
 
 
     private void Start()
@@ -36,6 +37,7 @@ public class InputHandler : MonoBehaviour
         }
         player = Engine.__player;
         isFOVrecompute = true; // When the player appears for first time, we need to calculate the initial FOV
+        isPlayerOnTopOfExitTile = false;
     }
 
     private void Update()
@@ -91,6 +93,11 @@ public class InputHandler : MonoBehaviour
             GameObject tempObject = GameObject.Find("Canvas");
             var menu = tempObject.GetComponent<_testingUIElements>();
             menu.ToggleMenu();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Less) && isPlayerOnTopOfExitTile == true )
+        {
+            Debug.Log("Discovering new depths");
         }
 
     }
@@ -171,6 +178,23 @@ public class InputHandler : MonoBehaviour
         if (collision.tag == "Item")
         {
             Entity.ResolveItem(player, collision.gameObject);
+        }
+
+    }
+
+    // Exit logic. This must be this way because the collisions is called on FixedUpdate, which may not coincide with your key press and not trigger, so we have a bool switch and check for changes in Update() instead.
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.tag == "Exit")
+        {
+            isPlayerOnTopOfExitTile = true;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.tag == "Exit")
+        {
+            isPlayerOnTopOfExitTile = false;
         }
     }
 

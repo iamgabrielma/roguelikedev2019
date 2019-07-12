@@ -23,6 +23,8 @@ public class Level : MonoBehaviour
         xpNextLevel = 11;
     }
 
+    public int CurrentLevel { get { return currentLevel; } }
+
 
     public void AddXP(int _xp)
     {
@@ -44,6 +46,7 @@ public class Level : MonoBehaviour
             currentLevel++;
             totalxp = totalxp + currentxp;
             currentxp = 0;
+            MessageLogManager.Instance.AddToQueue("Your battle skills grow stronger! You reached level " + currentLevel);
             CalculateXPNextLevel();
         }
     }

@@ -12,6 +12,7 @@ TagManager:
   - Item
   - UIItem
   - Canvas
+  - Exit
   layers:
   - Default
   - TransparentFX

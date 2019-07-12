@@ -39,6 +39,11 @@ public class StatusManager : MonoBehaviour
     public static bool __updateInventoryUI;
     public static bool __removeUsedItems;
 
+    private int currentPlayerLevel;
+    private int currentLevelDepth;
+    public Text currentPlayerLevelText;
+    public Text currentLevelDepthText;
+
     void Start()
     {
         playerReference = Engine.__player;
@@ -69,10 +74,8 @@ public class StatusManager : MonoBehaviour
         }
         if (playerReference.GetComponent<Fighter>() != null)
         {
-            //integrityText.text = "INTEGRITY " + integrity.ToString();
             integrityText.text = "INTEGRITY " + (playerReference.GetComponent<Fighter>().health * 10).ToString() + "%";
             energyText.text = "ENERGY " + energy.ToString();
-
         }
         if (playerReference.GetComponent<InventoryManager>() != null)
         {
@@ -86,6 +89,11 @@ public class StatusManager : MonoBehaviour
             sensorsText.text = sensors.name;
             navigationText.text = navigation.name;
             communicationText.text = communication.name;
+        }
+        if (playerReference.GetComponent<Level>() != null)
+        {
+            currentPlayerLevel = playerReference.GetComponent<Level>().CurrentLevel;
+            currentPlayerLevelText.text = "Level: " + currentPlayerLevel.ToString();
         }
 
         if (__updateInventoryUI)
