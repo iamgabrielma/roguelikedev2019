@@ -304,26 +304,29 @@ public class GridGenerator : MonoBehaviour
 
     void ClearReferences() {
 
-        // Map - Working.
+        // Map:
         floorMap.ClearAllTiles(); // clears all floor tiles
         listOfFloorTiles.Clear(); // clear this count list as well
         listOfWallTiles.Clear(); // clear this count list as well
         listOfWalkers.Clear(); // clears all walkers for the new iteration this may need to go at the end of the script, or will clear them before generates the level.
 
-        // Enemies and Items - WIP.
-        Debug.Log("listOfEnemyEntities" + listOfEnemyEntities.Count.ToString()); // 10 all the time, but there's 10x for each keystroke
+        // Enemies and Items
+        /* TIL: 
+        Attempting to destroy an asset loaded through Resource.Load is like attempting to delete an asset (be it a prefab or a texture or what have you) from the Project view. 
+        It will delete that asset permanently if it were allowed
+        */
+        GameObject[] _temp_listOfCurrentEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+        GameObject[] _temp_listOfCurrentItems = GameObject.FindGameObjectsWithTag("Item");
+        foreach (var item in _temp_listOfCurrentEnemies)
+        {
+            Destroy(item);
+        }
+        foreach (var item in _temp_listOfCurrentItems)
+        {
+            Destroy(item);
+        }
         listOfEnemyEntities.Clear();
-        foreach (var item in listOfEnemyEntities)
-        {
-            Destroy(item);
-        }
-         
-        Debug.Log("listOfItems" + listOfItems.Count.ToString()); // 0 all the time
-        gameObject.GetComponent<GridGenerator>().listOfItems.Clear();
-        foreach (var item in gameObject.GetComponent<GridGenerator>().listOfItems)
-        {
-            Destroy(item);
-        }
+        listOfItems.Clear();
 
     }
 
@@ -613,7 +616,7 @@ public class GridGenerator : MonoBehaviour
     {
         int _numberOfEnemyEntities = 10; // TODO: Move this somewhere differently, Game Manager?
 
-        GameObject enemyObjectPrefab = Resources.Load<GameObject>("Prefabs/Enemy");
+        GameObject enemyObjectPrefab = Resources.Load("Prefabs/Enemy") as GameObject;
          
         // For each entity to be created, find a suitable spawning place and Instantiate an enemy
         for (int i = 0; i < _numberOfEnemyEntities; i++)
@@ -623,6 +626,8 @@ public class GridGenerator : MonoBehaviour
             Entity npcInstance = new Entity((int)_randomVector.x, (int)_randomVector.y, "Enemy", enemyObjectPrefab, new Vector3(_randomVector.x, _randomVector.y, 0));
             Instantiate(npcInstance.entityGameObject, npcInstance.entityLocation, Quaternion.identity);
             listOfEnemyEntities.Add(npcInstance); // We use this later on to calculate closes FOV at CalculateEntityClosestFOV(listOfEnemyEntities);
+            //listOfEnemyEntitiesGO.Add(enemyObjectPrefab);
+
 
         }
     }
