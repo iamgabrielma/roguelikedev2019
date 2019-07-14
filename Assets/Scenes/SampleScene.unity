@@ -3111,7 +3111,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 436837720}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1452537877}
+        m_MethodName: UpgradeHullIntegrity
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &436837720
@@ -4524,7 +4535,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1002819422}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1452537877}
+        m_MethodName: UpgradeEnergy
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1002819422
@@ -5789,9 +5811,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   engine: {fileID: 0}
+  playerReference: {fileID: 0}
   statusLogBackgroundOutline: {fileID: 402942792}
   messageLogBackgroundOutline: {fileID: 38609004}
   pauseMenu: {fileID: 683461644}
+  levelUpMenu: {fileID: 1169183558}
 --- !u!1 &1506947062
 GameObject:
   m_ObjectHideFlags: 0

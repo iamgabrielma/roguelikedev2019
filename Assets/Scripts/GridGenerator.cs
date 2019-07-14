@@ -614,9 +614,26 @@ public class GridGenerator : MonoBehaviour
     // TODO: Most likely we can place this in a different place, for example on GameStateManager to generate enemies as new events or states happen.
     private void PlaceEntities()
     {
-        int _numberOfEnemyEntities = 10; // TODO: Move this somewhere differently, Game Manager?
 
         GameObject enemyObjectPrefab = Resources.Load("Prefabs/Enemy") as GameObject;
+        int _numberOfEnemyEntities = 10;
+
+        /* Basic implementation of "Increase difficulty as depth progresses" */
+        // TODO: Possibly create an array of GO's where I can locate the different enemies and spawn with certain weight based on level.
+        if (currentFloor < 5)
+        {
+            enemyObjectPrefab = Resources.Load("Prefabs/Enemy") as GameObject;
+
+        } else if (currentFloor >= 5)
+        {
+            enemyObjectPrefab = Resources.Load("Prefabs/Enemy") as GameObject;
+            _numberOfEnemyEntities = 15; 
+        }
+
+
+
+
+        //GameObject enemyObjectPrefab = Resources.Load("Prefabs/Enemy") as GameObject;
          
         // For each entity to be created, find a suitable spawning place and Instantiate an enemy
         for (int i = 0; i < _numberOfEnemyEntities; i++)
