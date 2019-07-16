@@ -23,8 +23,11 @@ public class InventoryManager : MonoBehaviour
     public int Payload { get { return payload; } }
     public GameObject[] ItemsInInventory { get { return itemsInInventory; } }
 
+    public static GameObject __itemToBeEquiped;
+
     private void Start()
     {
+        __itemToBeEquiped = null;
         capacity = 10;
         payload = 0;
         //_placeholderGO = new GameObject();
@@ -41,13 +44,41 @@ public class InventoryManager : MonoBehaviour
 
     public void InputHandlerAndUseItem(GameObject entity, int _numericKeycode) {
 
+        //Debug.Log(entity); // player
         Debug.Log("Method linked, using item located on " + _numericKeycode);
-        itemsInInventoryList.Remove(itemsInInventoryList[_numericKeycode]); // remove it from the list
+        //Debug.Log(itemsInInventory[_numericKeycode].tag);
+        //Debug.Log(itemsInInventory[_numericKeycode].name);
+        Debug.Log(itemsInInventory[_numericKeycode].gameObject.GetType().ToString()); // GameObject
+
+        Debug.Log(itemsInInventoryList[_numericKeycode].gameObject.GetComponent<ItemButtonGo>().item.typeOfItem.ToString()); // none
+        Debug.Log(itemsInInventoryList[_numericKeycode].gameObject.GetComponent<ItemButtonGo>().item.Test_ItemType); // Armament
+
+        if (itemsInInventoryList[_numericKeycode].gameObject.GetComponent<ItemButtonGo>().item.Test_ItemType == "Armament")
+        {
+            EquipItem(itemsInInventoryList[_numericKeycode].gameObject);
+            //Entity.EquipGear(itemsInInventoryList[_numericKeycode].gameObject);
+        }
+
+
+
+        itemsInInventoryList.Remove(itemsInInventoryList[_numericKeycode]); // remove it from the list item.name = torpedosomething, so is reachable
         itemsInInventory[_numericKeycode] = null; // Set the item in array to null --> Works: This is the one we're using, not the list above.
         // Use item functionality
         StatusManager.__updateInventoryUI = true; // update UI. Doesn't seem to work.
         StatusManager.__removeUsedItems = true;
 
+    }
+
+    public void EquipItem(GameObject itemToEquip)
+    {
+        // WIP
+        Debug.Log("Equiping item");
+        __itemToBeEquiped = itemToEquip;
+        //GameObject playerArmamentRef = Engine.__player.gameObject.GetComponent<EquipmentManager>().Armament;
+        //playerArmamentRef = itemToEquip;
+        //Entity.EquipGear(playerRef,itemToEquip);
+        //EquipmentManager.GearSwitcher(playerArmamentRef, itemToEquip);
+        EquipmentManager.__updateEquipedGear = true;
     }
 
     public void AddItem(GameObject item, int itemCount) 

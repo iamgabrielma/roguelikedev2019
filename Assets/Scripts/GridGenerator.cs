@@ -619,7 +619,7 @@ public class GridGenerator : MonoBehaviour
         int _numberOfEnemyEntities = 10;
 
         /* Basic implementation of "Increase difficulty as depth progresses" */
-        // TODO: Possibly create an array of GO's where I can locate the different enemies and spawn with certain weight based on level.
+        // TODO: Possibly create an array of GO's where I can locate the different enemies and spawn with certain weight based on level.    
         if (currentFloor < 5)
         {
             enemyObjectPrefab = Resources.Load("Prefabs/Enemy") as GameObject;

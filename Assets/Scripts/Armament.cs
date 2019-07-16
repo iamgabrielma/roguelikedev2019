@@ -7,9 +7,13 @@ public class Armament : Item
 
     [SerializeField] private Rarity rarity;
     [SerializeField] private int damage;
-    [SerializeField] private string useText = "Use: Something";
+    [SerializeField] private string useText = "Use: ";
 
     public Rarity Rarity { get { return rarity; } }
+
+    public new ItemType ItemType = ItemType.armament; // Specific to this class
+
+
 
     // TODO: Both ColoredName and GetToolTipInfoText() methods are cloned from the Consumables class, most likely I can abstract this somewhere else as I'll be using it more often.
     public override string ColoredName
@@ -35,4 +39,5 @@ public class Armament : Item
         return builder.ToString();
 
     }
+
 }

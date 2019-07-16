@@ -16,5 +16,7 @@ MonoBehaviour:
   description: Compressed Air Torpedo
   sellPrice: 0
   rarity: {fileID: 11400000, guid: 8b3e9505cce8a4f70b4d96cf4a8b4fd9, type: 2}
-  damage: 10
-  useText: 'Use: Something'
+  damage: 11
+  useText: 'Use:'
+  ItemType: 3
+  test_itemtype: Armament

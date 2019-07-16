@@ -78,21 +78,21 @@ public class InputHandler : MonoBehaviour
                 EndOfPlayerTurn(); 
             }
         // USING ITEMS DEACTIVATED FOR NOW UNTIL I CAN RETHINK THE INVENTORY SYSTEM
-        //if (Input.GetKeyDown(KeyCode.Alpha0) && isPlayerMoving == false && IsPlayerTurn)
-        //{
-        //    // Check if item is in inventory, otherwise skip:
-        //    if (gameObject.GetComponent<InventoryManager>().itemsInInventory[0] != null)
-        //    {
-        //        isPlayerMoving = true; // While is not moving we activate this to avoid multiple actions
-        //        Debug.Log("Using item assigned to 0");
-        //        UseItem(0);
-        //    }
-        //    else
-        //    {
-        //        Debug.Log("No item in [0]");
-        //    }
+        if (Input.GetKeyDown(KeyCode.Alpha0) && isPlayerMoving == false && IsPlayerTurn)
+        {
+            // Check if item is in inventory, otherwise skip:
+            if (gameObject.GetComponent<InventoryManager>().itemsInInventory[0] != null)
+            {
+                isPlayerMoving = true; // While is not moving we activate this to avoid multiple actions
+                Debug.Log("Using item assigned to 0");
+                UseItem(0);
+            }
+            else
+            {
+                Debug.Log("No item in [0]");
+            }
 
-        //}
+        }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {

@@ -42,5 +42,15 @@ public class ItemGenerator: MonoBehaviour
             listOfItems.Add(itemPrefab);
         }
 
+        TEST_GenerateGear();
+
+    }
+
+    public void TEST_GenerateGear()
+    {
+
+        GameObject itemArmament = Resources.Load<GameObject>("Prefabs/ArmamentTorpedoCA");
+        Instantiate(itemArmament, new Vector3(58 + 0.5f, 58 + 0.5f, 0), Quaternion.identity);
+
     }
 }

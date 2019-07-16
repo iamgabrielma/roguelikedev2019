@@ -148,6 +148,12 @@ public class Entity : MonoBehaviour //, IScheduleable
 
     }
 
+    //public static void EquipGear(GameObject entity, GameObject gear) {
+
+    //    MessageLogManager.Instance.AddToQueue(gear.name + " equipped!");
+    //    entity.gameObject.GetComponent<EquipmentManager>() 
+    //}
+
     /* Used mainly when ENEMIES attack the PLAYER */
     public static void ResolveAttack(GameObject attacker, GameObject defender, EntityMode _entityMode) {
         // TODO: Ranged attacks works nicely and the player is hit back, but there's no graphical cue of this YET

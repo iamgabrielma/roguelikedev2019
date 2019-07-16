@@ -19,7 +19,8 @@ public class StatusManager : MonoBehaviour
     [SerializeField] private RectTransform _newItemUISLotReference; // sub-UI for Inventory
 
     // WIP: Items-Inventory TODO: Move this to local-scoped variables inside other function?
-    [SerializeField] private GameObject[] itemsInInventory;
+    [SerializeField] private GameObject[] itemsInInventory; 
+    [SerializeField] private GameObject gearInInventory; // Testing armament only
     [SerializeField] private List<GameObject> itemsInVisibleUI = new List<GameObject>(); // we'll use this to keep track of instantiated objects in UI and remove them when used.
     [SerializeField] private List<GameObject> itemsInUi = new List<GameObject>();
 
@@ -129,13 +130,14 @@ public class StatusManager : MonoBehaviour
 
         // Grab ITEM data
         itemsInInventory = playerReference.GetComponent<InventoryManager>().ItemsInInventory;
+        gearInInventory = playerReference.GetComponent<EquipmentManager>().Armament; // Testing armament only
 
         // Grab EQUIPMENT data
         propulsion = playerReference.GetComponent<EquipmentManager>().Propulsion;
         armament = playerReference.GetComponent<EquipmentManager>().Armament;
         sensors = playerReference.GetComponent<EquipmentManager>().Sensors;
         navigation = playerReference.GetComponent<EquipmentManager>().Navigation;
-        communication = playerReference.GetComponent<EquipmentManager>().Communication;
+        communication = playerReference.GetComponent<EquipmentManager>().Communication; // Testing armament only
 
         areComponentReferencesLinked = true;
     }
@@ -144,6 +146,7 @@ public class StatusManager : MonoBehaviour
     {
         // Grab UPDATED ITEM data
         itemsInInventory = playerReference.GetComponent<InventoryManager>().ItemsInInventory;
+        gearInInventory = playerReference.GetComponent<EquipmentManager>().Armament;
 
 
 
@@ -184,6 +187,9 @@ public class StatusManager : MonoBehaviour
 
         }
         itemsInUi.Clear(); // Here we cleat the itemsInUi list so next item will regenerate the list from zero, otherwise will replicate and sum to the previous ones.
+
+        /* WIP updating GEAR */
+        armamentText.text = gearInInventory.name;
 
 
     }
