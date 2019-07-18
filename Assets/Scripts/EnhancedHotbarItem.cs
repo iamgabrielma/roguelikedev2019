@@ -7,7 +7,7 @@ public abstract class EnhancedHotbarItem : ScriptableObject
 {
 
     [Header("Enhanced Basic Info")]
-    [SerializeField] private new string name; //item.name hides object.name, so we use "new" keyword
+    [SerializeField] private new string name;
     [SerializeField] private Sprite icon = null;
 
     public string Name => name;

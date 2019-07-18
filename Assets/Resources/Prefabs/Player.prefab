@@ -163,9 +163,12 @@ MonoBehaviour:
   attack: 0
   defense: 0
   speed: 0
+  maxHealth: 0
   health: 0
+  maxEnergy: 0
   energy: 0
   oxygen: 0
+  xp: 0
   isAgressive: 0
 --- !u!114 &-8172304018565884105
 MonoBehaviour:
@@ -201,6 +204,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   item0: {fileID: 0}
+  enhancedPlayerInventory: {fileID: 11400000, guid: 1e1b9d9545dac4ecd9d4097c4864a7f9,
+    type: 2}
 --- !u!114 &5512900312966380720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,6 +250,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bb09e888a2564bfa8bbf436349c88dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentLevel: 0
+  currentxp: 0
+  totalxp: 0
+  levelUpBase: 0
+  levelUpModifier: 0
+  xpNextLevel: 0
 --- !u!1 &8689757660453284567
 GameObject:
   m_ObjectHideFlags: 0

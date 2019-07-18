@@ -11,8 +11,8 @@ public abstract class EnhancedInventoryItem : EnhancedHotbarItem
     //    throw new System.NotImplementedException();
     //}
     [Header("Enhanced Item Data")]
-    [Min(0)] private int sellPrice = 1;
-    [Min(1)] private int maxStack = 1;
+    [SerializeField][Min(0)] private int sellPrice = 1;
+    [SerializeField][Min(1)] private int maxStack = 1;
 
     public override string ColoredName
     {

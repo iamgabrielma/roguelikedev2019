@@ -18,4 +18,18 @@ public struct EnhancedItemSlot
         this.quantity = quantity;
     }
 
+    /*
+     * This has a very specific use: 
+     * In EnhancedItemContainer.Swap() we want to check what happens when you pick up an item, and drop it back to the same spot. For this we have to compare firstSlot == secondSlot 
+     * However we cannot compare 2 structs directly, so we'll create this helper function in orer to do so  
+    */
+    public static bool operator == (EnhancedItemSlot a, EnhancedItemSlot b)
+    {
+        return a.Equals(b);
+    }
+    public static bool operator !=(EnhancedItemSlot a, EnhancedItemSlot b)
+    {
+        return !a.Equals(b);
+    }
+
 }
