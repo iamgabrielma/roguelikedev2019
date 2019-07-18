@@ -68,14 +68,14 @@ public class Entity : MonoBehaviour //, IScheduleable
         //}
 
 
-
-
         // TODO: Add: Awareness
         // TODO: if submarines theme: oxygen/energy/temperature/pressure -> Hunger clock oxygen/energy . Pressure++ when we go next level
 
 
 
     }
+
+
 
     public GameObject TestGameObject() {
 
@@ -282,6 +282,11 @@ public class Entity : MonoBehaviour //, IScheduleable
 
     public static void ResolveItem(GameObject _entity, GameObject _item)
     {
+
+        /* TODO: NEW LOGIC USING ENHANCED INVENTORY */
+
+
+        /* OLD LOGIC */
         _entity.gameObject.GetComponent<InventoryManager>().AddItem(_item, 1); // Adds the item to the inventory
 
         // Temporary logic for pick-up item + use
@@ -301,6 +306,7 @@ public class Entity : MonoBehaviour //, IScheduleable
         // TODO: Create a copy of the item and pass this to the inventory, otherwise when we Destroy() it below, a missing reference is added to the inventory
         //Destroy(_item); DOn't destroy it yet, move it to the inventory.
         _item.SetActive(false); // This was disappears from the scene but is in our inventory, not sure if will cause other problems along the way.
+
 
     }
 

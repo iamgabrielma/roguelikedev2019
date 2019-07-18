@@ -26,6 +26,8 @@ public class InputHandler : MonoBehaviour
     //public static MessageLog MessageLog { get; private set; }
     private bool isPlayerOnTopOfExitTile;
 
+    /* TEST: NEW ENHANCED INVENTORY */
+    //EnhancedInventory playerInventory = new EnhancedInventory();
 
     private void Start()
     {
@@ -38,6 +40,9 @@ public class InputHandler : MonoBehaviour
         player = Engine.__player;
         isFOVrecompute = true; // When the player appears for first time, we need to calculate the initial FOV
         isPlayerOnTopOfExitTile = false;
+
+        /* TEST: NEW ENHANCED INVENTORY */
+
     }
 
     private void Update()
@@ -185,6 +190,9 @@ public class InputHandler : MonoBehaviour
         if (collision.tag == "Item")
         {
             Entity.ResolveItem(player, collision.gameObject);
+
+            /* TEST: NEW ENHANCED INVENTORY */
+            //playerInventory.Test_Add();
         }
 
     }

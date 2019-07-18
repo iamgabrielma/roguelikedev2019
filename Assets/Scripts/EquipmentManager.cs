@@ -91,6 +91,7 @@ public class EquipmentManager : MonoBehaviour{
         //GameObject _newItem = InventoryManager.__itemToBeEquiped;
         GameObject _newItem = new GameObject("NEW TEST OBJECT");
         armament = _newItem;
+        StatusManager.__updateInventoryUI = true;
         // Each time there's an equipment switch, we should update both the player stats and the UI
 
 
