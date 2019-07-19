@@ -28,6 +28,20 @@ public class EnhancedInventory : ScriptableObject //, IEnhancedItemContainer
     {
         enhancedItemContainer.AddItem(test_item_slot);
     }
+    public void Test_Add_Different_Items(GameObject _itemToAdd)
+    {
+        if (_itemToAdd.name == "ItemHealth")
+        {
+            test_item_slot = test_item_slot_array[0];
+            enhancedItemContainer.AddItem(test_item_slot);
+        }
+        if (_itemToAdd.name == "ArmamentTorpedoCA(Clone)")
+        {
+            test_item_slot = test_item_slot_array[1];
+            enhancedItemContainer.AddItem(test_item_slot);
+        }
+        //enhancedItemContainer.AddItem(test_item_slot);
+    }
 
     /* MOVED ALL OF THIS TO ENHANCEDITEMCONTAINER INSTEAD */
     //    private EnhancedItemSlot[] enhancedItemSlots = new EnhancedItemSlot[10];

@@ -87,7 +87,8 @@ public class InventoryManager : MonoBehaviour
     public void AddItem(GameObject item, int itemCount) 
     {
         /* TEST: NEW ENHANCED INVENTORY */
-        enhancedPlayerInventory.Test_Add();
+        //enhancedPlayerInventory.Test_Add();
+        enhancedPlayerInventory.Test_Add_Different_Items(item);
 
         // If we have capacity, add it to our list.
         // ARRAY APPROACH: Get the first element that is null (empty inventory slot) and add the item

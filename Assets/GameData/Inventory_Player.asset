@@ -17,3 +17,24 @@ MonoBehaviour:
   test_item_slot:
     item: {fileID: 11400000, guid: 1f6b69a8ae3804bd78ca339de2074784, type: 2}
     quantity: 1
+  test_item_slot_array:
+  - item: {fileID: 11400000, guid: 1f6b69a8ae3804bd78ca339de2074784, type: 2}
+    quantity: 1
+  - item: {fileID: 11400000, guid: 1b245f1cdf7a04bd3b850c87cb2bd866, type: 2}
+    quantity: 1
+  - item: {fileID: 0}
+    quantity: 0
+  - item: {fileID: 0}
+    quantity: 0
+  - item: {fileID: 0}
+    quantity: 0
+  - item: {fileID: 0}
+    quantity: 0
+  - item: {fileID: 0}
+    quantity: 0
+  - item: {fileID: 0}
+    quantity: 0
+  - item: {fileID: 0}
+    quantity: 0
+  - item: {fileID: 0}
+    quantity: 0

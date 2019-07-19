@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9596bd598aef34bc6a32f29af7cf40f3, type: 3}
+  m_Name: EItem_Armament_Torpedo
+  m_EditorClassIdentifier: 
+  name: 'Armament: Torpedo'
+  icon: {fileID: 21300000, guid: 972a8f4eeb94a4323a6e81d731c1f9ce, type: 3}
+  sellPrice: 1
+  maxStack: 1
