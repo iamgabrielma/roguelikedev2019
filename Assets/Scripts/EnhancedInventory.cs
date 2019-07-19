@@ -9,6 +9,8 @@ public class EnhancedInventory : ScriptableObject //, IEnhancedItemContainer
     [SerializeField] private VoidEvent onInventoryItemsUpdated = null;
     [SerializeField] private EnhancedItemSlot test_item_slot = new EnhancedItemSlot();
 
+    [SerializeField] private EnhancedItemSlot[] test_item_slot_array = new EnhancedItemSlot[10];
+
     public EnhancedItemContainer enhancedItemContainer { get; } = new EnhancedItemContainer(10);
 
     public void OnEnable()

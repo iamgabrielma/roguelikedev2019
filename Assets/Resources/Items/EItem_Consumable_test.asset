@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: EItem_Consumable_test
   m_EditorClassIdentifier: 
   name: EItem health potion
-  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  icon: {fileID: 21300000, guid: 46ea6b483f808412bb18d51ef043bd8b, type: 3}
+  sellPrice: 1
+  maxStack: 1

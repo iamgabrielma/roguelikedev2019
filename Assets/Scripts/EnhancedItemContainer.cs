@@ -77,7 +77,7 @@ public class EnhancedItemContainer: IEnhancedItemContainer
         return enhancedItemSlot;
     }
 
-    public int GetTotalQUantity(EnhancedInventoryItem item)
+    public int GetTotalQuantity(EnhancedInventoryItem item)
     {
         int totalCount = 0;
 

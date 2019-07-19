@@ -15,7 +15,7 @@ public interface IEnhancedItemContainer
 
     bool HasItem(EnhancedInventoryItem item);
 
-    int GetTotalQUantity(EnhancedInventoryItem item);
+    int GetTotalQuantity(EnhancedInventoryItem item);
 
     // swamp
 }
